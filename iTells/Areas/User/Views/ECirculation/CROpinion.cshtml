@@ -1,0 +1,516 @@
+﻿
+@using BusinessObjects;
+
+@{
+    CRAkses _cRAkses = (CRAkses)ViewData["AksesUser"];
+    List<BO_ECirculation> list = (List<BO_ECirculation>)ViewData["ListCRHeadDetail"];
+
+    ViewBag.Title = "CIRCULATION OPINION";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    var Group = "";
+
+}
+
+<head>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .pencarian {
+            display: grid;
+            grid-template-columns: 80px 1.5fr 100px 1.5fr 0.8fr;
+            grid-template-areas: 'lb1 tg1 lb2 tg2 cari';
+            margin-bottom: 5px;
+            border: 2px;
+
+        }
+
+        .lb1 {
+            grid-area: lb1;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+ 
+        }
+
+        .lb2 {
+            grid-area: lb2;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+    
+        }
+
+        .tg1 {
+            grid-area: tg1;
+            display: flex;
+            align-items: center;
+        }
+
+        .tg2 {
+            grid-area: tg2;
+            display: flex;
+            align-items: center;
+        }
+
+        .cari {
+            grid-area: cari;
+            padding-left: 6px;
+            align-items: center;
+        }
+
+
+
+        @@media (max-width:600px) {
+            .pencarian { display: grid; grid-template-columns: 80px 1fr; grid-template-areas: 'lb1 tg1' 'lb2 tg2' 'a cari'; grid-gap: 5px; }
+
+            .cari {
+                grid-area: cari;
+                padding-left: 0px;
+                align-items: center;
+            }
+
+            .tg1 {
+                margin-right: 6px
+            }
+
+            .tg2 {
+                margin-right: 6px
+            }
+        }
+    </style>
+</head>
+
+
+<div id="MainForm">
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div>OPINI SIRKULASI</div>
+                @*<div class="panel panel-default">
+                    <div class="panel-heading" data-toggle="collapse" data-target="#searchBody1" aria-expanded="false">Opini Sirkulasi</div>
+                    <ul class="list-group collapse in" id="searchBody1" aria-expanded="false">
+                        <li class="list-group-item">
+                            <div class="row form-search">*@
+                                @*<div class="form-group col-md-9">
+                            <label class="col-sm-2 col-md-2 control-label text-muted" style="text-align:left; ">Tanggal Awal</label>
+                            <div class="col-sm-3 col-md-3">
+                                <input type="date" id="TglAwal" class="form-control tgl">
+                            </div>
+                            <label class="col-sm-1 col-md-1 control-label text-muted ">s/d</label>
+                            <div class="col-sm-3 col-md-3">
+                                <input type="date" id="TglAhir" class="form-control tgl">
+                            </div>
+                            <div><button type="button" class="col-sm-1 col-md-1 btn btn-primary" id="btnCari">Cari</button></div>
+
+                        </div>*@
+
+                                @*<div class="pencarian">
+                                    <div class="lb1">
+                                        <label class=" ">Dari</label>
+                                    </div>
+                                    <div class="tg1">
+                                        <input type="date" id="TglAwal" class="form-control tgl">
+                                    </div>
+                                    <div class="lb2">
+                                        <label class="">Sampai</label>
+                                    </div>
+                                    <div class="tg2">
+                                        <input type="date" id="TglAhir" class="form-control tgl">
+                                    </div>
+
+                                    <div class="cari">
+                                        <button type="button" class="btn box-success" id="btnCari">Cari</button>
+                                    </div>*@
+
+
+                                @*</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>*@
+
+
+
+
+                <div id="tablegrid">
+                    @Html.Partial("Partial/CRHeadOpinion")
+                </div>
+
+            </div>
+        </div>
+    </section>
+    @*</div>*@
+</div>
+
+
+<div id="DetailForm" class="hidden">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <div class="clearfix">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" data-toggle="collapse" data-target="#searchBody2">Header</div>
+                            <ul class="list-group collapse in" id="searchBody2">
+                                <li class="list-group-item">
+                                    <div id="head">
+                                        @Html.Partial("Partial/CRHeadDetail")
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        @*<hr />*@
+                        <div id="tabledetail">
+                            @Html.Partial("Partial/CRGridDetailOpinion")
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer">
+                <div class="col-sm-offset-4 col-md-offset-5 col-sm-8 col-md-7">
+                    <button id="btnApprove" type="button" class="btn btn-primary" onclick="return ApprovePopUp()"><span class="bold fa  fa-times-circle">&nbsp;&nbsp;Comment</span></button>&nbsp;
+                    <button type="button" class="btn btn-default" onclick="return InitialConditions()"><span class="bold fa fa-angle-left">&nbsp;&nbsp;Back To List</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap modal RejectPopup -->
+<div class="modal fade" id="RejectPopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header alert alert-danger">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title" id="myModalLabel">Infromation Dialog</h3>
+            </div>
+            <div class="modal-body">
+                <p class="success-message">Are you sure you wish to Reject this record ? </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success delete-confirm" onclick="return Reject()">Ok</button>
+                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of the boostrap modal popup -->
+<!-- Bootstrap modal Approvepopup -->
+<div class="modal fade" id="ApprovePopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header alert alert-success">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title" id="myModalLabel">Infromation Dialog</h3>
+            </div>
+            <div class="col-sm-8 col-md-7">
+                <textarea id="approve_comment" class="form-control"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success delete-confirm" onclick="return Approve()">Ok</button>
+                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of the boostrap modal popup -->
+
+
+
+@section Scripts
+{
+  
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#searchBody1').collapse('hide');
+            $('#searchBody2').collapse('hide');
+            var menuItem = $('#4');
+            menuItem.addClass('active');
+            var subMenuItem = menuItem.find('#1');
+            subMenuItem.addClass('active');
+            DataTable();
+            DataTableDetail()
+
+        });
+
+        function DataTable(){
+        $('#table').DataTable({
+            "destroy": true,
+            "scrollY": "70vh",
+            "scrollX": true,
+            "scrollCollapse": true,
+            "paging": false,
+            "bFilter": false,
+            "info": false,
+            fixedColumns: false,
+            fixedColumns: {
+                leftColumns: 1
+            }
+        });
+        }
+
+        function DataTableDetail() {
+            $('#QCtable').DataTable({
+                "destroy": true,
+                "scrollY": "70vh",
+                "scrollX": true,
+                "scrollCollapse": true,
+                "paging": false,
+                "bFilter": false,
+                "info": false,
+                //fixedColumns: false,
+                //fixedColumns: {
+                //    leftColumns: 2
+                //}
+            });
+        }
+
+
+    //Button Click
+
+    $("#btnSubmit").on('click', function () {
+        var awal = $('#TglAwal').val();
+        var ahir = $('#TglAhir').val();
+        var tbl = $('#_Grid');
+        var tbl = $('#_Grid');
+        if (awal == "") {
+            alert("Pilih Tanggal Awal");
+        } else if (ahir == "") {
+            alert("Pilih Tanggal Ahir");
+        } else if (awal > ahir) {
+            alert("Cek Pemilihan Tanggal");
+        } else {
+            $.ajax({
+    //cache : false,
+                type: "POST",
+                url: '@Url.Action("GetClaim", "QC")',
+    //url: '/Material/GetMaterial',
+                data: {
+                    TanggalAwal: awal,
+                    TanggalAhir: ahir
+                },
+                success: function (data) {
+                    tbl.empty().append(data);
+    //$("#_Grid").html(data.responseText);
+                   return DataTable();
+                },
+                error: function (data) {
+                    alert('Error Load data');
+                }
+            });
+            DataTable();
+        }
+    });
+
+
+        function DetailForm(data) {
+
+            $("#title_form").html("Detail NPP");
+            $("#MainForm").addClass("hidden");
+            $("#DetailForm").removeClass("hidden");
+
+
+            var LUser = @_cRAkses.Level;
+            var status = data.closest("tr").find("._status").val();
+            var IdCR = data.closest("tr").find("._id").val();
+            var DeptGroup = data.closest("tr").find("._DeptGroup").val();
+           
+
+            if (status != "Approve 2") {
+
+                $("#btnApprove").addClass("hidden");
+
+            }
+
+            console.log(status);
+
+            GetDetail(IdCR,DeptGroup);
+            GetHeaderDetail(IdCR, LUser, DeptGroup);
+
+        }
+
+        function GetDetail(_Id) {
+            //WaitingDialog.show();_DeptGroup
+            var tbl = $('#tabledetail');
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetDataCRApproveDetailOpinion", "ECirculation")',
+                data: {
+                    Id: _Id
+                },
+                success: function (data) {
+                    tbl.empty().append(data);
+                    //$("#_Grid").html(data.responseText);
+                    return DataTableDetail();
+                },
+                error: function (data) {
+                    alert('Error Load data');
+                }
+            });
+            DataTableDetail();
+        }
+
+
+        function GetHeaderDetail(_Id, _level, _DeptGroup) {
+            //WaitingDialog.show();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetDataCRApproveHeadDetail", "ECirculation")',
+                data: {
+                    Id: _Id,
+                    level: _level,
+                    DeptGroup: _DeptGroup
+                },
+                complete: function (result) {
+                    $("#head").html(result.responseText);
+                   //$("#TotalAmount").html(Total);
+                },
+            });
+
+        }
+
+
+
+
+        function InitialConditions() {
+            $("#title_form").html(" Dept Approval Npp ");
+            $("#DetailForm").addClass("hidden");
+            $("#MainForm").removeClass("hidden");
+            $("#btnReject").removeClass("hidden");
+            $("#btnApprove").removeClass("hidden");
+
+        }
+
+
+
+        function ApprovePopUp() {
+            $("#ApprovePopUp").modal({ backdrop: 'static' });
+            $("#approve_comment").val("");
+        }
+
+        toastr.options = {
+            "positionClass": "toast-top-center",
+            "timeOut": "1000",
+            "preventDuplicates": true,
+            "closeButton": true,
+            "progressBar": true
+        }
+
+
+
+        function Approve() {
+
+            var _cekstatus = $("#_status").val();
+            var _Comment = $("#approve_comment").val();
+            var _status = "Other Dept";
+            var _IdNPP = $("#T_CRNo").val();
+            var _CurrentLevel = "4";
+            var _dept = "@_cRAkses.UserGroupCode.Trim()";
+            var _User = "@_cRAkses.UserName.Trim()";
+            var _DeptGroup = $("#vdeptgroup").val();
+                        
+
+            var _MenuCode = "CIRCULATION";
+            var _LevelHistory = "4";
+            var _StatusHistory = "Approve";
+            var _isActive = 1;
+
+            console.log(_DeptGroup)
+            //var _LevelHistory = "4";
+
+                     $.ajax({
+                         type: "POST",
+                         url: '@Url.Action("UpdateCROpinion", "ECirculation")',
+                         data: {
+
+                             CirculationNo: _IdNPP,
+                             Status: _status,
+                             CurrentLevel: _CurrentLevel,
+                             CekStatus: _cekstatus,
+                             DeptGroup: _DeptGroup,
+
+                             Other_DeptHead: _User,
+                             Other_Opinion: _Comment,
+                             Other_Deptid: _dept,
+                             Other_Approve: true,
+
+                             HisMenuCode: _MenuCode,
+                             HisStatus: _StatusHistory,
+                             HisisActive: _isActive,
+                             HisLevel: _LevelHistory,
+
+
+                         },
+                         complete: function (result) {
+                             $("#tablegrid").html(result.responseText);
+
+                             toastr.success('Comment success.')
+                             InitialConditions();
+                             $("#ApprovePopUp").modal('hide');
+                             return DataTable();
+                         },
+                     });
+                 }
+
+
+        $("#btnCari").on('click', function () {
+
+            var awal = $('#TglAwal').val();
+            var ahir = $('#TglAhir').val();
+            //var tbl = $('#_Grid');
+
+            var tbl = $('#tablegrid');
+
+
+            if (awal == "") {
+                alert("Pilih Tanggal Awal");
+            } else if (ahir == "") {
+                alert("Pilih Tanggal Ahir");
+            } else if (awal > ahir) {
+                alert("Cek Pemilihan Tanggal");
+            } else {
+                $.ajax({
+                    //cache : false,
+                    type: "POST",
+                    url: '@Url.Action("GetDataOpinionSearch", "ECirculation")',
+                    //url: '/Material/GetMaterial',
+                    data: {
+                        TanggalAwal: awal,
+                        TanggalAhir: ahir
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        //$("#_Grid").html(data.responseText);
+                        return DataTable();
+                    },
+                    error: function (data) {
+                        alert('Error Load data');
+                    }
+
+                });
+                DataTable();
+            }
+        });
+
+    </script>
+
+}
+
+
+
+
+
+
+
+

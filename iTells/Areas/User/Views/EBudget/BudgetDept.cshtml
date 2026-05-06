@@ -1,0 +1,180 @@
+﻿@using BusinessObjects;
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    List<ComboList> combo = (List<ComboList>)ViewData["ComboTahun"];
+}
+
+<head>
+
+
+    <style>
+
+        .packaging {
+            display: grid;
+            grid-template-columns: 150px 150px ;
+            grid-template-areas: 'btn1 combo';
+            margin-bottom: 5px;
+            /*background-color: #2E86C1;*/
+            padding: 5px;
+            border-radius: 5px;
+            grid-gap: 5px;
+        }
+
+        .btn1 {
+            grid-area: btn1;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .combo {
+            grid-area: combo;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        @@media (max-width:450px) {
+            .packaging {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas: 'btn1 combo';
+                grid-gap: 5px;
+            }
+        }
+       
+    </style>
+</head>
+
+
+<section class="content">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="form-group form-group-sm packaging">
+                <div class="btn1">
+                    <button type="button" class="btn btn-success margin-r-5" id="btn">Lihat Budget</button>
+                </div>
+                <div class="combo">
+                    <select id="tahun" class="form-control select2 " placeholder="Pilih Tahun">
+                        <option value="0">-- Pilih Tahun --</option>
+                        @foreach (var item in combo)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+        @*<div class="col-sm-3  col-md-2">
+            <button type="button" class="btn btn-success margin-r-5" id="btntest">test</button>
+        </div>*@
+
+
+        @*<div class="col-md-12 div2" id="div2">
+
+            <div class="form-group form-group-sm">
+                <button class=" col-xs-2 col-md-1 btn btn-success delete-confirm" id="btnisi" onclick="return Approve()">Isi / Edit Budget</button>
+                <div class="col-sm-4 col-md-2">
+                    <input id="tahun_isi" class="form-control input-sm" disabled="disabled" value="@Tahun" />
+                </div>
+                <label class="col-xs-2 col-md-1 control-label text-muted" style="text-align:left;">Semester</label>
+                <div class="col-sm-8 col-md-1">
+                    <input id="semester_isi" class="form-control input-sm" disabled="disabled" value="@Semester" />
+                </div>
+            </div>
+
+        </div>*@
+
+        @*<div class="col-md-12 div2" id="div2">
+
+            <button class=" col-xs-2 col-md-1 btn btn-success " id="btnupload" onclick="return Upload()">Upload File</button>
+
+        </div>*@
+
+
+    </div>
+
+
+
+</section>
+
+@section Scripts
+{
+    <script src="~/Scripts/aes.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+           
+        })
+
+        $(document).on('click', '#btn', function (event) {
+            event.preventDefault();
+            var _tahun = $('#tahun').val();
+            if (_tahun == 0) {
+                alert("Pilih Tahun");
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: '/loadBudgetDeptSummary',
+                    data: { Tahun: EncryptURL(_tahun) },
+                    datatype: "json",
+                    success: function (data) {
+                        window.location.href = data.redirectUrl;
+                    }
+
+                });
+            }
+
+
+        });
+
+
+        $(document).on('click', '#btntest', function (event) {
+            event.preventDefault();
+           
+                $.ajax({
+                    type: "POST",
+                     url: '@Url.Action("loadtestRollBack", "EBudget")',
+                    datatype: "json",
+                    success: function (data) {
+                        window.location.href = data.redirectUrl;
+                    }
+
+                });
+
+        });
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+
+
+    </script>
+}
+
+
+
+

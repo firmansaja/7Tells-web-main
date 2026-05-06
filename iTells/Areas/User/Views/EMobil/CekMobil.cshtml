@@ -1,0 +1,178 @@
+﻿@using BusinessObjects;
+@{
+    ViewBag.Title = "CekMobil";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+}
+
+<div id="message"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select id="filterStatus" class="form-control select2" style="width:100%">
+                                            <option value=""></option>
+                                            <option value="CREATE">CREATE</option>
+                                            <option value="SUBMIT">SUBMIT</option>
+                                            <option value="MENUNGGU">MENUNGGU</option>
+                                            <option value="JALAN">JALAN</option>
+                                            <option value="SELESAI">SELESAI</option>
+                                            <option value="ALL">ALL</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_ListCekMobil")
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            DataTableCekMobil("");
+            $('#dtDari').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+            $('#dtSampai').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+            
+            $("#message").slideDown(0).slideUp(0);
+            var msg = localStorage.getItem("message");
+            if (msg != null) {
+                var msg1 = '<h3 class=\"alert alert-success fade in\">' + msg + '</h3>';
+                $('#message').html(msg1);
+                $("#message").slideDown(1000).slideUp(2000);
+                localStorage.removeItem("message");
+            }
+        })
+
+        $(document).on('change', '#filterStatus', function (event) {
+            event.preventDefault();
+            var status = $('#filterStatus').val();
+            $("#tbCekMobil").dataTable().fnDestroy();
+            DataTableCekMobil(status);
+        });
+
+        var ListCekMobil = null;
+        var dtCekMobil;
+        function DataTableCekMobil(status) {
+            ListCekMobil = {
+                init: function () {
+                    dtCekMobil = $('#tbCekMobil').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "ajax": {
+                            "url": "/getCekMobil",
+                            "data": { status: status },
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            //{
+                            //    "data": "null", "title": "Action", "orderable": false, "render": function (data) {
+                            //        return '<button class="btn btn-xs btn-info" title="Edit" id="BtnEditCek" style="margin-right:5px"> <span class="fa fa-eye"></span></button>';
+                            //    }
+                            //},
+                            {
+                                "title": "No Surat Jalan",
+                                "data": "NoSuratJalan",
+                                "class": "point",
+                                render: function (data,) {
+                                    return '<a id=btnNoSuratJalan>' + data + '</a>'
+                                },
+                            },
+                            {
+                                "title": "Tanggal", "data": "Tanggal",
+                                "render": function (value) {
+                                    if (value === null) return "";
+                                    return moment(value).format('DD/MM/YYYY');
+                                }
+                            },
+                            { "title": "Status Mobil", "data": "StatusMobil" },
+                            { "title": "No Mobil", "data": "NoMobil" },
+                            { "title": "Nama Supir", "data": "NamaSupir" },
+                            { "title": "Catatan", "data": "Catatan" },
+                            {
+                                "title": "Berangkat Tgl", "data": "BerangkatTgl",
+                                "render": function (value) {
+                                    if (value === null) return "";
+                                    return moment(value).format('DD/MM/YYYY HH:mm:ss');
+                                }
+                            },
+                            { "title": "KM Awal", "data": "KMAwal" },
+                            {
+                                "title": "Kembali Tgl", "data": "KembaliTgl",
+                                "render": function (value) {
+                                    if (value === null) return "";
+                                    return moment(value).format('DD/MM/YYYY HH:mm:ss');
+                                }
+                            },
+                            { "title": "KM Akhir", "data": "KMAkhir" },
+                            { "title": "Status", "data": "Status" },
+                            //{ "title": "Approved", "data": "Approved" },
+                            //{ "title": "Comment", "data": "Comment" },
+                            //{ "title": "CurrLvlApv", "data": "CurrLvlApv" }
+                        ],
+                        "columnDefs": [
+                            { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                            { "className": "text-center custom-middle-align", "targets": [0] },
+                            //{ "visible": false, "targets": [0, 4, 6] },
+                        ],
+                        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+                    });
+                }
+            }
+            ListCekMobil.init();
+        }
+
+        $(document).on('click', '#btnNoSuratJalan', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbCekMobil').dataTable().fnGetData(row);
+            var _noSuratJalan= EncryptURL(data.NoSuratJalan);
+            var url = "/viewCekMobil/" + _noSuratJalan;
+            window.location.href = url;
+        });
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+    </script>
+}
+

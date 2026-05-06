@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewBag.Title = "Activity Log";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    iTells.Helper.GeneralHelper dHelper = new iTells.Helper.GeneralHelper();
+}
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            @{ Html.RenderAction("GetActivityLog", "ActivityLog");}
+        </div>
+    </div>
+</div>

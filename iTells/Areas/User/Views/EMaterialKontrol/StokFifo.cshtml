@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "StokFifo";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>StokFifo</h2>
+
+<div class="box box-primary scrollme">
+    @Html.Partial("Partial/PartialFIFO")
+</div>
+
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+            DT1();
+        })
+
+        function DT1() {
+
+            $('#TBFIFO').DataTable({
+                paging: false,
+                scrollY: "60vh",
+                scrollX: true,
+
+            });
+
+
+        }
+
+    </script>
+}
+

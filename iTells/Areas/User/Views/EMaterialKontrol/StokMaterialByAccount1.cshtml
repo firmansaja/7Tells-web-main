@@ -1,0 +1,132 @@
+﻿@using BusinessObjects;
+@{
+
+//List<BO_MaterialKontrol> ListPRBudget = (List<BO_MaterialKontrol>)ViewData["StokMaterial"];
+//List<ComboList> listYear = (List<ComboList>)ViewData["Tahun"];
+//int i = 0;
+
+//var FilterTahun = "";
+//var FilterAccount = "";
+
+//foreach (var item in listYear)
+//{
+//    FilterTahun = item.Value;
+//}
+
+//FilterAccount = @ViewBag.Account;
+
+}
+
+<style type="text/css">
+    .style2 {
+        font-size: 12px;
+        /*font-weight: ;*/
+    }
+
+    .style3 {
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .style10 {
+        font-size: 12px;
+        /*font-weight: ;*/
+    }
+
+    .btncolor {
+        background-color: #4682B4; /* Green */
+        /*border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;*/
+    }
+
+
+    @@keyframes blink {
+        0% {
+            /*background-color: #d73434 ;*/
+            color: black;
+        }
+
+        50% {
+            /*background-color: #c88e8e;*/
+            color: #c88e8e;
+        }
+
+        100% {
+            /*background-color: #d73434;*/
+            color: black;
+        }
+    }
+
+    @@-webkit-keyframes blink {
+        0% {
+            /*background-color: #d73434;*/
+            color: black;
+        }
+
+        50% {
+            /*background-color: #c88e8e;*/
+            color: #c88e8e;
+        }
+
+        100% {
+            /*background-color: #d73434;*/
+            color: black;
+        }
+    }
+
+    .blink {
+        -moz-transition: all 0.5s ease-in-out;
+        -webkit-transition: all 0.5s ease-in-out;
+        -o-transition: all 0.5s ease-in-out;
+        -ms-transition: all 0.5s ease-in-out;
+        transition: all 0.5s ease-in-out;
+        -moz-animation: blink normal 1.5s infinite ease-in-out;
+        /* Firefox */
+        -webkit-animation: blink normal 1.5s infinite ease-in-out;
+        /* Webkit */
+        -ms-animation: blink normal 1.5s infinite ease-in-out;
+        /* IE */
+        animation: blink normal 1.5s infinite ease-in-out;
+        /* Opera */
+    }
+
+    .select {
+        /*position: relative;
+        display: block;
+        width: 15em;*/
+        height: 2em;
+        background: #3C8EBE;
+        border-radius: 5px;
+        /*line-height: 2;*/
+        /*overflow: hidden;*/
+        /*border-radius: .25em;*/
+        /*padding-bottom: 5px;*/
+    }
+</style>
+
+<div class="row" style="margin-bottom :0px">
+        <div class="col-sm-1 col-md-2">
+            <font color="#ffffff"><label class="  control-label text-muted" style="text-align:left;">@ViewBag.title</label></font>
+        </div>
+    </div>
+
+<div class="box box-primary scrollme">
+    @Html.Partial("Partial/Partial10")
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+        }
+      
+
+    </script>
+}
+

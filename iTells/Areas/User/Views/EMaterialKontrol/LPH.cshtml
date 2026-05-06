@@ -1,0 +1,249 @@
+﻿@using BusinessObjects
+@{
+    ViewBag.Title = "LPH";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    List<BO_NoMesin> ListMesin = (List<BO_NoMesin>)ViewData["DataMesin"];
+}
+
+<style>
+    * {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    Body {
+        /*background-color: #85C1E9;*/
+        background-color: #000000;
+    }
+
+    .content {
+        padding: 5px;
+    }
+
+    .main-sidebar {
+        display: none;
+    }
+
+    .main-header {
+        display: none;
+    }
+
+    .sidebar-toggle {
+        display: none;
+    }
+
+    .table tr:nth-child(even) {
+        background-color: #FAE5D3;
+    }
+
+    td {
+        padding: 5px;
+    }
+        
+</style>
+
+<div class="partialview">
+    <div id="tablegrid1">
+        <div>
+            @Html.Partial("Partial/PartialLPH")
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="_popUp" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title" id="_title"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <table>
+                            <tr>
+                                <td>Per Slide</td>
+                                <td style="padding-left: 10px">:</td>
+                                <td>
+                                    <div class="input-group">
+                                        <input id="jmlRow" type="text" class="form-control" onkeypress="numberOnly(event)" value="15"/>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Tanggal</td>
+                                <td style="padding-left: 10px">:</td>
+                                <td>
+                                    <div class="input-group date" id="tglProd">
+                                        <input type="text" class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Area</td>
+                                <td style="padding-left: 10px">:</td>
+                                <td>
+                                    <select id="area" class="form-control select2" style="width:100%">
+                                        <option value="All">-- All --</option>
+                                        <option value="A1">A1</option>
+                                        <option value="A2">A2</option>
+                                        <option value="C">C</option>
+                                        <option value="E1">E1</option>
+                                        <option value="E2">E2</option>
+                                        <option value="F">F</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>No Mesin</td>
+                                <td style="padding-left: 10px">:</td>
+                                <td>
+                                    <select id="noMesin" class="form-control select2" style="width:100%">
+                                        <option value="All">-- All --</option>
+                                        @foreach (var item in @ListMesin)
+                                        {
+                                            <option value=@item.NoMesin>@item.NoMesin</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnSubmit" class="btn btn-primary" onclick="return filterLPH()" style="width:100px">Submit</button>&nbsp;
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.signalR-2.1.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+        $(document).ready(function () {
+            $("body").removeClass();
+            document.getElementById('wr').classList.remove('wrapper')
+            document.getElementById('wrcw').classList.remove('content-wrapper')
+
+            $('#tglProd').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy',
+            });
+
+            let today = new Date();
+            let timeShift3 = new Date((today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear() + " " + "08:30:01");
+            timeShift3 = timeShift3.getTime();
+            var timeCurrent = today.getTime();
+            if (timeCurrent < timeShift3) {
+                today.setDate(today.getDate() - 1)
+            }
+
+            $('#tglProd').datepicker('setDate', today);
+
+            setInterval(function () {
+                var dt = new Date();
+                if (dt > timeShift3) {
+                    $('#tglProd').datepicker('setDate', dt);
+                    getData();
+                }                
+            }, 50000)
+
+            var notifications = $.connection.fifoHub;
+            notifications.client.updateData = function () {
+                getData()
+            };
+
+            $.connection.hub.start().done(function () {
+                getData();
+            }).fail(function (e) {
+                alert(e);
+            });
+        });
+
+        $(document).on('click', '#btnFilter', function (event) {
+            event.preventDefault();
+            $("#_popUp").modal({ backdrop: 'static' });
+            $('#_title').text("Filter Hasil Produksi");
+
+            //$('#_popUp').on('shown.bs.modal', function () {
+            //    $('#noMesin').focus();
+            //})
+        });
+
+        function filterLPH() {
+            getData();
+            $("#_popUp").modal('hide');
+        }
+
+        function getData() {
+            var tbl = $('#tablegrid1');
+            var tgl = $('#tglProd').datepicker('getDate');
+            var noMesin = $("#noMesin").val();
+            var area = $("#area").val();
+            var perSlide = $("#jmlRow").val();
+            $('#tglHeader').text(formatDate(tgl));
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetDataLPH", "EMaterialKontrol")',
+                data: {
+                    tgl: formatDate(tgl),
+                    area: area,
+                    noMesin: noMesin,
+                    perSlide: perSlide
+                },
+                success: function (data) {
+                    //tbl.empty().append(data);
+                    //setTimeout(function () {
+                    //    WaitingDialog.hide();
+                    //}, 500);
+                    return tbl.empty().append(data);
+                },
+                error: function (data) {
+                    setTimeout(function () {
+                        WaitingDialog.hide();
+                    }, 500);
+                    alert('Error Load data');
+                }
+            });
+        }
+
+        function numberOnly(evt) {
+            var theEvent = evt || window.event;
+
+            // Handle paste
+            if (theEvent.type === 'paste') {
+                key = event.clipboardData.getData('text/plain');
+            } else {
+                // Handle key press
+                var key = theEvent.keyCode || theEvent.which;
+                key = String.fromCharCode(key);
+            }
+            var regex = /[0-9]|\./;
+            if (!regex.test(key)) {
+                theEvent.returnValue = false;
+                if (theEvent.preventDefault) theEvent.preventDefault();
+            }
+        }
+
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+    </script>
+}

@@ -1,0 +1,117 @@
+﻿@using BusinessObjects;
+@{
+    List<BO_EBudget> filter = (List<BO_EBudget>)ViewData["Filter"];
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    //ViewBag.Title = "View Budget";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    var FilterTahun = "";
+
+    foreach (var item in filter)
+    {
+        FilterTahun = item.FilterTahun;
+
+    }
+}
+
+<div id="MainForm">
+    <div id="tablegrid">
+        @Html.Partial("PartialLihatBudget")
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+            DataTable();
+
+
+        })
+
+
+        var ListVM;
+        function DataTable() {
+            var th = @FilterTahun;
+            ListVM = {
+                dt: null,
+
+                init: function () {
+                    dt = $('#tbLihatBudget').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "scrollY": "75vh",
+                        "scrollX": true,
+                        "scrollCollapse": true,
+                        "paging": true,
+                        fixedColumns: true,
+                        fixedColumns: {leftColumns: 5},
+                        "ajax": {
+                            "url": "/getbudget",
+                            "data": { tahun: th },
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            { "title": "No", "data": "RowNumber", "width": "30px", "class": "text-center hh"},
+                            {
+                                "title": "AcctID",
+                                "data": "AcctID",
+                                "class": "text-center point",
+                                "width": "70px",
+                                render: function (data,) {
+                                    return '<a id=btnLihat>' + data + '</a>'
+                                },
+                            },
+                            //{ "title": "AcctID", "data": "AcctID", "width": "70px", "class": "text-center" },
+                            { "title": "AcctName", "data": "AcctName", "width": "200px" },
+                            { "title": "Tahun", "data": "Tahun", "width": "70px", "class": "text-center th" },
+                            { "title": "DeptID", "data": "DeptID", "width": "70px", "class": "text-center dept" },
+                            { "title": "Jan", "data": "Jan", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Feb", "data": "Feb", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Mar", "data": "Mar", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Apr", "data": "Apr", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Mei", "data": "Mei", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Jun", "data": "Jun", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Jul", "data": "Jul", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Agst", "data": "Agst", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Sept", "data": "Sept", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Okt", "data": "Okt", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Nov", "data": "Nov", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Des", "data": "Des", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0) },
+                            { "title": "Subtotal", "data": "Subtotal", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0) },
+                        ],
+                        "lengthMenu": [[50, 100], [50, 100]]
+
+                    });
+                }
+            }
+            ListVM.init();
+        }
+
+        $(document).on('click', '#btnLihat', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+
+            var data = $('#tbLihatBudget').dataTable().fnGetData(row);
+
+            //var Id = data.DeptID;
+            console.log(data);
+
+            var _AcctId = $(this).closest('tr').find('.point').text();
+            var _Tahun = $(this).closest('tr').find('.th').text();
+            var _Dept = $(this).closest('tr').find('.dept').text();
+            console.log('ini ' + _AcctId);
+            console.log('ini ' + _Tahun);
+            console.log('ini ' + _Dept);
+            var url = "/showBudgetDetail/" + _AcctId + "/Tahun/" + _Tahun + "/Dept/" + _Dept;
+            window.location.href = url;
+            
+        });
+    </script>
+}
+
+
+

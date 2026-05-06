@@ -1,0 +1,170 @@
+﻿@using BusinessObjects;
+@{
+    ViewBag.Title = "Permohonan Kendaraan Detail";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "Permohonan Kendaraan";
+    ViewBag.Link = "/User/EMobil";
+    MobilAksesUser AkseUser = (MobilAksesUser)ViewData["AksesUser"];
+    EMobilReq ReqHeader = (EMobilReq)ViewData["ReqHeader"];
+    List<EMobilReqDetail> ListReqDetail = (List<EMobilReqDetail>)ViewData["ListReqDetail"];
+    var Dept = @AkseUser.Dept;
+    string Site = @AkseUser.Site;
+    int Level = @AkseUser.Level;
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="box box-primary">
+    <div class="box-body" style="overflow-x:auto">
+        <div class="row">
+            <div class="col-xs-12">
+                <table style="width:100%">
+                    <tr>
+                        <td style="width:20%;vertical-align:middle"><h5>No Trans&nbsp:&nbsp<b><span id="noTrans">@ReqHeader.NoTrans</span></b></h5></td>
+                        <td style="width:20%;vertical-align:middle"><h5>Dept&nbsp:&nbsp<b><span id="dept">@ReqHeader.Dept</span></b></h5></td>
+                        <td style="width:20%;vertical-align:middle"><h5>Tgl Buat&nbsp:&nbsp<b><span id="tgl">@ReqHeader.Tanggal.ToShortDateString()</span></b></h5></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+                <div class="col-xs-12">
+                    <table id="tblReqDetail" style="border-color:black" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Tujuan</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Keperluan</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">NIK</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Nama</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Berangkat Dari</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Berangkat Tgl</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Kembali Di</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Kembali Tgl</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Tugas Luar</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Pakai Mobil</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Catatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ListReqDetail)
+                            {                                
+                            <tr>
+                                <td style="word-wrap:break-word;white-space:pre-wrap;vertical-align:middle;border-color:black">@item.Tujuan</td>
+                                <td style="word-wrap:break-word;white-space:pre-wrap;vertical-align:middle;border-color:black">@item.Keperluan</td>
+                                <td style="vertical-align:middle;border-color:black">@item.Nik</td>
+                                <td style="vertical-align:middle;border-color:black">@item.Nama</td>
+                                <td style="vertical-align:middle;border-color:black">@item.BerangkatDari</td>
+                                <td style="vertical-align:middle;border-color:black">@item.BerangkatTgl</td>
+                                <td style="vertical-align:middle;border-color:black">@item.KembaliDi</td>
+                                <td style="vertical-align:middle;border-color:black">@item.KembaliTgl</td>
+                                <td style="text-align:center; vertical-align:middle;border-color:black"><input type="checkbox" class="singlechkbox" name="singlechkbox" value="1" @item.TugasLuar onclick="return false;" /></td>
+                                <td style="text-align:center;vertical-align:middle;border-color:black"><input type="checkbox" class="singlechkbox" name="singlechkbox" value="1" @item.PakaiMobil onclick="return false;" /></td>
+                                <td style="word-wrap:break-word;white-space:pre-wrap;vertical-align:middle;border-color:black">@item.Catatan</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <div class="row no-print">
+            <div class="col-xs-12">
+                <button class="btn btn-primary pull-left margin" id="btnApproveReq">Approve</button>
+                <button class="btn btn-danger pull-left margin" id="btnRejectReq">Reject</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+            if (@Level == 1) {
+                if (@ReqHeader.CurrentLevel == (@Level - 1)) {
+                    $("#btnRejectReq").addClass('hidden');
+                } else {
+                    $("#btnApproveReq").addClass('hidden');
+                    $("#btnRejectReq").addClass('hidden');
+                }
+		    } else if (@Level == 2 || @Level == 3) {
+                if (@ReqHeader.CurrentLevel != (@Level - 1)) {
+                    $("#btnApproveReq").addClass('hidden');
+                    $("#btnRejectReq").addClass('hidden');
+                }
+		    }
+        });
+
+        $(document).on('click', '#btnApproveReq', function (event) {
+            event.preventDefault();
+            if (confirm('Apakah Yakin Ingin Approve ?')) {
+                var comment = "";
+                let approve = "APPROVED";
+                if (@Level == 1) {
+                    approve = "SUBMITED";
+                } else {
+                    comment = prompt("Input Comment:", "");
+                }
+
+                var mobilReq = {
+                    NoTrans: '@ReqHeader.NoTrans',
+                    CurrentLevel : '@Level' ,
+                    Approved: approve ,
+                    Comment: comment
+                };
+
+                $.ajax({
+                    url: '@Url.Action("ApproveReq", "EMobil", new { area ="User"})',
+                    dataType: "json",
+                    type: "POST",
+                    cache: false,
+                    data: mobilReq ,
+                    success: function (data) {
+                        if (data.success) {
+                            window.location = "/user/EMobil";
+                            localStorage.setItem("message", data.message)
+                        }
+                    },
+                    error: function (xhr) {
+                        alert("Error");
+                    }
+                });
+            } else {
+                return false;
+            }            
+        });
+
+        $(document).on('click', '#btnRejectReq', function (event) {
+            event.preventDefault();
+            if (confirm('Apakah Yakin Ingin Reject ?')) {
+                var comment = prompt("Input Comment:", "");
+                let approve = "REJECTED";
+
+                var mobilReq = {
+                    NoTrans: '@ReqHeader.NoTrans',
+                    CurrentLevel : 0 ,
+                    Approved: approve ,
+                    Comment: comment
+                };
+
+                $.ajax({
+                    url: '@Url.Action("RejectReq", "EMobil", new { area ="User"})',
+                    dataType: "json",
+                    type: "POST",
+                    cache: false,
+                    data: mobilReq ,
+                    success: function (data) {
+                        if (data.success) {
+                            window.location = "/user/EMobil";
+                            localStorage.setItem("message", data.message)
+                        }
+                    },
+                    error: function (xhr) {
+                        alert("Error");
+                    }
+                });
+            } else {
+                return false;
+            }   
+        });
+
+    </script>
+}

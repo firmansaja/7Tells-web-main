@@ -1,0 +1,315 @@
+﻿@{
+    ViewBag.Title = "Display Scan Trolly";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    * {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    Body {
+        background-color: #14599e;
+    }
+
+    .content {
+        padding: 0px;
+    }
+
+    .main-sidebar {
+        display: none;
+    }
+
+    .main-header {
+        display: none;
+    }
+
+    .sidebar-toggle {
+        display: none;
+    }
+
+    .table tr:nth-child(even) {
+        background-color: #2a6fb4;
+    }
+
+    td {
+        padding: 5px;
+    }
+
+    th {
+        background-color: #10477e;
+        padding: 5px;
+    }
+
+    .cmain-navbar {
+        border-bottom: 1px solid #333;
+        background-color: #10477e;
+        /*padding: 5px 0px;*/
+        padding-top: 5px;
+    }
+
+    .cmain-body {
+        padding: 10px;
+        font-size: 2.5rem;
+    }
+
+    .cmain-filter {
+        border-bottom: 1px solid #333;
+        background-color: #fff;
+        padding: 5px;
+    }
+
+    h1 {
+        text-align: center;
+        margin: auto;
+        color: white;
+        font-size: 4rem;
+        font-weight: bold;
+    }
+
+    a {
+        color: white;
+    }
+
+    .input-group-addon {
+        background-color: #eee;
+        font-size: large;
+        font-weight: bold;
+    }
+
+    .input-group,
+    .form-control {
+        font-size: large;
+        font-weight: bold;
+    }
+
+    .belum-scan {
+        background-color: orange;
+        padding: 5px 10px;
+        text-align: center;
+    }
+
+    .sudah-scan {
+        background-color: green;
+        padding: 5px 10px;
+        text-align: center;
+    }
+
+    .qty-tidak-standar {
+        background-color: hotpink;
+        padding: 5px 10px;
+        text-align: center;
+    }
+
+    .part-lebih {
+        background-color: #FFD300;
+        padding: 5px 10px;
+        text-align: center;
+    }
+</style>
+
+<div class="cmain-navbar">
+    <h1><marquee>MONITORING TROLLY TSC</marquee></h1>
+</div>
+
+<div class="cmain-filter col-xs-12">
+    <div class="col-xs-8 col-sm-6 col-md-4" style="padding-right:14px">
+        <div class='input-group'style="margin-bottom:5px">
+            <span class="input-group-addon" style="background-color: #eee; padding-right:37px">TGL DARI</span>
+            <input id="dtDisplayDari" type='text' class="form-control" onchange="return getData()" />
+        </div>
+        <div class='input-group'>
+            <span class="input-group-addon" style="background-color: #eee">TGL SAMPAI</span>
+            <input id="dtDisplaySampai" type='text' class="form-control" onchange="return getData()" />
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 col-md-offset-2" style="padding-left:0px">
+        <div class="col-md-6">
+            <div class='input-group' style="margin-bottom:5px">
+                <span class="input-group-addon" style="background-color: #eee">
+                    BELUM SCAN DEPO
+                </span>
+                <div class="belum-scan">OK</div>
+            </div>
+            <div class='input-group'>
+                <span class="input-group-addon" style="background-color: #eee">
+                    SUDAH SCAN DEPO
+                </span>
+                <div class="sudah-scan">OK</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class='input-group' style="margin-bottom:5px">
+                <span class="input-group-addon" style="padding-right:20px;background-color: #eee">
+                    LEBIH DARI 1 WARNA
+                </span>
+                <div class="part-lebih">QTY</div>
+            </div>
+            <div class='input-group'>
+                <span class="input-group-addon" style="padding-right:23px;background-color: #eee">
+                    QTY TIDAK STANDAR
+                </span>
+                <div class="qty-tidak-standar">QTY</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="partialview">
+    <div id="tablegrid">
+        <div>
+            @Html.Partial("_ListTrollyInOut")
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalTrollyDetail" role="dialog" aria-labelledby="ModalPopUp" aria-hidden="true">
+    <div class="modal-dialog" style="width:95%;height:90%" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.signalR-2.1.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Scripts/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("body").removeClass();
+            document.getElementById('wr').classList.remove('wrapper')
+            document.getElementById('wrcw').classList.remove('content-wrapper')
+
+            $('#dtDisplayDari').datepicker({
+                autoclose: true,
+                orientation: "bottom left",
+                todayHighlight: true,
+                format: "dd/mm/yyyy"
+            });
+
+            $('#dtDisplaySampai').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+
+            $('#dtDisplayDari').datepicker('setDate', 'today');
+            $('#dtDisplaySampai').datepicker('setDate', 'today');
+
+            DT1();
+
+            var notifications = $.connection.fifoHub;
+            notifications.client.updateData = function () {
+                getData()
+            };
+
+           $.connection.hub.start().done(function () {
+                getData();
+            }).fail(function (e) {
+                alert(e);
+            });
+
+            //setInterval(function () {
+            //    var table = $('#tblTrollyInOut').DataTable();
+            //    var info = table.page.info();
+
+            //    if (info.page + 1 === info.pages) {
+            //        $(".first").click();
+            //    } else {
+            //        $(".next").click();
+            //    }
+            //}, 50000)
+        })
+
+        $(function () {
+            $(document).on('click', 'button[data-dismiss]', function (e) {
+                location.reload();
+            });
+        });
+
+        function DT1() {
+            $('#tblTrollyInOut').DataTable({
+                //paging: false,
+                //scrollY: "65vh",
+                //scrollX: "65vh",
+                scrollX: true,
+                bSort: false,
+                bInfo: false,
+                columnDefs: [
+                    { "className": "text-center custom-middle-align", "targets": [0] },
+                ],
+                pagingType: 'full_numbers',
+            });
+        }
+
+
+        function getData() {
+            if ($('#dtDisplayDari').datepicker("getDate") !== null && $('#dtDisplaySampai').datepicker("getDate") !== null) {
+                let dtDari = $('#dtDisplayDari').datepicker("getDate").toISOString();
+                let dtSampai = $('#dtDisplaySampai').datepicker("getDate").toISOString();
+
+                var tbl = $('#tablegrid');
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetDataTrollyInOut", "Trolly")',
+                    data: { DTDari: dtDari, DTSampai: dtSampai },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+
+                        return DT1();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+                });
+            }
+        }
+
+        @*function ViewTrollyDetail(noTrans, kodeQR) {
+            $("#modalTrollyDetail").modal({ backdrop: 'static' });
+            modal: false;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ViewTrollyDetail", "Trolly")',
+                data: { noTrans: noTrans, kodeQR: kodeQR},
+                dataType: "html",
+                success: function (response) {
+                    $("#modalTrollyDetail").find(".modal-body").html(response);
+                    $("#modalTrollyDetail").modal('show');
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }*@
+
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+    </script>
+}
+
+
+

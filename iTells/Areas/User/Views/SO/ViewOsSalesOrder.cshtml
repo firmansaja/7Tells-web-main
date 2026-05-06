@@ -1,0 +1,140 @@
+﻿@using BusinessObjects;
+@{
+    //List<BO_So> filter = (List<BO_So>)ViewData["Filter"];
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    //ViewBag.Title = "Sales Order";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    string FilterId = "";
+
+    FilterId = ViewBag.filter;
+
+    //foreach (var item in filter)
+    //{
+    //    FilterTahun = item.CustOrdNbr;
+
+    //}
+}
+
+<div id="MainForm">
+    <div class="row">
+        <div class="col-md-12 " id="div2">
+            <div class="form-group form-group-sm">
+                <div class="col-sm-1 col-md-8">
+                    <font color="#ffffff" size="+1"><label class="  control-label text-muted" style="text-align:left;">@ViewBag.title</label></font>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="MainForm">
+    <div id="tablegrid">
+        @Html.Partial("PartialSoOutstanding")
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            DataTable();
+        });
+
+
+     var ListVM;
+        function DataTable() {
+            var th1 = "UcnBXbdmIpwQy7itlPn0ww=="
+            var th = "@FilterId";
+            ListVM = {
+                dt: null,
+
+                init: function () {
+                    dt = $('#tbSoOutstanding').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": true,
+                        "scrollY": "400px",
+                        "scrollX": true,
+                        "scrollCollapse": true,
+                        "paging": true,
+                        fixedColumns: true,
+                        fixedColumns: {leftColumns: 1},
+                        "ajax": {
+                            "url": "/GetOutstanding",
+                            "data": { CustOrdNbr: th },
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            { "title": "No", "data": "No", "width": "30px", "class": "text-center hh"},
+                            //{
+                            //    "title": "AcctID",
+                            //    "data": "AcctID",
+                            //    "class": "text-center point",
+                            //    "width": "70px",
+                            //    render: function (data,) {
+                            //        return '<a id=btnLihat>' + data + '</a>'
+                            //    },
+                            //},
+                            { "title": "PO Number", "data": "CustOrdNbr", "width": "70px", "class": "text-center" },
+                            { "title": "InvtID", "data": "InvtID", "width": "70px", "class": "text-center dept" },
+                            { "title": "AlternateID", "data": "AlternateID", "class": "text-center"},
+                            { "title": "Descr", "data": "Descr", "class": "text-left"},
+                            { "title": "QtyOrd", "data": "QtyOrd", "class": "text-center", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "SiteID", "data": "SiteID", "class": "text-center" },
+                            {
+                                "title": "ReqDate", "data": "ReqDate", "class": "text-center",
+                                "render": function (value) {
+                                    if (value === null) return "";
+                                    return moment(value).format('DD-MMMM-YYYY');
+                                }
+                            },
+                            //{ "title": "ReqDate", "data": "ReqDate", "class": "text-center"},
+                            //{ "title": "ShipName", "data": "ShipName", "width": "70px", "class": "text-left th" },
+                            //{ "title": "OrdNbr", "data": "OrdNbr", "width": "200px" },
+                            //{ "title": "QtyOpenShip", "data": "QtyOpenShip", "class": "text-center", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            //{ "title": "QtyCloseShip", "data": "QtyCloseShip", "class": "text-center", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            //{ "title": "QtyShip", "data": "QtyShip", "class": "text-center", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            //{ "title": "QtyBal", "data": "QtyBal", "class": "text-center", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            //{ "title": "NoSPAB", "data": "NoSPAB", "class": "text-center"},
+                            //{ "title": "Tujuan", "data": "Tujuan", "class": "text-center"},
+                        ],
+                        "lengthMenu": [[100, 200], [100, 200]]
+
+                    });
+                }
+            }
+            ListVM.init();
+        }
+
+
+
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+
+
+
+    </script>
+}
+
+
+

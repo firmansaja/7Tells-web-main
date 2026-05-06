@@ -1,0 +1,380 @@
+﻿
+@{
+    ViewBag.Title = "Scan Part Hasil Produksi";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <style>
+        .grid_center {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-column-gap: 10px;
+            grid-row-gap: 5px;
+        }
+
+        .container_barcode {
+            display: grid;
+            justify-content: center;
+            align-items: center;
+            grid-auto-flow: row;
+            grid-row-gap: 5px;
+            background-color: #CCCCCC;
+            padding: 5px;
+            margin: 5px 0px;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 0px;
+        }
+
+        .form-control {
+            border-radius: 5px;
+        }
+
+        .box-header {
+            padding: 10px 10px 0px 10px;
+        }
+
+        @@media only screen and (max-width:640px) {
+            .box-header {
+                padding: 5px 5px 0px 5px;
+            }
+
+            .c-header {
+                font-size: 14px;
+            }
+
+            .col-xs-12 {
+                padding: 0px;
+            }
+
+            .grid_center {
+                grid-gap: 5px;
+                font-size: 10px;
+            }
+
+            .form-control {
+                border-radius: 5px;
+                padding: 2px 8px;
+                font-size: 10px;
+                height: 20px;
+            }
+
+            .btn {
+                padding: 2px 8px;
+                font-size: 10px;
+            }
+
+            h4.small {
+                font-size: 10px;
+            }
+
+            .container_barcode {
+                display: grid;
+                grid-auto-flow: column;
+                grid-gap: 5px;
+                align-items: center;
+                justify-content: space-around;
+            }
+
+            .table-container {
+                font-size: 10px;
+            }
+
+            .main-header .logo {
+                display: none;
+            }
+
+            .fixed .content-wrapper, .fixed .right-side {
+                padding-top: 50px;
+            }
+        }
+    </style>
+</head>
+
+<div class="box box-primary">
+    <div class="box-header with-border header-font">
+        <div class="col-xs-12">
+            <div align="center" class="row">
+                <h1 class="c-header" style="margin:0; font-weight:bold; color:#0288E1">SCAN PART HASIL PRODUKSI</h1>
+            </div>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="col-xs-12">
+            <div class="container_barcode">
+                <div align="center">
+                    <h4 class="small" style="margin:0; font-weight:bold">Inventory Id</h4>
+                </div>
+                <div>
+                    <input style="max-width:400px;" type="text" class="form-control" oninput="this.value = this.value.toUpperCase()" value="" id="txtBarcode">
+                </div>
+                <div align="center">
+                    <button id="btnSubmit" class="btn btn-primary" onclick="return SimpanScanPart()">Submit</button>
+                </div>
+            </div>
+            <div class="table-container" style="overflow-x:auto">
+                <table class="table" id="tblScanPart" style="border-color:black;width:100%">
+                    <thead>
+                        <tr style="border-color:black">
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Invt Id</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" hidden>Part No</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Part Name</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Job No</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Qty</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black"></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var menuItem = $('#linestore');
+            menuItem.addClass('active');
+            var subMenuItem = menuItem.find('#scanpartprod');
+            subMenuItem.addClass('active');
+
+            var msg = localStorage.getItem("message");
+            var scs = localStorage.getItem("success");
+            if (msg != null) {
+                //var msg1 = '<h3 class=\"alert alert-success fade in\">' + msg + '</h3>';
+                //$('#message').html(msg1);
+                //$("#message").slideDown(1000).slideUp(2000);
+                PopupMessage(scs, msg);
+                localStorage.removeItem("message");
+                localStorage.removeItem("success");
+            }
+
+            $('#txtBarcode').focus();
+        })
+
+        // Input Pass Card
+        $(document).on('focus', '#txtBarcode', function (event) {
+            //event.preventDefault();
+            $('#txtBarcode').val('');
+        });
+
+        $(document).on('keypress', '#txtBarcode', function (event) {
+            var kodeQR = $('#txtBarcode').val();
+
+            if (kodeQR !== '' && event.key === "Enter") {
+                event.preventDefault();
+                CheckPart(kodeQR);
+            }
+        });
+
+        // Hapus Pass Card
+        $("#tblScanPart").on('click', '.btnHapus', function () {
+            $(this).closest('tr').remove();
+        });
+
+        function CheckPart(invtId_) {
+            if (invtId_ !== '') {
+                var invtId = getInvtIdByIndex(invtId_, "-", 1);
+
+                $.ajax({
+                    url: '@Url.Action("CheckPart", "LineStore", new { area ="User"})',
+                    dataType: "json",
+                    type: "GET",
+                    data: {
+                        invtId: invtId
+                    },
+                    async: false,
+                    success: function (data) {
+                        if (!data.success) {
+                            alert(data.message)
+                            //PopupMessage(false, data.message);
+                            $('#txtBarcode').focus();
+                        } else {
+                            var table = document.getElementById("tblScanPart").getElementsByTagName('tbody')[0];
+                            var rowCount = table.rows.length;
+
+                            var isReady = false;
+
+                            for (var i = 0; i < rowCount; i++) {
+                                var invtId_ = table.rows[i].cells[0].textContent.trim();
+                                var Qty = table.rows[i].cells[4].textContent.trim();
+                                if (invtId_ === invtId) {
+                                    $(`#txtQty_${i + 1}`).val(Qty+1)
+                                    //alert(`Pass card ${invtId} sudah ada!`);
+                                    $('#txtBarcode').focus();
+                                    isReady = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isReady) {
+                                var newRow = table.insertRow(rowCount);
+                                newRow.setAttribute("style", "text-align:center;vertical-align:middle");
+
+                                var cInvtID = newRow.insertCell(0);
+                                var cPartNo = newRow.insertCell(1);
+                                var cPartName = newRow.insertCell(2);
+                                var cJobNo = newRow.insertCell(3);
+                                var cQty = newRow.insertCell(4);
+                                var cPilihan = newRow.insertCell(5);
+                                cInvtID.innerHTML = invtId;
+                                cPartNo.innerHTML = data.part.PartNo;
+                                cPartNo.setAttribute("style", "display:none");
+                                cPartName.innerHTML = data.part.PartName;
+                                cJobNo.innerHTML = data.part.JobNo;
+                                cQty.innerHTML = `<input style="min-width:50px; width:100%" type="number" id="txtQty_${rowCount}" onkeypress="pressQTY(event)" readonly>`
+                                cPilihan.innerHTML = '<button class="btn btn-xs btnHapus" title="Hapus" style="color:red"><span class="fa fa-trash"></span></button>';
+                            }
+                            $(`#txtQty_${rowCount}`).focus();
+                        }
+                        $('#txtBarcode').val('');
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
+                    }
+                });
+            }
+        }
+
+        function getInvtIdByIndex(input, delimiter, posisi) {
+            let parts = input.split(delimiter);
+
+            if (posisi <= 0 || posisi > parts.length) {
+                return "";
+            }
+
+            return parts[posisi - 1].trim();
+        }
+
+        function SimpanScanPart() {
+            var table = document.getElementById("tblScanPart").getElementsByTagName('tbody')[0];;
+            var rowCount = table.rows.length;
+
+            if (rowCount == 0) {
+                alert("Data trolley tidak boleh kosong!")
+            } else {
+                if (confirm('Yakin ingin simpan data?')) {
+
+                    $('#btnSubmit').prop('disabled', true);
+
+                    var Data = [];
+                    $("#tblScanPart tbody tr").each(function () {
+                        var currentRow = $(this);
+                        var invtId = currentRow.find("td:eq(0)").text();
+                        var partNo = currentRow.find("td:eq(1)").text();
+                        var partName = currentRow.find("td:eq(2)").text();
+                        var jobNo = currentRow.find("td:eq(3)").text();
+                        var qty = currentRow.find('td:eq(4) input[type=number]').val();
+                        var obj = {};
+                        obj.NoTrans = "";
+                        obj.InvtId = invtId;
+                        obj.PartNo = partNo;
+                        obj.PartName = partName;
+                        obj.JobNo = jobNo;
+                        obj.Qty = qty;
+
+                        Data.push(obj);
+                    });
+                    Data = JSON.stringify({ 'Data': Data });
+                    console.log(Data);
+                    $.ajax({
+                        contentType: 'application/json; charset=utf-8',
+                        url: '@Url.Action("SimpanScanPart", "LineStore", new { area ="User"})',
+                        dataType: "json",
+                        type: "POST",
+                        cache: false,
+                        data: Data,
+                        success: function (data) {
+                            if (data.success) {
+                                $("#tblScanPart").find("tr:gt(0)").remove();
+                                //PopupMessage(true, data.message);
+                                alert(data.message);
+                                $('#btnSubmit').prop('disabled', false);
+                            } else {
+                                //PopupMessage(false, data.message);
+                                alert(data.message);
+                                $('#btnSubmit').prop('disabled', false);
+                            }
+                        },
+                        error: function (xhr) {
+                            alert(xhr.responseText);
+                            $('#btnSubmit').prop('disabled', false);
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        function pressQTY(evt) {
+            var theEvent = evt || window.event;
+
+            // Handle paste
+            if (theEvent.type === 'paste') {
+                var key = theEvent.clipboardData.getData('text/plain');
+            } else {
+                // Handle key press
+                var key = theEvent.keyCode || theEvent.which;
+                key = String.fromCharCode(key);
+            }
+
+            if (theEvent.keyCode === 13) {
+                $('#txtBarcode').focus();
+            } else {
+                var regex = /[0-9]|\./;
+                if (!regex.test(key)) {
+                    theEvent.returnValue = false;
+                    if (theEvent.preventDefault) theEvent.preventDefault();
+                }
+            }
+        }
+
+        function PopupMessage(success, msg) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+            //Toast.fire({
+            //    icon: 'success',
+            //    title: msg
+            //})
+            if (success) {
+                Toast.fire({
+                    icon: 'success',
+                    title: msg
+                })
+            } else {
+                Toast.fire({
+                    icon: 'error',
+                    title: msg
+                })
+            }
+        }
+
+        function FormatDateTime(format) {
+            const today = new Date();
+
+            var datetime = moment(today).format(format)
+            return datetime
+        }
+
+    </script>
+}
+
+
+

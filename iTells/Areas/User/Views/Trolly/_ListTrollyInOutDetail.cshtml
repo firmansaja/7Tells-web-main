@@ -1,0 +1,96 @@
+﻿@using BusinessObjects;
+@{
+    List<TrollyInOutDetailModel> ListTrollyDetail = (List<TrollyInOutDetailModel>)ViewData["ListTrollyDetail"];
+}
+
+
+<div class="modal-header" style="color:white;background-color: #10477e;">
+    <button type="button" class="close" data-dismiss="modal" data-reload="yes" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3 class="modal-title">TROLLY DETAIL</h3>
+</div>
+
+<div class="modal-body">
+    <div class="container-fluid" style="height:90%;overflow-x:auto;overflow-y:auto">
+        <div class="row">
+            <div class="col-xs-4" style="padding-top:0">
+                <p style="font-size:18px">No Surat Jalan :&nbsp<span id="txtNotrans">@ListTrollyDetail[0].NoTrans</span></p>
+            </div>
+            <div class="col-xs-4" style="padding-top:0">
+                <p style="font-size:18px">No Truck :&nbsp<span id="txtNoMobil">@ListTrollyDetail[0].NoMobil</span></p>
+            </div>
+            <div class="col-xs-4" style="padding-top:0">
+                <p style="font-size:18px">Nama Supir :&nbsp<span id="txtNamaSupir">@ListTrollyDetail[0].NamaSupir</span></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-pull-12">
+                <table id="tblTrollyDetail" style="border-color:black;width:100%;height:100%" class="table table-bordered">
+                    <thead>
+                        <tr style="color:white;border-color:black;">
+                            <th colspan="7" style="text-align:center;vertical-align:middle">TSC</th>
+                            <th colspan="4" style="text-align:center;vertical-align:middle">Depo Nisho</th>
+                        </tr>
+                        <tr style="color:white;border-color:black;text-align:center;vertical-align:middle;">
+                            <th>QR Trolly</th>
+                            <th>Jam Scan</th>
+                            <th>Invt Id</th>
+                            <th>Part Name</th>
+                            <th>Color</th>
+                            <th>Status</th>
+                            <th>Qty Part</th>
+                            <th>Jam Scan</th>
+                            <th>Invt Id</th>
+                            <th>Status</th>
+                            <th>Qty Part</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in @ListTrollyDetail)
+                        {
+                        <tr style="color:black;text-align:center;vertical-align:middle;">
+                            <td>@item.KodeQR</td>
+                            <td>@Convert.ToDateTime(@item.TglTransTSC).ToString("HH:mm:ss")</td>
+                            <td>@item.InvtIdTSC</td>
+                            <td>@item.PartNameTSC</td>
+                            <td>@item.ColorTSC</td>
+                            @if (item.StatusDepo != "OK")
+                            {
+                                <td style="background-color:orange">@item.StatusTSC</td>
+                            }
+                            else
+                            {
+                                <td style="background-color:green">@item.StatusTSC</td>
+                            }
+                            <td>@item.QtyPartTSC</td>
+                            @if (item.StatusDepo != "OK")
+                            {
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@Convert.ToDateTime(@item.TglTransDepo).ToString("HH:mm:ss")</td>
+                                <td>@item.InvtIdDepo</td>
+                                <td>@item.StatusDepo</td>
+                                if (item.QtyPartTSC != item.QtyPartDepo)
+                                {
+                                    <td style="background-color:red">@item.QtyPartDepo</td>
+                                }
+                                else
+                                {
+                                    <td>@item.QtyPartDepo</td>
+                                }
+                            }
+
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

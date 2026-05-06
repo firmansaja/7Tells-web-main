@@ -1,0 +1,68 @@
+﻿
+
+@using BusinessObjects
+
+@{
+
+    List<BO_ECirculation_Detail> list = (List<BO_ECirculation_Detail>)ViewData["ListCRDetailOpinion"];
+
+    int i = 0;
+
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <table class="table table-bordered table-striped table-condensed table-hover table-responsive" id="QCtable">
+                    <thead>
+                        <tr>
+                            <th class="text-center">No</th>
+                            <th>Name</th>
+                            <th>Spesification</th>
+                            <th>Account Name</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-center">Curr</th>
+                            <th class="text-right">Price</th>
+                            <th class="text-right">Amount</th>
+                            <th class="hidden">ID</th>
+                            @*<th style="width:20px" class="text-center">OK</th>
+                                <th style="width:20px" class="text-center">Rev</th>
+                                <th style="width:90px" class="text-center">Del</th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var Claim in list)
+                        {
+                            i++;
+                            <tr>
+                                <td class="text-center"> @i</td>
+                                <td>@Claim.NameOfGood</td>
+                                <td> @Claim.Spesification</td>
+                                <td> @Claim.AccountName</td>
+                                <td class="text-center"> @Claim.Qty</td>
+                                <td class="text-center"> @Claim.Curr</td>
+                                <td class="text-right"> @string.Format("{0:N2}", Claim.Price)</td>
+                                <td class="text-right"> @string.Format("{0:N2}", Claim.Amount)</td>
+                                @*<td id="note" class="note">Test</td>*@
+                                <td id="id" class="hidden">@Claim.kode</td>
+                                @*<td class="text-center" type="checkbox" onclick="return true"> @Html.CheckBox("isActive", true) </td>*@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+

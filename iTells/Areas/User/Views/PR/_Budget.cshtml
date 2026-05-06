@@ -1,0 +1,54 @@
+﻿@using BusinessObjects;
+@{
+    List<ComboList> Years = (List<ComboList>)ViewData["FiscalYear"];
+    List<ComboList> ListSubAcct = (List<ComboList>)ViewData["ListSubAcct"];
+}
+
+<div id="cbudget" class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">CONTROL BUDGET REPORT</h3>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <table>
+                            <tr>
+                                <td><div class="form-group">
+                                    <label>Fiscal Year</label>
+                                    <select id="txtFiscalYearBudget" class="form-control select2" style="width:100%">
+                                        @foreach (var item in Years)
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                </div></td>
+                                <td width="10%"></td>
+                                <td><div class="form-group">
+                                    <label>Sub Acct</label>
+                                    <select id="txtSubAcct" class="form-control select2" style="width:100%">
+                                        <option value="0">-- Pilih Sub Acct --</option>
+                                        @foreach (var item in ListSubAcct)
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                </div></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-primary" id="BtnSubmitBudget">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

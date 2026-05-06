@@ -1,0 +1,193 @@
+﻿
+@{
+    ViewBag.Title = "Sales Order";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<style type="text/css">
+    pt {
+        /*border: 1px solid black;
+        background-color: lightblue;*/
+        padding-top: 500px;
+        /*padding-right: 30px;
+        padding-bottom: 50px;
+        padding-left: 80px;*/
+    }
+</style>
+
+<div id="MainForm">
+    <div class="row">
+        <div class="col-md-12 " id="div2">
+            <div class="form-group form-group-sm">
+                <div class="col-sm-1 col-md-8">
+                    <font color="#ffffff" size="+1"><label class="  control-label text-muted" style="text-align:left;">@ViewBag.title</label></font>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row ">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <table>
+                            <tr>
+                                <td width="2%"></td>
+                                <td width="70%">
+                                    <div class="form-group">
+                                        <label>PO Number</label>
+                                        <input type="text" class="form-control" id="tPo">
+                                    </div>
+
+                                </td>
+                                <td width="5%"></td>
+                                <td><button type="button" class="btn btn-primary" id="BtnPO"><span class="bold fa fa-eye"></span>&nbsp;&nbsp;Preview</button></td>
+                            </tr>
+                            <tr>
+                                <td width="2%"></td>
+                                <td width="70%">
+                                    <div class="form-group">
+                                        <label>Order Number</label>
+                                        <input type="text" class="form-control" id="tOrderNo">
+                                    </div>
+
+                                </td>
+                                <td width="5%"></td>
+                                <td><button type="button" class="btn btn-primary" id="BtnOrder"><span class="bold fa fa-eye"></span>&nbsp;&nbsp;Preview</button></td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //DataTable();
+
+
+        })
+
+
+        $(document).on('click', '#BtnPO', function (event) {
+            event.preventDefault();
+            var _CustOrdNbr = $('#tPo').val();
+            //var _tahun = EncryptURL(_th)
+            console.log(_CustOrdNbr);
+            if (_CustOrdNbr != "") {
+
+                 $.ajax({
+                url: '@Url.Action("CekCustOrdNbr", "SO", new { area ="User"})',
+                dataType: "json",
+                type: "POST",
+                cache: false,
+                     data: { CustOrdNbr: _CustOrdNbr} ,
+                success: function (data) {
+                    if (data.success) {
+                        $.ajax({
+                            type: "POST",
+                            //url: '/Load_Os_SalesOrder',
+                             url: '@Url.Action("Load_Os_SalesOrder", "SO", new { area ="User"})',
+                            data: { CustOrdNbr: EncryptURL(_CustOrdNbr) },
+                            datatype: "json",
+                            success: function (data) {
+                                window.location.href = data.redirectUrl;
+                            }
+                        });
+                    }
+                    else {
+                        alert(data.message);
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+
+            }
+            else {
+                alert("Po Harap Jangan Kosong")
+
+            }
+
+        });
+
+
+        $(document).on('click', '#BtnOrder', function (event) {
+            event.preventDefault();
+            var _OrdNbr = $('#tOrderNo').val();
+            if (_OrdNbr != "") {
+
+                 $.ajax({
+                url: '@Url.Action("CekByOrdNbr", "SO", new { area ="User"})',
+                dataType: "json",
+                type: "POST",
+                cache: false,
+                     data: { OrdNbr: _OrdNbr} ,
+                success: function (data) {
+                    if (data.success) {
+                        $.ajax({
+                            type: "POST",
+                            //url: '/Load_Os_SalesOrder',
+                             url: '@Url.Action("GetdataByOrdNbr", "SO", new { area ="User"})',
+                            data: { OrdNbr: EncryptURL(_OrdNbr) },
+                            datatype: "json",
+                            success: function (data) {
+                                window.location.href = data.redirectUrl;
+                            }
+                        });
+                    }
+                    else {
+                        alert(data.message);
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+
+            }
+            else {
+                alert("Order Number Jangan Kosong")
+
+            }
+
+        });
+
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+
+
+
+    </script>
+}
+
+
+
+

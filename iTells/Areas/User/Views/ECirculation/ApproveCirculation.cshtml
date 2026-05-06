@@ -1,0 +1,552 @@
+﻿@using BusinessObjects;
+
+@{
+    ViewBag.Title = "CIRCULATION APPROVAL";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    CRAkses _cRAkses = (CRAkses)ViewData["AksesUser"];
+}
+
+<head>
+    
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+        }
+
+        .pencarian {
+            display: grid;
+            grid-template-columns: 80px 1.5fr 80px 1.5fr 0.8fr;
+            grid-template-areas: 'lb1 tg1 lb2 tg2 cari';
+            margin-bottom: 5px;
+            border: 2px;
+            border-color: black;
+            background-color: #2E86C1;
+            padding: 4px;
+            border-radius: 5px;
+        }
+
+        .lb1 {
+            grid-area: lb1;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            color:white;
+        }
+
+        .lb2 {
+            grid-area: lb2;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .tg1 {
+            grid-area: tg1;
+            display: flex;
+            align-items: center;
+        }
+
+        .tg2 {
+            grid-area: tg2;
+            display: flex;
+            align-items: center;
+        }
+
+        .cari {
+            grid-area: cari;
+            padding-left: 6px;
+            align-items: center;
+            
+        }
+
+       
+
+        @@media (max-width:600px) {
+            .pencarian {
+                display: grid;
+                grid-template-columns: 80px 1fr;
+                grid-template-areas: 'lb1 tg1' 'lb2 tg2' 'a cari';
+                grid-gap: 5px;
+                
+            }
+
+            .cari {
+                grid-area: cari;
+                padding-left: 0px;
+                align-items: center;
+            }
+            .tg1 {
+               margin-right:6px
+            }
+            .tg2 {
+                margin-right: 6px
+            }
+        }
+    </style>
+</head>
+
+<div id="MainForm">
+  <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                @*<div class="panel panel-default paneltoogel">
+                    <div class="panel-heading" data-toggle="collapse" data-target="#searchBody1" aria-expanded="false">Search</div>
+                    <ul class="list-group collapse in" id="searchBody1" aria-expanded="false">
+                        <li class="list-group-item">*@
+                            @*<div class="row form-search">*@
+                                <div class="pencarian">
+                                    <div class="lb1">
+                                        <label class=" ">Dari</label>
+                                    </div>
+                                    <div class="tg1">
+                                        <input type="date" id="TglAwal" class="form-control tgl">
+                                    </div>
+                                    <div class="lb2">
+                                        <label class="">Sampai</label>
+                                    </div>
+                                    <div class="tg2">
+                                        <input type="date" id="TglAhir" class="form-control tgl">
+                                    </div>
+
+                                    <div class="cari">
+                                        <button type="button" class="btn box-success" id="btnCari">Cari</button>
+                                    </div>
+
+
+                                </div>
+                            @*</div>*@
+                        @*</li>
+                    </ul>
+                </div>*@
+
+                <div id="tablegrid">
+                    @Html.Partial("Partial/CRHead")
+                </div>
+
+            </div>
+        </div>
+    </section>
+    </div>
+
+
+<div id="DetailForm" class="hidden">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <div class="clearfix">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" data-toggle="collapse" data-target="#searchBody2">Header</div>
+                            <ul class="list-group collapse in" id="searchBody2">
+                                <li class="list-group-item">
+                                    <div id="head">
+                                        @Html.Partial("Partial/CRHeadDetail")
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="tabledetail">
+                            @Html.Partial("Partial/CRGridDetail")
+                        </div>
+                        <button id="btnApprove" type="button" class="btn btn-primary" onclick="return ApprovePopUp()"><span class="bold fa  fa-times-circle">&nbsp;&nbsp;Approve</span></button>&nbsp;
+                        <button id="btnReject" type="button" class="btn btn-danger" onclick="return RejectPopUp()"><span class="bold fa  fa-times-circle">&nbsp;&nbsp;Reject</span></button>&nbsp;
+                        <button type="button" class="btn btn-default" onclick="return InitialConditions()"><span class="bold fa fa-angle-left">&nbsp;&nbsp;Back To List</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap modal RejectPopup -->
+<div class="modal fade" id="RejectPopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header alert alert-danger">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title" id="myModalLabel">Reject Confirmation</h3>
+            </div>
+            <div class="modal-body">
+                <h2 class="success-message">Are you sure to Reject ? </h2>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success delete-confirm" onclick="return Reject()">Ok</button>
+                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of the boostrap modal popup -->
+<!-- Bootstrap modal Approvepopup -->
+<div class="modal fade" id="ApprovePopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header alert alert-success">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title" id="myModalLabel">Approve Confirmation</h3>
+            </div>
+            <div class="modal-body">
+                <h2 class="success-message">Are you sure to Approve ? </h2>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success delete-confirm" onclick="return Approve()">Ok</button>
+                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of the boostrap modal popup -->
+
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+            //$(".panel-heading").hide();
+            $('#searchBody1').collapse('hide');
+            $('#searchBody2').collapse('hide');
+            DataTable();
+            DataTableDetail();
+
+            var menuItem = $('#4');
+            menuItem.addClass('active');
+            var subMenuItem = menuItem.find('#3');
+            subMenuItem.addClass('active');
+
+    })
+
+
+
+        function DataTable(){
+        $('#table').DataTable({
+            "destroy": true,
+            "scrollY": "70vh",
+            "scrollX": true,
+            "scrollCollapse": true,
+            "paging": false,
+            "bFilter": false,
+            "info": false,
+            fixedColumns: false,
+            fixedColumns: {
+                leftColumns: 2
+            }
+        });
+        }
+
+        function DataTableDetail() {
+            $('#QCtable').DataTable({
+                "destroy": true,
+                "scrollY": "70vh",
+                "scrollX": true,
+                "scrollCollapse": true,
+                "paging": false,
+                "bFilter": false,
+                "info": false,
+                fixedColumns: false,
+
+            });
+        }
+
+
+        $("#btnCari").on('click', function () {
+
+
+            var awal = $('#TglAwal').val();
+            var ahir = $('#TglAhir').val(); 
+            var tbl = $('#tablegrid');
+
+
+            if (awal == "") {
+                alert("Pilih Tanggal Awal");
+            } else if (ahir == "") {
+                alert("Pilih Tanggal Ahir");
+            } else if (awal > ahir) {
+                alert("Cek Pemilihan Tanggal");
+            } else {
+                $.ajax({
+                    //cache : false,
+                    type: "POST",
+                    url: '@Url.Action("GetCRSearch", "ECirculation")',
+                    //url: '/Material/GetMaterial',
+                    data: {
+                        TanggalAwal: awal,
+                        TanggalAhir: ahir
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        //$("#_Grid").html(data.responseText);
+                        return DataTable();
+                    },
+                    error: function (data) {
+                        alert('Error Load data');
+                    }
+
+                });
+                DataTable();
+            }
+        });
+
+
+        function DetailForm(data) {
+            InitialConditions();
+            DataTableDetail();
+            $("#title_form").html("Detail NPP");
+            $("#MainForm").addClass("hidden");
+            $("#DetailForm").removeClass("hidden");
+
+            
+            var LUser = @_cRAkses.Level;
+            console.log(LUser);
+            var status = data.closest("tr").find("._status").val();
+            var IdCR = data.closest("tr").find("._id").val();
+            console.log(status);
+            if (LUser == 2)
+            {
+
+                $("#btnReject").addClass("hidden");
+                $("#btnApprove").addClass("hidden");
+
+                if (status == "Submit") {
+
+                    $("#btnReject").removeClass("hidden");
+                    $("#btnApprove").removeClass("hidden");
+                }
+                if (status == "Approve 1") {
+
+                    $("#btnReject").removeClass("hidden");
+                    //$("#btnApprove").removeClass("hidden");
+                }
+
+               
+            }
+           else {
+
+                $("#btnReject").addClass("hidden");
+                $("#btnApprove").addClass("hidden");
+
+                if (status == "Approve 1") {
+
+                    $("#btnReject").removeClass("hidden");
+                    $("#btnApprove").removeClass("hidden");
+                }
+                if (status == "Approve 2" || status == "Other Dept") {
+
+                    $("#btnReject").removeClass("hidden");
+                    //$("#btnApprove").removeClass("hidden");
+                }
+                
+                
+            }
+            
+            GetDetail(IdCR);
+            GetHeaderDetail(IdCR, LUser);
+           
+        }
+
+        function GetDetail(_Id) {
+            //WaitingDialog.show();
+            var tbl = $('#tabledetail');
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetDataCRApproveDetail", "ECirculation")',
+                data: {
+                    Id: _Id
+                },
+
+                success: function (data) {
+                    tbl.empty().append(data);
+                    //$("#_Grid").html(data.responseText);
+                    return DataTableDetail();
+                },
+                error: function (data) {
+                    alert('Error Load data');
+                }
+            });
+            //WaitingDialog.hide();
+            DataTableDetail();
+        }
+
+          function GetHeaderDetail(_Id,_level) {
+            //WaitingDialog.show();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetDataCRApproveHeadDetail", "ECirculation")',
+                data: {
+                    Id: _Id,
+                    level: _level,
+                    DeptGroup: @_cRAkses.DeptGroup
+                },
+                complete: function (result) {
+                    $("#head").html(result.responseText);
+                   //$("#TotalAmount").html(Total);
+                },
+            });
+
+            //WaitingDialog.hide();
+        }
+
+        function InitialConditions() {
+            $("#title_form").html(" Circulation ");
+            $("#DetailForm").addClass("hidden");
+            $("#MainForm").removeClass("hidden");
+            $("#btnReject").removeClass("hidden");
+            $("#btnApprove").removeClass("hidden");
+
+        }
+
+        function CekApprove() {
+            var x = true;
+            $("#QCtable TBODY TR").each(function () {
+                var row = $(this);
+                x = x && $(this).find("td:eq(10) input[type='CheckBox']").prop('checked');
+            });
+
+            if (x === true) {
+                ApprovePopUp();
+            }
+            else {
+                RejectPopUp();
+                //window.alert("Please Tick All Details")
+            }
+        }
+
+        function RejectPopUp() {
+            $("#RejectPopUp").modal({ backdrop: 'static' });
+            $("#reject_comment").val("");
+        }
+
+        function ApprovePopUp() {
+            $("#ApprovePopUp").modal({ backdrop: 'static' });
+            $("#reject_comment").val("");
+        }
+
+        toastr.options = {
+            "positionClass": "toast-top-center",
+            "timeOut": "1000",
+            "preventDuplicates": true,
+            "closeButton": true,
+            "progressBar": true
+        }
+
+
+        function Approve() {
+            var _status = "";
+            var _IdNPP = $("#T_CRNo").val();
+            var _CurrentLevel = $("#lusr").val();
+            var _MenuCode = "CIRCULATION";
+            var _StatusHistory = "Approve";
+            var _isActive = 1;
+            var _LevelHistory = $("#lusr").val();
+                if (_LevelHistory == "2") {
+                    _status = "Approve 1";
+                }
+                else {
+                    _status = "Approve 2";
+                }
+                 var Notes = new Array();
+                 $("#QCtable TBODY TR").each(function () {
+                     var row = $(this);
+
+                     var Note = {};
+                     Note.NameOfGood = row.find("TD").eq(2).html();
+                     Note.Note = $(this).find("td:eq(8) input[type='text']").val();
+                     Note.kode = row.find("TD").eq(9).html();
+                     Note.Cek = $(this).find("td:eq(10) input[type='CheckBox']").prop('checked');
+                     Notes.push(Note);
+                 });
+                     $.ajax({
+                         type: "POST",
+                         url: '@Url.Action("UpdateCR", "ECirculation")',
+                         data: {
+                             CirculationNo: _IdNPP,
+                             Status: _status,
+                             CurrentLevel: _CurrentLevel,
+
+                             HisMenuCode: _MenuCode,
+                             HisStatus: _StatusHistory,
+                             HisisActive: _isActive,
+                             HisLevel: _LevelHistory,
+                             CRDetail: Notes
+                         },
+                         complete: function (result) {
+                             $("#tablegrid").html(result.responseText);
+
+                             toastr.success('Approve success.')
+                             InitialConditions();
+                             $("#ApprovePopUp").modal('hide');
+                             return DataTable();
+                         },
+                     });
+                 }
+
+        function Reject() {
+                 var Comment = $("#reject_comment").val();
+                 var _IdNPP = $("#T_CRNo").val();
+                 var _Status = "Revise";
+                 var _CurrentLevel = 0;
+
+                 var _MenuCode = "CIRCULATION";
+                 var _StatusHistory = "Reject";
+                 var _isActive = 1;
+                 var _LevelHistory = 0;
+
+                 var Notes = new Array();
+                 $("#QCtable TBODY TR").each(function () {
+                     var row = $(this);
+
+                     var Note = {};
+                     Note.NameOfGood = row.find("TD").eq(2).html();
+                     Note.Note = $(this).find("td:eq(8) input[type='text']").val();
+                     Note.kode = row.find("TD").eq(9).html();
+                     Note.Cek = $(this).find("td:eq(10) input[type='CheckBox']").prop('checked');
+                     Notes.push(Note);
+                 });
+
+                 $.ajax({
+                     type: "POST",
+                     url: '@Url.Action("RejectCR", "ECirculation")',
+                     data: {
+                         CirculationNo: _IdNPP,
+                         Status: _Status,
+                         CurrentLevel: _CurrentLevel,
+
+                         HisMenuCode: _MenuCode,
+                         HisStatus: _StatusHistory,
+                         HisisActive: _isActive,
+                         HisLevel: _LevelHistory,
+                         CRDetail: Notes
+                     },
+                     complete: function (result) {
+                         $("#tablegrid").html(result.responseText);
+
+                         toastr.success('Reject success.')
+                         InitialConditions();
+                         $("#RejectPopUp").modal('hide');
+                         return DataTable();
+                     },
+                 });
+             }
+
+
+
+
+    </script>
+
+}
+
+
+
+
+
+

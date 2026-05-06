@@ -1,0 +1,254 @@
+﻿@{
+    ViewBag.Title = "Display Scan Trolly Depo";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    * {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    Body {
+        background-color: #14599e;
+    }
+
+    .content {
+        padding: 0px;
+    }
+
+    .main-sidebar {
+        display: none;
+    }
+
+    .main-header {
+        display: none;
+    }
+
+    .sidebar-toggle {
+        display: none;
+    }
+
+    .table tr:nth-child(even) {
+        background-color: #2a6fb4;
+    }
+
+    td {
+        padding: 5px;
+    }
+
+    th {
+        background-color: #10477e;
+        padding: 5px;
+    }
+
+    .cmain-navbar {
+        border-bottom: 1px solid #333;
+        background-color: #10477e;
+        /*padding: 5px 0px;*/
+        padding-top: 5px;
+    }
+
+    .cmain-filter {
+        border-bottom: 1px solid #333;
+        background-color: #fff;
+        padding: 5px 10px;
+    }
+
+    .cmain-body {
+        padding: 10px;
+        font-size: 2.5rem;
+    }
+
+    h1 {
+        text-align: center;
+        margin: auto;
+        color: white;
+        font-size: 4rem;
+        font-weight: bold;
+    }
+
+    a {
+        color: white;
+    }
+
+    .input-group-addon {
+        background-color: #eee;
+        font-size: large;
+        font-weight: bold;
+    }
+
+    .input-group,
+    .form-control {
+        font-size: large;
+        font-weight: bold;
+    }
+
+    .belum-scan {
+        background-color: orange;
+        padding: 5px 10px;
+    }
+
+    .sudah-scan {
+        background-color: green;
+        padding: 5px 10px;
+    }
+</style>
+
+<div class="cmain-navbar">
+    <h1><marquee>MONITORING TROLLY DEPO</marquee></h1>
+    
+</div>
+<div class="cmain-filter col-xs-12">
+    <table>
+        <tr>
+            <td>
+                <div class='input-group'>
+                    <span class="input-group-addon" style="background-color: #eee">DARI TANGGAL</span>
+                    <input id="dtDisplayDari" type='text' class="form-control" onchange="return getData()" />
+                </div>
+            </td>
+            <td width="10px"></td>
+            <td>
+                <div class='input-group'>
+                    <span class="input-group-addon" style="background-color: #eee">SAMPAI</span>
+                    <input id="dtDisplaySampai" type='text' class="form-control" onchange="return getData()" />
+                </div>
+            </td>
+            <td width="10px"></td>
+            <td>
+                <div class='input-group'>
+                    <span class="input-group-addon" style="padding-right:20px;background-color: #eee">
+                        BELUM SCAN TSC
+                    </span>
+                    <div class="belum-scan">OK</div>
+                </div>
+            </td>
+            <td width="10px"></td>
+            <td>
+                <div class='input-group'>
+                    <span class="input-group-addon" style="padding-right:20px;background-color: #eee">
+                        SUDAH SCAN TSC
+                    </span>
+                    <div class="sudah-scan">OK</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="partialview">
+    <div id="tablegrid">
+        <div>
+            @Html.Partial("_ListTrollyInOutDepo")
+        </div>
+    </div>
+</div> 
+
+@section scripts{
+    <script src="~/Scripts/jquery.signalR-2.1.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Scripts/bootstrap-datepicker.js"></script>
+    <script>
+    $(document).ready(function () {
+        $("body").removeClass();
+        document.getElementById('wr').classList.remove('wrapper')
+        document.getElementById('wrcw').classList.remove('content-wrapper')
+
+        $('#dtDisplayDari').datepicker({
+            autoclose: true,
+            orientation: "bottom left",
+            todayHighlight: true,
+            format: "dd/mm/yyyy"
+        });
+
+        $('#dtDisplaySampai').datepicker({
+            useCurrent: false,
+            autoclose: true,
+            format: 'dd/mm/yyyy'
+        });
+
+        $('#dtDisplayDari').datepicker('setDate', 'today');
+        $('#dtDisplaySampai').datepicker('setDate', 'today');
+
+        DT1();
+
+        var notifications = $.connection.fifoHub;
+        notifications.client.updateData = function () {
+            getData()
+        };
+
+        $.connection.hub.start().done(function () {
+            getData();
+        }).fail(function (e) {
+            alert(e);
+        });
+
+        //setInterval(function () {
+        //    var table = $('#tblTrollyInOut').DataTable();
+        //    var info = table.page.info();
+
+        //    if (info.page + 1 === info.pages) {
+        //        $(".first").click();
+        //    } else {
+        //        $(".next").click();
+        //    }
+        //}, 50000)
+    })
+
+    function DT1() {
+        $('#tblTrollyInOut').DataTable({
+            scrollX: true,
+            bSort: false,
+            bInfo: false,
+            columnDefs: [
+                { "className": "text-center custom-middle-align", "targets": [0] },
+            ],
+            pagingType: 'full_numbers',
+        });
+    }
+
+    function getData() {
+        if ($('#dtDisplayDari').datepicker("getDate") !== null && $('#dtDisplaySampai').datepicker("getDate") !== null) {
+            let dtDari = $('#dtDisplayDari').datepicker("getDate").toISOString();
+            let dtSampai = $('#dtDisplaySampai').datepicker("getDate").toISOString();
+
+            var tbl = $('#tablegrid');
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetDataTrollyInOut", "TrollyDepo")',
+                data: { DTDari: dtDari, DTSampai: dtSampai },
+                success: function (data) {
+                    tbl.empty().append(data);
+                    setTimeout(function () {
+                        WaitingDialog.hide();
+                    }, 500);
+
+                    return DT1();
+                },
+                error: function (data) {
+                    setTimeout(function () {
+                        WaitingDialog.hide();
+                    }, 500);
+                    alert('Error Load data');
+                }
+            });
+        }        
+    }
+
+    //function formatDate(date) {
+    //    var d = new Date(date),
+    //        month = '' + (d.getMonth() + 1),
+    //        day = '' + d.getDate(),
+    //        year = d.getFullYear();
+
+    //    if (month.length < 2)
+    //        month = '0' + month;
+    //    if (day.length < 2)
+    //        day = '0' + day;
+
+    //    return [year, month, day].join('-');
+    //}
+
+    </script>
+}

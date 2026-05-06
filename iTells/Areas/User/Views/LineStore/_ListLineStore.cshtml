@@ -1,0 +1,136 @@
+﻿@using BusinessObjects
+@{
+    var empty = ViewBag.Empty;
+    var critical = ViewBag.Critical;
+    var over = ViewBag.Over;
+    var normal = ViewBag.Normal;
+    List<LineStorePartModel> DataLineStore = (List<LineStorePartModel>)ViewData["DataLineStore"];
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="header-container">
+            <div class="logo">
+                <img class="rounded float-left" width="150" height="100" src="/Images/Logo.png" alt="Image">
+            </div>
+            <div class="title-container" style="border-right:1px solid">
+                <div style="border-bottom:1px solid">
+                    <h1>CONTROL STOCK F/G</h1>
+                </div>
+                <div>
+                    <h3>PT. Takagi Sari Multi Utama</h3>
+                </div>
+            </div>
+            <div class="title-container">
+                <div style="border-bottom:1px solid">
+                    <h1 id="hari"></h1>
+                </div>
+                <div>
+                    <h3 id="tgl"></h3>
+                </div>
+            </div>
+        </div>
+        <div class="sum-container">
+            <div style="background-color:red">
+                <h3>EMPTY</h3>
+            </div>
+            <div style="background-color:yellow;color:black">
+                <h3>CRITICAL</h3>
+            </div>
+            <div style="background-color:seagreen">
+                <h3>NORMAL</h3>
+            </div>
+            <div style="background-color:#0096FF">
+                <h3>OVER</h3>
+            </div>
+            <div style="background-color:red">
+                <h1>@empty</h1>
+            </div>
+            <div style="background-color:yellow;color:black">
+                <h1>@critical</h1>
+            </div>
+            <div style="background-color:seagreen">
+                <h1>@normal</h1>
+            </div>
+            <div style="background-color:#0096FF;">
+                <h1>@over</h1>
+            </div>
+        </div>
+        <table id="tblLineStock" style="width:100%">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Invt. ID</th>
+                    <th>Part No</th>
+                    <th>Job No</th>
+                    <th>Part Name</th>
+                    <th>Qty (kbn)</th>
+                    <th>Min</th>
+                    <th>Max</th>
+                    <th>Delv. (Hour)</th>
+                    <th>Ratio (Hour)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in @DataLineStore)
+                {
+                    <tr style="text-align:center;vertical-align:middle">
+                        @if (item.Status == "Empty")
+                        {
+                            <td style="color:white; background-color:red"></td>
+                            <td style="color:white; background-color:red">@item.InvtId</td>
+                            <td style="color:white; background-color:red">@item.PartNo</td>
+                            <td style="color:white; background-color:red">@item.JobNo</td>
+                            <td style="color:white; background-color:red">@item.PartName</td>
+                            <td style="color:white; background-color:red">@item.Qty</td>
+                            <td style="color:white; background-color:red">@item.QtyMin</td>
+                            <td style="color:white; background-color:red">@item.QtyMax</td>
+                            <td style="color:white; background-color:red">@item.Delivery</td>
+                            <td style="color:white; background-color:red">@item.Ratio</td>
+                        }
+                        else if (item.Status == "Critical")
+                        {
+                            <td style="background-color:yellow"></td>
+                            <td style="background-color:yellow">@item.InvtId</td>
+                            <td style="background-color:yellow">@item.PartNo</td>
+                            <td style="background-color:yellow">@item.JobNo</td>
+                            <td style="background-color:yellow">@item.PartName</td>
+                            <td style="background-color:yellow">@item.Qty</td>
+                            <td style="background-color:yellow">@item.QtyMin</td>
+                            <td style="background-color:yellow">@item.QtyMax</td>
+                            <td style="background-color:yellow">@item.Delivery</td>
+                            <td style="background-color:yellow">@item.Ratio</td>
+                        }
+                        else if (item.Status == "Over")
+                        {
+                            <td style="color:white; background-color:#0096FF"></td>
+                            <td style="color:white; background-color:#0096FF">@item.InvtId</td>
+                            <td style="color:white; background-color:#0096FF">@item.PartNo</td>
+                            <td style="color:white; background-color:#0096FF">@item.JobNo</td>
+                            <td style="color:white; background-color:#0096FF">@item.PartName</td>
+                            <td style="color:white; background-color:#0096FF">@item.Qty</td>
+                            <td style="color:white; background-color:#0096FF">@item.QtyMin</td>
+                            <td style="color:white; background-color:#0096FF">@item.QtyMax</td>
+                            <td style="color:white; background-color:#0096FF">@item.Delivery</td>
+                            <td style="color:white; background-color:#0096FF">@item.Ratio</td>
+                        }
+                        else
+                        {
+                            <td style="color:white; background-color:seagreen"></td>
+                            <td style="color:white; background-color:seagreen">@item.InvtId</td>
+                            <td style="color:white; background-color:seagreen">@item.PartNo</td>
+                            <td style="color:white; background-color:seagreen">@item.JobNo</td>
+                            <td style="color:white; background-color:seagreen">@item.PartName</td>
+                            <td style="color:white; background-color:seagreen">@item.Qty</td>
+                            <td style="color:white; background-color:seagreen">@item.QtyMin</td>
+                            <td style="color:white; background-color:seagreen">@item.QtyMax</td>
+                            <td style="color:white; background-color:seagreen">@item.Delivery</td>
+                            <td style="color:white; background-color:seagreen">@item.Ratio</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

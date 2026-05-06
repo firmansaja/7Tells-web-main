@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1694E36F-99F1-4080-B584-359BB26AE31E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ActionServices</RootNamespace>
+    <AssemblyName>ActionServices</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.10.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.10\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BuktiMuatService.cs" />
+    <Compile Include="CirculationServices.cs" />
+    <Compile Include="ComboListService.cs" />
+    <Compile Include="EBudgetPLService.cs" />
+    <Compile Include="EBudgetService.cs" />
+    <Compile Include="EMobilService.cs" />
+    <Compile Include="GlobalService.cs" />
+    <Compile Include="IBuktiMuatService.cs" />
+    <Compile Include="ICirculationService.cs" />
+    <Compile Include="IComboListService.cs" />
+    <Compile Include="IEbudgetPLService.cs" />
+    <Compile Include="IEMobilService.cs" />
+    <Compile Include="IGlobalService.cs" />
+    <Compile Include="IKlinikService.cs" />
+    <Compile Include="ILineStoreService.cs" />
+    <Compile Include="IMaterialKontrolService.cs" />
+    <Compile Include="IModuleService.cs" />
+    <Compile Include="IMRPService.cs" />
+    <Compile Include="IPOServices.cs" />
+    <Compile Include="IPPAPService.cs" />
+    <Compile Include="IPRService.cs" />
+    <Compile Include="IEBudgetService.cs" />
+    <Compile Include="ISoService.cs" />
+    <Compile Include="ITrolleyService.cs" />
+    <Compile Include="ITrollyDepoService.cs" />
+    <Compile Include="ITrollyService.cs" />
+    <Compile Include="ITypedHubClient.cs" />
+    <Compile Include="IUserService.cs" />
+    <Compile Include="KlinikService.cs" />
+    <Compile Include="LineStoreService.cs" />
+    <Compile Include="MaterialKontrolService.cs" />
+    <Compile Include="ModuleService.cs" />
+    <Compile Include="MRPService.cs" />
+    <Compile Include="POServices.cs" />
+    <Compile Include="PPAPService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PRService.cs" />
+    <Compile Include="SOService.cs" />
+    <Compile Include="Surat\ISuratSecService.cs" />
+    <Compile Include="Surat\ISuratKeluarService.cs" />
+    <Compile Include="Surat\ISuratMasukService.cs" />
+    <Compile Include="Surat\SuratSecService.cs" />
+    <Compile Include="Surat\SuratKeluarService.cs" />
+    <Compile Include="Surat\SuratMasukService.cs" />
+    <Compile Include="TrolleyService.cs" />
+    <Compile Include="TrollyDepoService.cs" />
+    <Compile Include="TrollyService.cs" />
+    <Compile Include="Surat\IKategoriSuratService.cs" />
+    <Compile Include="Surat\KategoriSuratService.cs" />
+    <Compile Include="UserService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BusinessObjects\BusinessObjects.csproj">
+      <Project>{acd3af20-09b9-4b74-a594-e15b59291725}</Project>
+      <Name>BusinessObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataObjects\DataObjects.csproj">
+      <Project>{4c522f11-1325-4266-abd9-9b6d55f58b9a}</Project>
+      <Name>DataObjects</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,60 @@
+﻿
+
+.point {
+    cursor: pointer;
+}
+#div2 {
+    /*margin-top: 10px;*/
+    margin-bottom: 5px;
+}
+#btn{
+    width:120px;
+    height:30px;
+    padding-top:3px;
+}
+#btnisi {
+    width: 120px;
+    height: 30px;
+    padding-top: 3px;
+}
+#btnupload {
+    width: 120px;
+    height: 30px;
+    padding-top: 3px;
+}
+#btnadd {
+    width: 100px;
+    height: 30px;
+    padding-top: 3px;
+}
+
+td.highlight {
+    background-color: red !important;
+}
+th, td {
+    white-space: nowrap;
+}
+
+#button {
+    background-color: #34495e;
+    width: 100%;
+    padding: 5px 0 10px 0;
+}
+
+.bgrow {
+    background: red;
+    color: white;
+}
+
+.modol {
+    position: fixed;
+    z-index: 999;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    background-color: red;
+    filter: alpha(opacity=60);
+    opacity: 0.6;
+    /*moz-opacity: 0.8;*/
+    display: none;
+}

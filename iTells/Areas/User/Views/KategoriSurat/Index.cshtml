@@ -1,0 +1,368 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    string aa = (string)ViewData["FileName"];
+    var a = ViewBag.FileName;
+}
+
+<div id="message"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-header">
+                <button type="button" class="btn btn-primary pull-right bottom" id="btnAdd"><span class="bold fa fa-plus"></span>&nbsp;&nbsp;Kategori Surat</button>
+            </div>
+            @Html.Partial("_KategoriSuratHeader")
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="_popUp" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title" id="_title"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group hidden">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">id</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="_inputState" class="form-control" />
+                            <input id="_id" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group hidden">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Id</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="id" class="form-control" equired placeholder="Id" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Id Kategori</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="idKategori" class="form-control" equired placeholder="Id Kategori" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Kategori</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="kategori" class="form-control" equired placeholder="Kategori" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Aktif</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="aktif" class="minimal" type="checkbox" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Upload</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <div>
+                                <input id="file" class="form-control" type="file" placeholder="Upload template surat" , required />
+                                <span id="fileName" class="hidden" />
+                            </div>
+                            <div id="downloadTemplate" class="hidden" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnSimpan" class="btn btn-primary" style="width:100px">Simpan</button>&nbsp;
+                <button type="button" class="btn btn-primary" data-dismiss="modal" style="width:100px">Kembali</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bootstrapDialog" role="dialog" aria-labelledby="myModal-label" aria-hidden="true"></div>
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            DataTableKategoriSurat();
+
+            $("#message").slideDown(0).slideUp(0);
+            var msg = localStorage.getItem("message");
+            if (msg != null) {
+                var msg1 = '<h3 class=\"alert alert-success fade in\">' + msg + '</h3>';
+                $('#message').html(msg1);
+                $("#message").slideDown(1000).slideUp(2000);
+                localStorage.removeItem("message");
+            }
+        });
+
+        function Init() {
+            $("#_id").val();
+            $("#id").val(0);
+            $("#idKategori").val("");
+            $("#kategori").val("");
+            $('#aktif').prop('checked', true);
+            $("#file").val("");
+            $("#fileName").text("");
+            $("#downloadTemplate").addClass("hidden");
+        };
+
+        var List = null;
+        var dtKategoriSurat;
+        function DataTableKategoriSurat() {
+            List = {
+                init: function () {
+                    dtKategoriSurat = $('#tbKategoriSurat').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "ajax": {
+                            "url": "/getkategori",
+                            "data": {},
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            { "title": "Id", "data": "Id" },
+                            {
+                                "title": "No",
+                                "data": "Id",
+                                "width": "50px",
+                                "orderable": false,
+                                render: function (data, type, row, meta) {
+                                    return meta.row + meta.settings._iDisplayStart + 1;
+                                }
+                            },
+                            { "title": "Id Kategori", "data": "IdKategori" },
+                            { "title": "Kategori", "data": "Kategori" },
+                            {
+                                data: "Aktif", "title": "Aktif", "render": function (value) {
+                                    if (value) return '<input id="colAktif" class="minimal" type="checkbox" checked />';
+                                    return '<input id="colAktif" class="minimal" type="checkbox" />';
+                                }
+                            },
+                            {
+                                data: "id", "width": "70px", title: "Action", "orderable": false, "render": function (data) {
+                                     return '<button class="btn btn-xs btn-primary" title="Edit" id="btnEdit" style="margin-right:5px"> <span class="fa fa-pencil"></span></button>' +
+                                            '<button class="btn btn-xs btn-danger" title="Hapus" id="btnDelete" style="margin-right:5px"><span class="fa fa-trash"></span></button>';
+                                }
+                            },
+                        ],
+                        "columnDefs": [
+                            { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                            { "className": "text-center custom-middle-align", "targets": [1] },
+                            { "visible": false, "targets": [0] },
+                        ],
+                        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+                    });
+                }
+            }
+            List.init();
+        };
+
+        $(document).on('click', '#btnAdd', function (event) {
+            event.preventDefault();
+            Init();
+
+            $("#_popUp").modal({ backdrop: 'static' });
+            $("#_title").text("Kategori Surat Baru");
+            $("#_inputState").val("Create");
+
+            $("#btnSimpan").removeClass("hidden");
+            $("#btnSimpan").html("Simpan");
+            $('#_popUp').on('shown.bs.modal', function () {
+                $('#order').focus();
+            })
+        });
+
+        $(document).on('click', '#btnEdit', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+
+            Init();
+            var data = $('#tbKategoriSurat').dataTable().fnGetData(row);
+
+            var Id = data.Id;
+
+            $("#_popUp").modal({ backdrop: 'static' });
+            $('#_title').text("Edit Kategori Surat");
+
+            GetKategoriSuratById(Id);
+
+            $("#_inputState").val("Edit");
+
+            $("#_id").attr("disabled", "disabled");
+
+            $("#btnSimpan").removeClass("hidden");
+            $("#btnSimpan").html("Update");
+            $('#_popUp').on('shown.bs.modal', function () {
+                $('#kategori').focus();
+            })
+        });
+
+        $(document).on('click', '#btnDelete', function (event) {
+            event.preventDefault();
+
+            var row = $(this).closest('tr');
+            var data = $('#tbKategoriSurat').dataTable().fnGetData(row);
+
+            var Id = data.Id;
+
+            if (confirm('Anda yakin ingin hapus data ?')) {
+                $.ajax({
+                    type: "DELETE",
+                    url: '/deletekategorisurat',
+                    cache: false,
+                    data: {
+                        Id: Id
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            toastr.success(data.message);
+                            $('#tbKategoriSurat').DataTable().ajax.reload();
+                        } else {
+                            toastr.error(data.message);
+                        }
+                    },
+                });
+            } else {
+                return false;
+            }
+        });
+
+        $(document).on('click', '#btnSimpan', function (event) {
+            event.preventDefault();
+            var inputState = $("#_inputState").val();
+            var id = $("#id").val();
+            var idKategori = $("#idKategori").val();
+            var kategori = $("#kategori").val();
+            var aktif = $("#aktif").is(":checked");
+            var fileName = $("#fileName").text();
+
+            if (idKategori == "") {
+                toastr.error("Input Id Kategori.")
+                $("#idKategori").focus();
+            } else if (kategori == "") {
+                toastr.error("Input Kategori.")
+                $("#kategori").focus();
+            } else {
+
+                //var model = {
+                //    Id: id,
+                //    IdKategori: idKategori,
+                //    Kategori: kategori,
+                //    Aktif: aktif
+                //};
+                var formData = new FormData();
+                formData.append("file", $("#file")[0].files[0]);
+                formData.append("Id", id);
+                formData.append("IdKategori", idKategori);
+                formData.append("Kategori", kategori);
+                formData.append("Aktif", aktif);
+                formData.append("FileName", fileName);
+
+                $.ajax({
+                    type: inputState == 'Create' ? "POST" : "PUT",
+                    url: inputState == 'Create' ? '/postkategorisurat' : '/putkategorisurat',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        if (data.success) {
+                            toastr.success(data.message);
+                            $("#_popUp").modal('hide');
+                            Init();
+                            $('#tbKategoriSurat').DataTable().ajax.reload();
+                        } else {
+                            toastr.error(data.message);
+                            $("#_popUp").modal('hide');
+                            Init();
+                        }
+                    },
+                });
+            }
+        });
+
+        function GetKategoriSuratById(Id) {
+            $.ajax({
+                type: "GET",
+                url: '/getkategorisurat',
+                data: {
+                    Id: Id
+                },
+                success: function (result) {
+                    if (result.Id != 0) {
+                        $("#id").val(result.Id);
+                        $("#idKategori").val(result.IdKategori);
+                        $("#kategori").val(result.Kategori);
+                        $('#aktif').prop('checked', result.Aktif);
+                        $("#fileName").text(result.FileName);
+                        if (result.FileName) {
+                            $("#downloadTemplate").removeClass("hidden");
+                            var link = '@Html.ActionLink("Download template", "DownloadFile", "KategoriSurat", new { FileName  = "_fileName_" }, null)';
+                            link = link.replace('_fileName_', result.FileName);
+                            $("#downloadTemplate").html(link)
+                        } else {
+                            $("#downloadTemplate").addClass("hidden");
+                        }
+                    }
+                },
+            });
+        };
+
+        @*$(document).on('click', '#btnDownload', function (event) {
+            event.preventDefault();
+            var fileName = $("#fileName").text();
+
+            if (fileName != "") {
+                window.location.href = "@Url.RouteUrl(new { Controller = "KategoriSurat", Action = "DownloadFile" })/?fileName=" + fileName;
+            }
+        });*@
+
+        toastr.options = {
+            "positionClass": "toast-top-center",
+            "timeOut": "1000",
+            "preventDuplicates": true,
+            "closeButton": true,
+            "progressBar": true
+        }
+
+        function FormatDateTime(format) {
+            const today = new Date();
+
+            var datetime = moment(today).format(format)
+            return datetime
+        }
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+    </script>
+}

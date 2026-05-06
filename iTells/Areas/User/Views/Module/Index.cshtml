@@ -1,0 +1,262 @@
+﻿@using BusinessObjects;
+@using DataObjects.Helpers;
+@{
+    /**/
+
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "List Module";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    List<ComboList> Module = (List<ComboList>)ViewData["Module"];
+}
+
+<div id="MainForm">
+    <div id="tablegrid">
+        @Html.Partial("_List")
+    </div>
+</div>
+
+<div class="modal fade" id="_popUp" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title" id="_title"></h2>
+            </div>
+            <div class="modal-body">
+                @*<h4 style="color:red;" class="hidden" id="_delConfirm">Are your sure delete this data?</h4>*@
+                <div class="form-horizontal">
+                    <div class="form-group hidden">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">id</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="_inputState" class="form-control" />
+                            <input id="_id" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Parent Page</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <select id="module" class="form-control select2" style="width:100%">
+                                <option value="0">-- Pilih Module --</option>
+                                @foreach (var item in Module)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Display Order</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="order" type="number" class="form-control" autofocus required placeholder="Display Order" min="0" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Name</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="name" class="form-control" equired placeholder="Name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Page Icon <a href="https://fortawesome.github.io/Font-Awesome/icons/" target="_blank">Icon List</a></label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="pgicon" class="form-control" placeholder="fa-dashboard" , required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Page Url</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="pgurl" class="form-control" placeholder="Page Url" , required />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="_saveBtn" class="btn btn-primary" style="width:100px">Simpan</button>&nbsp;
+                <button type="button" class="btn btn-primary" data-dismiss="modal" style="width:100px">Kembali</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            DataTable();
+            $(".select2").select2();
+            //var menuItem = $('#2');
+            //menuItem.addClass('active');
+            //var subMenuItem = menuItem.find('#18');
+            //subMenuItem.addClass('active');
+        })
+
+        function Init() {
+            $("#_id").val();
+            $("#module").val("0").trigger('change');
+            $("#order").val("");
+            $("#name").val("");
+            $("#pgurl").val("");
+            $("#pgicon").val("");
+        }
+
+        var ListVM;
+        function DataTable() {
+            ListVM = {
+                dt: null,
+
+                init: function () {
+                    dt = $('#tbModule').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "ajax": {
+                            "url": "/getmodules",
+                            "type": 'POST',
+                    },
+                        "columns": [
+                            {
+                                data: "id", "width": "70px", title: "Action", "orderable": false, "render": function (data) {
+                                    return '<button class="btn btn-xs btn-primary" title="Edit" id="BtnEdit" style="margin-right:5px"> <span class="fa fa-pencil"></span></button>' +
+                                            '<button class="btn btn-xs btn-danger" title="Delete" id="BtnDelete" style="margin-right:5px"><span class="fa fa-trash"></span></button>';
+                                }
+                            },
+                            { "title": "Id", "data": "ID", "searchable": false, className: "_id", "visible": false },
+                            { "title": "Name", "data": "FullName"},
+                        ],
+                        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+                    });
+                }
+            }
+            ListVM.init();
+        }
+
+        toastr.options = {
+            "positionClass": "toast-top-center",
+            "timeOut": "1000",
+            "preventDuplicates": true,
+            "closeButton": true,
+            "progressBar": true
+        }
+        $(document).on('click', '#BtnEdit', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            //var Username = row.find('td:eq(2)').text();
+            //console.log(Username);
+
+            Init();
+            var data = $('#tbModule').dataTable().fnGetData(row);
+
+            var Id = data.ID;
+            console.log(Id);
+            $("#_popUp").modal({ backdrop: 'static' });
+            $('#_title').text("Edit Module");
+
+            GetModuleById(Id);
+
+            $("#_inputState").val("Edit");
+
+            $("#_id").attr("disabled", "disabled");
+            //$("#username").attr("disabled", "disabled");
+            //$("#roles").removeAttr("disabled", "disabled");
+
+            $("#_saveBtn").removeClass("hidden");
+            $("#_saveBtn").html("Update");
+            $('#_popUp').on('shown.bs.modal', function () {
+                $('#order').focus();
+            })
+        });
+
+        $(document).on('click', '#BtnAdd', function (event) {
+            event.preventDefault();
+            Init();
+
+            $("#_popUp").modal({ backdrop: 'static' });
+            $("#_title").text("Barang Baru");
+            $("#_inputState").val("Create");
+
+            $("#_saveBtn").removeClass("hidden");
+            $("#_saveBtn").html("Simpan");
+            $('#_popUp').on('shown.bs.modal', function () {
+                $('#order').focus();
+            })
+        });
+
+        $(document).on('click', '#_saveBtn', function (event) {
+            event.preventDefault();
+            var module = $("#module").val();
+            var order = $("#order").val();
+            var name = $("#name").val();
+            var pgurl = $("#pgurl").val();
+            var pgicon = $("#pgicon").val();
+            if (order == "") {
+                toastr.error("Input Display Order.")
+                $("#order").focus();
+            } else if (name == "") {
+                toastr.error("Input Nama Module.")
+                $("#name").focus();
+            } else if (pgurl == "") {
+                toastr.error("Input Page Url.")
+                $("#pgurl").focus();
+            } else if (pgicon == "") {
+                toastr.error("Input Page Icon.")
+                $("#pgicon").focus();
+            } else {
+
+                var model = {
+                    DisplayOrder: order,
+                    ModuleName: name,
+                    PageIcon: pgicon,
+                    PageUrl: pgurl,
+                    ParentModuleID: module
+                }
+                $.ajax({
+                    type: "POST",
+                    //url: '@Url.Action("Create", "Module", new { area ="User"})',
+                    url: '/postmodule',
+                    data: {
+                        model: model
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            toastr.success(data.message);
+                            $("#_popUp").modal('hide');
+                            Init();
+                            $('#tbModule').DataTable().ajax.reload();
+                        } else {
+                            toastr.error(data.message);
+                            $("#_popUp").modal('hide');
+                            Init();
+                        }
+                    },
+                });
+            }
+        });
+
+        function GetModuleById(Id) {
+            $.ajax({
+                type: "POST",
+                url: '/getmodule/'+Id,
+                //data: {
+                //    id: Id
+                //},
+                success: function (result) {
+                    console.log(result);
+                    if (result.ModuleName != null) {
+                        $("#_id").val(result.ID);
+                        $("#module").val(result.ParentModuleID).trigger('change');
+                        $("#order").val(result.DisplayOrder);
+                        $("#name").val(result.ModuleName);
+                        $("#pgicon").val(result.PageIcon);
+                        $("#pgurl").val(result.PageUrl);
+                    }
+                },
+            });
+        }
+    </script>
+}

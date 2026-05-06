@@ -1,0 +1,776 @@
+﻿@using BusinessObjects;
+@model List<BO_EBudget>
+@{
+    List<BO_EBudget> Budget = (List<BO_EBudget>)ViewData["budgetdata"];
+    List<BO_EBudget> BudgetOpen = (List<BO_EBudget>)ViewData["ListBudgetOpen"];
+    List<ComboList> combo = (List<ComboList>)ViewData["ComboAccount"];
+    List<ComboList> comboDept = (List<ComboList>)ViewData["ComboAccountDept"];
+
+    string Semester = "";
+    string tahunopen = "";
+    string statusOpen = "";
+
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    var IdNo = 0;
+    var AcctID = "";
+    var AcctName = "";
+    var DeptID = "";
+    var SiteID = "";
+    var Tahun = "";
+    var TahunOld = 0;
+    var Keterangan = "";
+    var Unit = "";
+    var jan_qty = 0.0;
+    var feb_qty = 0.0;
+    var mar_qty = 0.0;
+    var apr_qty = 0.0;
+    var mei_qty = 0.0;
+    var jun_qty = 0.0;
+    var jul_qty = 0.0;
+    var agt_qty = 0.0;
+    var sep_qty = 0.0;
+    var okt_qty = 0.0;
+    var nov_qty = 0.0;
+    var des_qty = 0.0;
+    var jan_harga = 0.0;
+    var feb_harga = 0.0;
+    var mar_harga = 0.0;
+    var apr_harga = 0.0;
+    var mei_harga = 0.0;
+    var jun_harga = 0.0;
+    var jul_harga = 0.0;
+    var agt_harga = 0.0;
+    var sep_harga = 0.0;
+    var okt_harga = 0.0;
+    var nov_harga = 0.0;
+    var des_harga = 0.0;
+
+    foreach (var BudgetOpenItem in BudgetOpen)
+    {
+        Semester = BudgetOpenItem.OpenSemester;
+        tahunopen = BudgetOpenItem.OpenTahun;
+        statusOpen = BudgetOpenItem.OpenStatus;
+    }
+
+
+    foreach (var budget in Budget)
+    {
+        AcctID = budget.AcctID;
+        AcctName = budget.AcctName;
+        DeptID = budget.DeptID;
+        Tahun = budget.Tahun;
+        SiteID = budget.SiteID;
+        Tahun = budget.Tahun;
+        //TahunOld = Convert.ToInt32(budget.Tahun);
+        //TahunOld = (TahunOld - 1);
+    }
+
+
+
+    <head>
+        <style>
+
+            /* Header Grid*/
+
+            .hpack {
+                display: grid;
+                /*grid-template-columns: 100px auto 100px auto 100px;*/
+                grid-template-columns: 0.3fr 0.5fr 0.3fr 1fr 0.5fr 1.3fr 0.3fr 0.7fr;
+                grid-template-areas: 'judul judul judul judul judul judul judul judul' 'l_dept t_dept l_account t_account l_ket t_ket l_satuan t_satuan';
+                margin-bottom: 8px;
+                width: 100%;
+                grid-gap: 5px;
+            }
+
+            .judul {
+                grid-area: judul;
+                padding-left: 6px;
+                display: flex;
+                align-items: center;
+                justify-content:center;
+                border-bottom:2px;
+                border-bottom-style:solid;
+            }
+            .hpack .judul label{
+                font-size:20px;
+            }
+
+            .l_dept {
+                grid-area: l_dept;
+                padding-left: 6px;
+                display: flex;
+                align-items: center;
+                color: white;
+            }
+
+            .t_dept {
+                grid-area: t_dept;
+                padding-left: 6px;
+                display: flex;
+                align-items: center;
+                color: white;
+            }
+
+            .l_account {
+                grid-area: l_account;
+                padding-left: 6px;
+                display: flex;
+                align-items: center;
+                color: white;
+            }
+
+            .t_account {
+                grid-area: t_account;
+                padding-left: 6px;
+                display: flex;
+                align-items: center;
+                color: white;
+            }
+
+            .l_ket {
+                grid-area: l_ket;
+                padding-left: 6px;
+                display: flex;
+                align-items: center;
+                color: white;
+            }
+
+            .t_ket {
+                grid-area: t_ket;
+                padding-left: 6px;
+                display: flex;
+                align-items: center;
+                color: white;
+            }
+
+            .l_satuan {
+                grid-area: l_satuan;
+                padding-left: 6px;
+                display: flex;
+                align-items: center;
+                color: white;
+            }
+
+            .t_satuan {
+                grid-area: t_satuan;
+                padding-left: 6px;
+                display: flex;
+                align-items: center;
+                color: white;
+            }
+
+            /*Grid Table*/
+
+            .packaging {
+                display: grid;
+                grid-template-columns: 1fr;
+                grid-template-areas: 'contab';
+                margin-bottom: 8px; /*background-color: #2E86C1;*/
+                width: 100%;
+                overflow: auto;
+            }
+
+            .contab {
+                grid-area: contab;
+                padding-left: 6px;
+            }
+
+
+            @@media (max-width:900px) {
+                .hpack {
+                    display: grid;
+                    grid-template-columns: 0.5fr 0.5fr 0.5fr 1fr;
+                    grid-template-areas: 'judul judul judul judul ' 'l_dept t_dept l_account t_account'' l_satuan t_satuan l_ket t_ket';
+                    margin-bottom: 5px; /*background-color: #2E86C1;*/
+                    width: 100%;
+                    grid-gap: 5px;
+                }
+            }
+
+            @@media (max-width:500px) {
+                .hpack {
+                    display: grid;
+                    grid-template-columns: 0.35fr 1fr;
+                    grid-template-areas: 'judul judul ' 'l_dept t_dept '' l_account t_account'' l_satuan t_satuan '' l_ket t_ket';
+                    margin-bottom: 5px; /*background-color: #2E86C1;*/
+                    width: 100%;
+                    grid-gap: 5px;
+                }
+            }
+
+        </style>
+    </head>
+
+    <body>
+
+        <div class="hpack">
+
+            <div class="judul">
+                <label class="control-label text-muted">@ViewBag.title</label>
+            </div>
+
+            <div class="l_dept">
+                <label class="control-label text-muted">Dept Id</label>
+            </div>
+
+            <div class="t_dept">
+                <select id="idDept" class="form-control select2" placeholder="Pilih Dept Id">
+
+                    @foreach (var item in comboDept)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+
+
+            <div class="l_account">
+                <label class="control-label text-muted">Account</label>
+            </div>
+
+            <div class="t_account">
+                <select id="acctid" class="form-control select2" placeholder="Pilih Account">
+                    <option value="0">-- Pilih Account --</option>
+                    @foreach (var item in combo)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="l_ket">
+                <label class="control-label text-muted">Description</label>
+            </div>
+            <div class="t_ket">
+                <input id="description" class="form-control input-sm" />
+            </div>
+
+            <div class="l_satuan">
+                <label class="control-label text-muted" style="text-align:left;">Satuan</label>
+            </div>
+
+            <div class="t_satuan">
+                <input id="satuan" class="form-control input-sm" />
+            </div>
+
+            @*<div class="row">
+                <div class="col-md-12 div2" id="div2">
+                    <div class="form-group form-group-sm">
+                        <label class=" col-xs-2 col-md-1 control-label text-muted" style="text-align:left;">Dept Id</label>
+                        <div class="col-sm-4 col-md-2">
+                            <select id="idDept" class="form-control select2 col-sm-12" placeholder="Pilih Dept Id">
+
+                                @foreach (var item in comboDept)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-sm-4 col-md-5">
+                            <font color="#ffffff" size="+1"><label class=" col-xs-2 col-md-12 control-label text-muted" style="text-align:left;">@ViewBag.title</label></font>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 div2" id="div2">
+                    <div class="form-group form-group-sm">
+                        <label class=" col-xs-2 col-md-1 control-label text-muted" style="text-align:left;">Account</label>
+                        <div class="col-sm-4 col-md-2">
+                            <select id="acctid" class="form-control select2 col-sm-12" placeholder="Pilih Account">
+                                <option value="0">-- Pilih Account --</option>
+                                @foreach (var item in combo)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <label class=" col-xs-2 col-md-1 control-label text-muted" style="text-align:left;">Description</label>
+                        <div class="col-sm-4 col-md-5">
+                            <input id="description" class="form-control input-sm" />
+                        </div>
+                        <label class="col-xs-2 col-md-1 control-label text-muted" style="text-align:left;">Satuan</label>
+                        <div class="col-sm-8 col-md-2">
+                            <input id="satuan" class="form-control input-sm" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>*@
+        </div>
+        <div class="packaging">
+            <div id="table-container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box box-default">
+                            <div class="table-section">
+                                <div class="outer">
+                                    <div class="inner">
+                                        <table border="1" align="left" cellpadding="0" cellspacing="0" style="width:100%">
+                                            <thead>
+                                                <tr align="center" class="style2" bgcolor="lightgrey">
+                                                    <th class="text-center" colspan="1"><strong></strong></th>
+                                                    <th class="text-center" colspan="3"><strong>@TahunOld</strong></th>
+                                                    <th class="text-center" colspan="3"><strong>@Tahun</strong></th>
+
+                                                </tr>
+
+                                                <tr align="center" class="style2" bgcolor="lightgrey">
+                                                    <th class="text-center" width="10%"><strong>Month</strong></th>
+                                                    <th class="text-center" width="15%"><strong>Qty</strong></th>
+                                                    <th class="text-center" width="15%"><strong>Price</strong></th>
+                                                    <th class="text-center" width="15%"><strong>Total</strong></th>
+                                                    <th class="text-center" width="15%"><strong>Qty</strong></th>
+                                                    <th class="text-center" width="15%"><strong>Price</strong></th>
+                                                    <th class="text-center" width="15%"><strong>Total</strong></th>
+                                                </tr>
+
+                                            </thead>
+                                            <tbody>
+                                                <tr id="tr-jan">
+                                                    <td style="padding-left:5px"><strong> Januari </strong></td>
+                                                    <td class="text-center"> </td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+
+                                                    <td> <input class="price  text-center" id="jan_qty" value=@jan_qty></td>
+                                                    <td> <input class="price  text-center" id="jan_harga" value=@jan_harga></td>
+                                                    <td><input class="total  text-right" step="any" id="totaljan" readonly="readonly" /></td>
+
+                                                    @*<td><input onkeyup="format(this)" type="number" class="price form-control text-center" id="jan_qty" value=@jan_qty /></td>
+                                                    <td><input type="number" class="price form-control text-right" id="jan_harga" value=@jan_harga /></td>
+                                                    <td><input type="number" class="total form-control text-right" step="any" id="totaljan" readonly="readonly" /></td>*@
+                                                    @*<td><input type="number" onchange="setTwoNumberDecimal" min="0" max="10" step="0.25" class="total form-control"  value="0.00"  /></td>*@
+                                                </tr>
+                                                <tr id="tr-feb">
+                                                    <td style="padding-left:5px"> <strong> Februari </strong></td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-right" style="padding-right:5px"></td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+
+                                                    <td> <input class="price  text-center" id="feb_qty" value=@feb_qty></td>
+                                                    <td> <input class="price  text-center" id="feb_harga" value=@feb_harga></td>
+                                                    <td><input class="total  text-right" step="any" id="totalfeb" readonly="readonly" /></td>
+
+                                                    @*<td><input type="number" class="price form-control text-center" id="feb_qty" value=@feb_qty /></td>
+                                                    <td><input type="number" class="price form-control text-right" id="feb_harga" value=@feb_harga /></td>
+                                                    <td><input type="number" class="total form-control text-right" id="totalfeb" readonly="readonly" /></td>*@
+                                                </tr>
+                                                <tr id="tr-mar">
+                                                    <td style="padding-left:5px"><strong> Maret </strong>  </td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+
+                                                    <td> <input class="price  text-center" id="mar_qty" value=@mar_qty></td>
+                                                    <td> <input class="price  text-center" id="mar_harga" value=@mar_harga></td>
+                                                    <td><input class="total  text-right" step="any" id="totalmar" readonly="readonly" /></td>
+
+                                                    @*<td><input type="number" class="price form-control text-center" id="mar_qty" value=@mar_qty /></td>
+                                                    <td><input type="number" class="price form-control text-right" id="mar_harga" value=@mar_harga /></td>
+                                                    <td><input type="number" class="total form-control text-right" id="totalmar" readonly="readonly" /></td>*@
+                                                </tr>
+                                                <tr id="tr-apr">
+                                                    <td style="padding-left:5px"> <strong> April </strong> </td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+
+                                                    <td> <input class="price  text-center" id="apr_qty" value=@apr_qty></td>
+                                                    <td> <input class="price  text-center" id="apr_harga" value=@apr_harga></td>
+                                                    <td><input class="total  text-right" step="any" id="totalapr" readonly="readonly" /></td>
+
+
+                                                    @*<td> <input onkeyup="format(this)" class="price form-control text-center" id="apr_qty" value=@apr_qty></td>
+                                                    <td> <input onkeyup="format(this)" class="price form-control text-center" id="apr_harga" value=@apr_harga></td>
+                                                    <td><input onchange="format(this)" class="total form-control text-right" step="any" id="totalapr" readonly="readonly" /></td>*@
+
+                                                </tr>
+                                                <tr id="tr-mei">
+                                                    <td style="padding-left:5px"> <strong> Mei </strong></td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+
+                                                    <td> <input class="price  text-center" id="mei_qty" value=@mei_qty></td>
+                                                    <td> <input class="price  text-center" id="mei_harga" value=@mei_harga></td>
+                                                    <td><input class="total  text-right" step="any" id="totalmei" readonly="readonly" /></td>
+
+                                                    @*<td><input type="number" class="price form-control text-center" id="mei_qty" value=@mei_qty /></td>
+                                                    <td><input type="number" class="price form-control text-right" id="mei_harga" value=@mei_harga /></td>
+                                                    <td><input type="number" class="total form-control text-right" id="totalmei" readonly="readonly" /></td>*@
+                                                </tr>
+                                                <tr id="tr-jun">
+                                                    <td style="padding-left:5px"> <strong> Juni </strong> </td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+                                                    <td class="text-right" style="padding-right:5px"></td>
+
+                                                    <td> <input class="price  text-center" id="jun_qty" value=@jun_qty></td>
+                                                    <td> <input class="price  text-center" id="jun_harga" value=@jun_harga></td>
+                                                    <td><input class="total  text-right" step="any" id="totaljun" readonly="readonly" /></td>
+
+                                                    @*<td><input type="number" class="price form-control text-center" id="jun_qty" value=@jun_qty /></td>
+                                                    <td><input type="number" class="price form-control text-right" id="jun_harga" value=@jun_harga /></td>
+                                                    <td><input type="number" class="total form-control text-right" id="totaljun" readonly="readonly" /></td>*@
+                                                </tr>
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td colspan="2" align="left"><strong>Semester 1</strong></td>
+                                                    <td align="left"></td>
+                                                    <td colspan="2" align="center"><strong>Semester 1</strong></td>
+                                                    <td><input class="totalS1  text-right" step="any" readonly="readonly" /></td>
+                                                    @*<td align="left"><input type="number" class="totalS1 form-control text-right" readonly="readonly" /></td>*@
+                                                </tr>
+
+                                                <tr id="tr-jul">
+                                                    <td style="padding-left:5px"><strong> Juli </strong></td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-right" style="padding-right:5px"></td>
+                                                    <td class="text-right" style="padding-right:5px"></td>
+
+                                                    <td> <input class="price  text-center" id="jul_qty" value=@jul_qty></td>
+                                                    <td> <input class="price  text-center" id="jul_harga" value=@jul_harga></td>
+                                                    <td><input class="total  text-right" step="any" id="totaljul" readonly="readonly" /></td>
+
+                                                    @*<td><input type="number" class="price form-control text-center" id="jul_qty" value=@jul_qty /></td>
+                                                    <td><input type="number" class="price form-control text-right" id="jul_harga" value=@jul_harga /></td>
+                                                    <td><input type="number" class="total form-control text-right" id="totaljul" readonly="readonly" /></td>*@
+                                                </tr>
+                                                <tr id="tr-agt">
+                                                    <td style="padding-left:5px"> <strong> Agustus </strong></td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+
+                                                    <td> <input class="price  text-center" id="agt_qty" value=@agt_qty></td>
+                                                    <td> <input class="price  text-center" id="agt_harga" value=@agt_harga></td>
+                                                    <td><input class="total  text-right" step="any" id="totalagt" readonly="readonly" /></td>
+
+                                                    @*<td><input type="number" class="price form-control text-center" id="agt_qty" value=@agt_qty /></td>
+                                                    <td><input type="number" class="price form-control text-right" id="agt_harga" value=@agt_harga /></td>
+                                                    <td><input type="number" class="total form-control text-right" id="totalagt" readonly="readonly" /></td>*@
+                                                </tr>
+                                                <tr id="tr-sep">
+                                                    <td style="padding-left:5px"><strong> September </strong>  </td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+                                                    <td class="text-right" style="padding-right:5px"></td>
+
+                                                    <td> <input class="price  text-center" id="sep_qty" value=@sep_qty></td>
+                                                    <td> <input class="price  text-center" id="sep_harga" value=@sep_harga></td>
+                                                    <td><input class="total  text-right" step="any" id="totalsep" readonly="readonly" /></td>
+
+                                                    @*<td><input type="number" class="price form-control text-center" id="sep_qty" value=@sep_qty /></td>
+                                                    <td><input type="number" class="price form-control text-right" id="sep_harga" value=@sep_harga /></td>
+                                                    <td><input type="number" class="total form-control text-right" id="totalsep" readonly="readonly" /></td>*@
+                                                </tr>
+                                                <tr id="tr-okt">
+                                                    <td style="padding-left:5px"> <strong> Oktober </strong> </td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-right" style="padding-right:5px"></td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+
+                                                    <td> <input class="price  text-center" id="okt_qty" value=@okt_qty></td>
+                                                    <td> <input class="price  text-center" id="okt_harga" value=@okt_harga></td>
+                                                    <td><input class="total  text-right" step="any" id="totalokt" readonly="readonly" /></td>
+
+                                                    @*<td><input type="number" class="price form-control text-center" id="okt_qty" value=@okt_qty /></td>
+                                                    <td><input type="number" class="price form-control text-right" id="okt_harga" value=@okt_harga /></td>
+                                                    <td><input type="number" class="total form-control text-right" id="totalokt" readonly="readonly" /></td>*@
+                                                </tr>
+                                                <tr id="tr-nov">
+                                                    <td style="padding-left:5px"> <strong> November </strong></td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+                                                    <td class="text-right" style="padding-right:5px"> </td>
+
+                                                    <td> <input class="price  text-center" id="nov_qty" value=@nov_qty></td>
+                                                    <td> <input class="price  text-center" id="nov_harga" value=@nov_harga></td>
+                                                    <td><input class="total  text-right" step="any" id="totalnov" readonly="readonly" /></td>
+
+                                                    @*<td><input type="number" class="price form-control text-center" id="nov_qty" value=@nov_qty /></td>
+                                                    <td><input type="number" class="price form-control text-right" id="nov_harga" value=@nov_harga /></td>
+                                                    <td><input type="number" class="total form-control text-right" id="totalnov" readonly="readonly" /></td>*@
+                                                </tr>
+                                                <tr id="tr-des">
+                                                    <td style="padding-left:5px"> <strong> Desember </strong> </td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-right" style="padding-right:5px"></td>
+                                                    <td class="text-right" style="padding-right:5px"></td>
+
+                                                    <td> <input class="price  text-center" id="des_qty" value=@des_qty></td>
+                                                    <td> <input class="price  text-center" id="des_harga" value=@des_harga></td>
+                                                    <td><input class="total  text-right" step="any" id="totaldes" readonly="readonly" /></td>
+
+                                                    @*<td><input type="number" class="price form-control text-center" id="des_qty" value=@des_qty /></td>
+                                                    <td><input type="number" class="price form-control text-right" id="des_harga" value=@des_harga /></td>
+                                                    <td><input type="number" class="total form-control text-right" id="totaldes" readonly="readonly" /></td>*@
+                                                </tr>
+                                                <tr align="center">
+                                                    <td>&nbsp;</td>
+                                                    <td colspan="2" align="left"><strong>Semester 2</strong></td>
+
+                                                    <td align="left"></td>
+                                                    <td colspan="2" align="center"><strong>Semester 2</strong></td>
+                                                    <td><input class="totals2  text-right" step="any" readonly="readonly" /></td>
+                                                    @*<td align="left"><input type="number" class="totals2 form-control text-right" readonly="readonly" /></td>*@
+                                                </tr>
+                                                <tr align="center">
+                                                    <td>&nbsp;</td>
+                                                    <td colspan="2" align="left"><strong>Total</strong></td>
+
+                                                    <td align="left"></td>
+                                                    <td colspan="2" align="center"><strong>Total</strong></td>
+                                                    <td><input class="finaltotal  text-right" step="any" readonly="readonly" /></td>
+                                                    @*<td align="right"><input type="number" class="finaltotal form-control text-right" readonly="readonly" /></td>*@
+                                                </tr>
+
+                                            </tbody>
+
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <div>
+                <input type="submit" value="Simpan" id="btnsimpan" class="btn btn-success">
+                <input type="submit" value="Kembali" id="btnkembali" class="btn btn-warning">
+            </div>
+        </div>
+
+
+    </body>
+
+
+    @section scripts{
+        <script src="~/Scripts/aes.js"></script>
+        <script>
+
+            $(document).ready(function () {
+                $("body").addClass("sidebar-collapse");
+
+        $('.price').trigger('keyup');
+
+        //$("#semester1").addClass("readonly");
+
+        if (@Semester == 2) {
+
+        $("#jan_harga").prop("readonly", true);
+        $("#jan_qty").prop("readonly", true);
+
+        $("#feb_harga").prop("readonly", true);
+        $("#feb_qty").prop("readonly", true);
+
+        $("#mar_harga").prop("readonly", true);
+        $("#mar_qty").prop("readonly", true);
+
+        $("#apr_harga").prop("readonly", true);
+        $("#apr_qty").prop("readonly", true);
+
+        $("#mei_harga").prop("readonly", true);
+        $("#mei_qty").prop("readonly", true);
+
+        $("#jun_harga").prop("readonly", true);
+        $("#jun_qty").prop("readonly", true);
+        }
+
+
+        });
+
+
+        $(document).on('click', '#btnsimpan', function (event) {
+        event.preventDefault();
+
+        var _AcctID = $("#acctid").val();
+        var _Keterangan = $("#description").val();
+        var _Unit = $("#satuan").val();
+        var _DEPT = $("#idDept").val();
+
+
+        console.log(_DEPT);
+
+        if (_AcctID == "0") {
+        alert("Pilih Account")
+        }
+        else if (_Keterangan == "" ) {
+        alert("Description Jangan Kosong")
+        }
+        else if (_Unit == "") {
+        alert("Satuan Jangan Kosong")
+        }
+        else if (_DEPT == null) {
+        alert("Pilih DeptId")
+        }
+        else {
+
+        var data = {};
+        data.AcctID = _AcctID;
+        data.Tahun = '@tahunopen';
+        data.DeptID = _DEPT;
+        data.Keterangan = _Keterangan;
+        data.Unit = _Unit;
+        data.SiteID = '@SiteID';
+        data.AcctName = _AcctID;
+
+        data.jan_qty = $("#jan_qty").val().replace(/\,/g, '');
+        data.jan_harga = $("#jan_harga").val().replace(/\,/g, '');
+
+        data.feb_qty = $("#feb_qty").val().replace(/\,/g, '');
+        data.feb_harga = $("#feb_harga").val().replace(/\,/g, '');
+
+        data.mar_qty = $("#mar_qty").val().replace(/\,/g, '');
+        data.mar_harga = $("#mar_harga").val().replace(/\,/g, '');
+
+        data.apr_qty = $("#apr_qty").val().replace(/\,/g, '');
+        data.apr_harga = $("#apr_harga").val().replace(/\,/g, '');
+
+        data.mei_qty = $("#mei_qty").val().replace(/\,/g, '');
+        data.mei_harga = $("#mei_harga").val().replace(/\,/g, '');
+
+        data.jun_qty = $("#jun_qty").val().replace(/\,/g, '');
+        data.jun_harga = $("#jun_harga").val().replace(/\,/g, '');
+
+        data.jul_qty = $("#jul_qty").val().replace(/\,/g, '');
+        data.jul_harga = $("#jul_harga").val().replace(/\,/g, '');
+
+        data.agt_qty = $("#agt_qty").val().replace(/\,/g, '');
+        data.agt_harga = $("#agt_harga").val().replace(/\,/g, '');
+
+        data.sep_qty = $("#sep_qty").val().replace(/\,/g, '');
+        data.sep_harga = $("#sep_harga").val().replace(/\,/g, '');
+
+        data.okt_qty = $("#okt_qty").val().replace(/\,/g, '');
+        data.okt_harga = $("#okt_harga").val().replace(/\,/g, '');
+
+        data.nov_qty = $("#nov_qty").val().replace(/\,/g, '');
+        data.nov_harga = $("#nov_harga").val().replace(/\,/g, '');
+
+        data.des_qty = $("#des_qty").val().replace(/\,/g, '');
+        data.des_harga = $("#des_harga").val().replace(/\,/g, '');
+
+        console.log(data);
+        $.ajax({
+        type: "POST",
+        url: '@Url.Action("SimpanBudget_Baru", "EBudget", new { area = "User" })',
+        data: { data: data },
+        success: function (data_) {
+        console.log(data_);
+        if (data_.success) {
+        alert(data_.message)
+            var url = "/lihatbudget_isi/" + EncryptURL(data_.tahun);
+        window.location.href = url;
+        }
+        else {
+        alert(data_.message)
+            var url = "/lihatbudget_isi/" + EncryptURL(data_.tahun);
+        window.location.href = url;
+        }
+        }
+        });
+        }
+        });
+
+        $(document).on('click', '#btnkembali', function (event) {
+        event.preventDefault();
+        var url = "/lihatbudget_isi/" +  EncryptURL('@tahunopen') ;
+        window.location.href = url;
+        });
+
+
+
+        $('.price').on('keyup', function () {
+
+
+        var val = +$(this).val().replace(/\,/g, '');
+        var valSibling = +$(this).parent().siblings('td').find('.price').val().replace(/\,/g, '');
+
+        if (isNaN(val) || isNaN(valSibling))
+        return;
+        var n = val * valSibling
+
+        //console.log(n.toLocaleString());
+        $(this).parent().siblings('td').find('.total').val(n);
+
+        var jan = Number($('#totaljan').val().replace(/\,/g, ''));
+        var feb = Number($('#totalfeb').val().replace(/\,/g, ''));
+        var mar = Number($('#totalmar').val().replace(/\,/g, ''));
+        var apr = Number($('#totalapr').val().replace(/\,/g, ''));
+        var mei = Number($('#totalmei').val().replace(/\,/g, ''));
+        var jun = Number($('#totaljun').val().replace(/\,/g, ''));
+
+        var jul = Number($('#totaljul').val().replace(/\,/g, ''));
+        var ags = Number($('#totalagt').val().replace(/\,/g, ''));
+        var sept = Number($('#totalsep').val().replace(/\,/g, ''));
+        var okt = Number($('#totalokt').val().replace(/\,/g, ''));
+        var nov = Number($('#totalnov').val().replace(/\,/g, ''));
+        var des = Number($('#totaldes').val().replace(/\,/g, ''));
+
+        var semester1 = jan + feb + mar + apr + mei + jun;
+        var semester2 = jul + ags + sept + okt + nov + des;
+
+        $('.totalS1').val(semester1.toLocaleString());
+        $('.totals2').val(semester2.toLocaleString());
+        $('.finaltotal').val((semester1+semester2).toLocaleString());
+
+
+        });
+
+
+        $(function () {
+        $('.number').each(function () { $(this).attr('type', 'number'); });
+        });
+
+        function format(inp) {
+        var start = inp.selectionStart,  // get the selection start
+        end = inp.selectionEnd;    // and end, as per the linked post
+        var s1 = inp.value.split(",").length - 1; //count the commas before edit
+        inp.value = numberWithCommas(inp.value.replace(/,|[^\d.]/g, ''));
+        var s2 = inp.value.split(",").length - s1 - 1; //count the commas after edit so as to know where to place the cursor, as the position changes, if there are new commas or some commas have been removed
+        inp.setSelectionRange(start + s2, end + s2); // set the selection start and end, as per the linked post
+        }
+        function numberWithCommas(str) {
+        var a = str.split('.');
+        var p = /\B(?=(\d{3})+(?!\d))/g;
+        if (a.length > 1)
+        return a[0].toString().replace(p, ",") + "." + a[1];
+        else
+        return str.toString().replace(p, ",");
+        }
+
+        function EncryptURL(obj) {
+        var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+        var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+        var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+        {
+        keySize: 128 / 8,
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+        });
+        var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+        encryptedString = encryptedString.replace(/\//g, " ");
+        encryptedString = encryptedString.replace(/\+/g, "-");
+        return encryptedString
+        }
+
+
+        </script>
+    }
+}
+
+
+
+
+

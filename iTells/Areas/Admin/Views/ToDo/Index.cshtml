@@ -1,0 +1,56 @@
+﻿
+@{
+    ViewBag.Title = "To Do List";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    iTells.Helper.GeneralHelper dHelper = new iTells.Helper.GeneralHelper();
+}
+
+
+<div class="row">
+    <div class="box-header">
+        <input type="button" class="btn-bootstrap-dialog btn btn-info pull-right" title="Add ToDo" data-url="/admin/todo/create" value="Add ToDo" data-toggle="modal" />
+    </div>
+    <div class="col-lg-6">
+        <div id="div_UnFinishtodo">
+            @{Html.RenderAction("UnFinishToDoList", "ToDo");}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div id="div_Finishtodo">
+            @{Html.RenderAction("FinishToDoList", "ToDo");}
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bootstrapDialog" role="dialog" aria-labelledby="myModal-label" aria-hidden="true">
+
+</div>
+@section scripts{
+<script src="~/scripts/Common.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('input[type="checkbox"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue'
+            });
+
+            $(".todo-list").on("ifChecked", "input.unfinish", function () {
+                var ID = $(this).attr("rel");
+                UpdateToDoStatus(ID);
+            });
+
+            $(".todo-list").on("ifChecked", "input.finish", function () {
+                var ID = $(this).attr("rel");
+                UpdateToDoStatus(ID);
+            });
+        });
+
+        function CreateSuccess(data) {
+            if (data.status == "1") {
+                $('#bootstrapDialog').modal('hide');
+                $('#div_UnFinishtodo').load("/Admin/ToDo/UnFinishToDoList");
+                $('#div_Finishtodo').load("/Admin/ToDo/FinishToDoList");
+            }
+        }
+    </script>
+}

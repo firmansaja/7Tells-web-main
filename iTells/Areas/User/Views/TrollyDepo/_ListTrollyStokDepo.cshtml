@@ -1,0 +1,145 @@
+﻿@using BusinessObjects
+@{
+    List<TrollyStokDepoModel> DataTrollyStok = (List<TrollyStokDepoModel>)ViewData["DataTrollyStok"];
+}
+
+<div class="row cmain-body">
+    <div class="col-xs-12">
+        <table id="tblTrollyStok" style="width:100%" class="table table-bordered">
+            <thead>
+                <tr style="color:white">
+                    <th rowspan="2" style="text-align:center;vertical-align:middle" hidden>INVT ID</th>
+                    <th rowspan="2" style="text-align:center;vertical-align:middle;padding:8px">PART NAME</th>
+                    <th rowspan="2" style="text-align:center;vertical-align:middle;padding:8px">JOB NO</th>
+                    <th rowspan="2" style="text-align:center;vertical-align:middle;padding:8px">TYPE</th>
+                    <th rowspan="2" style="text-align:center;vertical-align:middle;padding:8px">STOK<BR>AWAL</th>
+                    <th colspan="3" style="text-align:center;vertical-align:middle;background-color:yellow;color:black;padding:8px">OUT TSC</th>
+                    <th colspan="3" style="text-align:center;vertical-align:middle;background-color:green;color:black;padding:8px">IN DEPO</th>
+                    <th colspan="3" style="text-align:center;vertical-align:middle;padding:8px">OUT ADM</th>
+                    <th rowspan="2" style="text-align:center;vertical-align:middle;padding:8px">NG</th>
+                    <th rowspan="2" style="text-align:center;vertical-align:middle;padding:8px">STOK<BR>AKHIR</th>
+                </tr>
+                <tr style="color:white;text-align:center;vertical-align:middle;">
+                    <th style="text-align:center;vertical-align:middle;background-color:yellow;color:black;padding:8px">S1</th>
+                    <th style="text-align:center;vertical-align:middle;background-color:yellow;color:black;padding:8px">S2</th>
+                    <th style="text-align:center;vertical-align:middle;background-color:yellow;color:black;padding:8px">TOTAL</th>
+                    <th style="text-align:center;vertical-align:middle;background-color:green;color:black;padding:8px">S1</th>
+                    <th style="text-align:center;vertical-align:middle;background-color:green;color:black;padding:8px">S2</th>
+                    <th style="text-align:center;vertical-align:middle;background-color:green;color:black;padding:8px">TOTAL</th>
+                    <th style="text-align:center;vertical-align:middle;padding:8px">S1</th>
+                    <th style="text-align:center;vertical-align:middle;padding:8px">S2</th>
+                    <th style="text-align:center;vertical-align:middle;padding:8px">TOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in @DataTrollyStok)
+                {
+                    var totOutTSC = @item.OutTsc1 + @item.OutTsc2;
+                    var totInDepo = @item.InDepo1 + @item.InDepo2;
+                    var totOutAdm = @item.OutAdm1 + @item.OutAdm2;
+                <tr style="color:white;text-align:center;vertical-align:middle;">
+                    <td hidden>@item.InvtId</td>
+                    <td>@item.PartName</td>
+                    <td>@item.JobNo</td>
+                    <td>@item.Type</td>
+                    <td>@item.StokAwal</td>
+                    @if (@item.OutTsc1 == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@item.OutTsc1</td>
+                    }
+                    @if (@item.OutTsc2 == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@item.OutTsc2</td>
+                    }
+                    @if (@totOutTSC == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@totOutTSC</td>
+                    }
+                    @if (@item.InDepo1 == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@item.InDepo1</td>
+                    }
+                    @if (@item.InDepo2 == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@item.InDepo2</td>
+                    }
+                    @if (@totInDepo == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@totInDepo</td>
+                    }
+                    @if (@item.OutAdm1 == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@item.OutAdm1</td>
+                    }
+                    @if (@item.OutAdm2 == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@item.OutAdm1</td>
+                    }
+                    @if (@totOutAdm == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@totOutAdm</td>
+                    }
+                    @if (@item.OutDepo == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@item.OutDepo</td>
+                    }
+                    @if (@item.StokAkhir == 0)
+                    {
+                        <td></td>
+                    }
+                    else if (@item.StokAkhir < @item.StdStok)
+                    {
+                        <td style="background-color:red">@item.StokAkhir</td>
+                    }
+                    else
+                    {
+                        <td>@item.StokAkhir</td>
+                    }
+                    @*<td>@item.OutDepo</td>
+        <td>@item.StokAkhir</td>*@
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

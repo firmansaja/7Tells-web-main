@@ -1,0 +1,367 @@
+﻿@using BusinessObjects;
+@model List<BO_EBudget>
+@{
+    /**/
+
+    // ViewBag.Title = "E-BUDGET";
+    List<BO_EBudget> BudgetOpen = (List<BO_EBudget>)ViewData["ListBudgetOpen"];
+
+    int i = 0;
+    var AcctId = "";
+    var AcctName = "";
+    var Tahun = "";
+    var dept = "";
+    var SiteID = "";
+    var Semester = "";
+}
+@foreach (var H_item in Model)
+{
+    AcctId = H_item.AcctID;
+    AcctName = H_item.AcctName;
+    Tahun = H_item.Tahun;
+    dept = H_item.DeptID;
+    SiteID = H_item.SiteID;
+}
+
+
+@foreach (var BudgetOpenItem in BudgetOpen)
+{
+    Semester = BudgetOpenItem.OpenSemester;
+}
+
+
+<head>
+
+
+    <style>
+
+        .packaging {
+            display: grid;
+            grid-template-columns: 100px 100px 1fr;
+            grid-template-areas: 'btn1 btn2 judul';
+            margin-bottom: 5px;
+            background-color: #2E86C1;
+            padding: 5px;
+            border-radius: 5px;
+            grid-gap: 5px;
+        }
+
+        .btn1 {
+            grid-area: btn1;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .btn2 {
+            grid-area: btn2;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .judul {
+            grid-area: judul;
+            display: flex;
+            align-items: center;
+            padding-left: 5px;
+        }
+
+        .packaging label {
+            color: white;
+        }
+
+        .packaging button {
+            border-radius: 5px;
+            padding-left: 5px;
+        }
+
+
+
+        @@media (max-width:600px) {
+            .packaging {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas: 'btn1 btn2' 'judul judul';
+                grid-gap: 5px;
+            }
+        }
+
+    </style>
+</head>
+
+<div id="MainForm">
+
+
+
+
+    <div id="MainForm">
+        <div class="row">
+            <div class="col-md-12 " id="div2">
+                <div class="packaging">
+                    <button class="btn1 btn btn-warning" id="btnkembali">Kembali</button>
+                    <button class="btn2 btn btn-success" id="btnbaru">Tambah</button>
+                    <label class="judul  control-label text-muted" style="text-align:left;">@ViewBag.title</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="box box-primary">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="tbDetailBudget" class="table table-bordered">
+
+                        <thead>
+                            <tr>
+                                <th colspan="2"></th>
+                                <th colspan="3" class="text-center">Januari</th>
+                                <th colspan="3" class="text-center">Februari</th>
+                                <th colspan="3" class="text-center">Maret</th>
+                                <th colspan="3" class="text-center">April</th>
+                                <th colspan="3" class="text-center">Mei</th>
+                                <th colspan="3" class="text-center">Juni</th>
+                                <th colspan="3" class="text-center">Juli</th>
+                                <th colspan="3" class="text-center">Agustus</th>
+                                <th colspan="3" class="text-center">September</th>
+                                <th colspan="3" class="text-center">Oktober</th>
+                                <th colspan="3" class="text-center">November</th>
+                                <th colspan="3" class="text-center">Desember</th>
+
+
+                            </tr>
+
+                            <tr>
+                                <th class="text-center">No</th>
+                                @*<th class="text-center">ID</th>*@
+                                <th style="width:500px">Nama Barang</th>
+
+                                <th style="width:50px" class="text-center">Qty</th>
+                                <th style="width:100px" class="text-center">Harga</th>
+                                <th style="width:100px" class="text-center">Total</th>
+
+                                <th style="width:50px" class="text-center">Qty</th>
+                                <th style="width:100px" class="text-center">Harga</th>
+                                <th style="width:100px" class="text-center">Total</th>
+
+                                <th style="width:50px" class="text-center">Qty</th>
+                                <th style="width:100px" class="text-center">Harga</th>
+                                <th style="width:100px" class="text-center">Total</th>
+
+                                <th class="text-center">Qty</th>
+                                <th class="text-center">Harga</th>
+                                <th class="text-center">Total</th>
+
+                                <th class="text-center">Qty</th>
+                                <th class="text-center">Harga</th>
+                                <th class="text-center">Total</th>
+
+                                <th class="text-center">Qty</th>
+                                <th class="text-center">Harga</th>
+                                <th class="text-center">Total</th>
+
+                                <th class="text-center">Qty</th>
+                                <th class="text-center">Harga</th>
+                                <th class="text-center">Total</th>
+
+                                <th class="text-center">Qty</th>
+                                <th class="text-center">Harga</th>
+                                <th class="text-center">Total</th>
+
+                                <th class="text-center">Qty</th>
+                                <th class="text-center">Harga</th>
+                                <th class="text-center">Total</th>
+
+                                <th class="text-center">Qty</th>
+                                <th class="text-center">Harga</th>
+                                <th class="text-center">Total</th>
+
+                                <th class="text-center">Qty</th>
+                                <th class="text-center">Harga</th>
+                                <th class="text-center">Total</th>
+
+                                <th class="text-center">Qty</th>
+                                <th class="text-center">Harga</th>
+                                <th class="text-center">Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                i++;
+                            <tr>
+
+                                <td class="text-center">@i</td>
+                                <td class="text-left">
+                                    <input id=btnLihat type="button" class="text-left TKet" value="@item.Keterangan" />
+                                    <input type="hidden"  class="text-left TIdNo" name="postId" value="@item.IdNo">
+                                    <input type="hidden"  class="text-left TTahun" name="postId" value="@item.Tahun">
+                                    <input type="hidden"  class="text-left TDeptID" name="postId" value="@item.DeptID">
+                                    <input type="hidden"  class="text-left TAcctId" name="postId" value="@item.AcctID">
+                                </td>
+                                @*<td><a href="/ShowEditData/@item.IdNo/tahun/@item.Tahun/dept/@item.DeptID/acctid/@AcctId/semester/@Semester">@item.Keterangan</a></td>*@
+                                @*januari*@
+                                <td class="text-center">@string.Format("{0:N2}", item.jan_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.jan_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Jan)</td>
+                                @*Februari*@
+                                <td class="text-center">@string.Format("{0:N2}", item.feb_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.feb_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Feb)</td>
+                                @*Maret*@
+                                <td class="text-center">@string.Format("{0:N2}", item.mar_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.mar_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Mar)</td>
+                                @*April*@
+                                <td class="text-center">@string.Format("{0:N2}", item.apr_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.apr_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Apr)</td>
+                                @*Mei*@
+                                <td class="text-center">@string.Format("{0:N2}", item.mei_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.mei_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Mei)</td>
+                                @*Jun*@
+                                <td class="text-center">@string.Format("{0:N2}", item.jun_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.jun_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Jun)</td>
+                                @*Jul*@
+                                <td class="text-center">@string.Format("{0:N2}", item.jul_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.jul_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Jul)</td>
+                                @*Agustus*@
+                                <td class="text-center">@string.Format("{0:N2}", item.agt_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.agt_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Agst)</td>
+                                @*September*@
+                                <td class="text-center">@string.Format("{0:N2}", item.sep_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.sep_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Sept)</td>
+                                @*Oktober*@
+                                <td class="text-center">@string.Format("{0:N2}", item.okt_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.okt_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Okt)</td>
+                                @*November*@
+                                <td class="text-center">@string.Format("{0:N2}", item.nov_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.nov_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Nov)</td>
+                                @*Desember*@
+                                <td class="text-center">@string.Format("{0:N2}", item.des_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.des_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Des)</td>
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script>
+
+                $(document).ready(function () {
+                    $(document).ready(function () {
+                        $("body").addClass("sidebar-collapse");
+
+                        $('#tbDetailBudget').DataTable({
+                            "destroy": true,
+                            scrollY: "70vh",
+                            scrollX: true,
+                            scrollCollapse: true,
+                            paging: false,
+                            //search: false,
+                            bFilter: false,
+                            fixedColumns: true,
+                            fixedColumns: {
+                                leftColumns: 2
+                            }
+                        });
+                    })
+                })
+
+                function tdclick(data) {
+                    //var Id = data.closest("tr").find("._id").val();
+                    console.log(data)
+                    var url = "/ShowEditData/" + data;
+                    window.location.href = url;
+                };
+
+                $(document).on('click', '#btnbaru', function (event) {
+                    event.preventDefault();
+                    //var url = "/tambahbudget";
+                    var url = "/tambahbudget/" + @AcctId + "/AcctName/" + '@AcctName' + "/Tahun/" + @Tahun + "/DeptId/" + '@dept' + "/SideID/" + '@SiteID';
+                    window.location.href = url;
+                });
+
+        $(document).on('click', '#btnkembali', function (event) {
+            event.preventDefault();
+            var _tahun = EncryptURL(@Tahun) ;
+            $.ajax({
+                type: "POST",
+                url: '/loadbudgetisi',
+                data: { Tahun: _tahun },
+                datatype: "json",
+                success: function (data) {
+                    window.location.href = data.redirectUrl;
+                }
+
+            });
+        });
+
+         $(document).on('click', '#btnLihat', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+             var _keterangan = $(this).closest('tr').find('.TKet').val();
+             var _TIdNo = $(this).closest('tr').find('.TIdNo').val();
+             var _TTahun = $(this).closest('tr').find('.TTahun').val();
+             var _TDeptID = $(this).closest('tr').find('.TDeptID').val();
+             var _TAcctId = $(this).closest('tr').find('.TAcctId').val();
+
+             var url = "/ShowEditData/" + EncryptURL(_TIdNo) + "/tahun/" + EncryptURL(_TTahun) + "/dept/" + EncryptURL(_TDeptID) + "/acctid/" + EncryptURL(_TAcctId) + "/semester/" + '@Semester';
+
+              @*var url = "/ShowEditData/@item.IdNo/tahun/@item.Tahun/dept/@item.DeptID/acctid/@AcctId/semester/@Semester";*@
+              window.location.href = url;
+
+        });
+
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+    </script>
+}
+
+
+
+
+
+
+
+
+

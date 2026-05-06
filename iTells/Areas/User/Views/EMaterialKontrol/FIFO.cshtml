@@ -1,0 +1,253 @@
+﻿
+@{
+    ViewBag.Title = "FIFO";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<section style="margin-bottom :0px; margin-top :0px">
+
+    <div class="row" style="margin-bottom:0px">
+
+        <div class="form-group col-md-12">
+            <label class="col-sm-1 col-md-1 control-label text-muted" style="text-align:left; ">FIFO</label>
+            <div class="col-sm-2 col-md-2">
+
+                <select id="filterFifo" class="form-control select2" style="width:100%">
+                    <option value="">-Select Report-</option>
+                    <option value="IN">IN</option>
+                    <option value="OUT">OUT</option>
+                </select>
+            </div>
+            <label class="col-sm-1 col-md-1 control-label text-muted" style="text-align:left; ">Account</label>
+            <div class="col-sm-2 col-md-2">
+                <select id="filterAccount" class="form-control select2" style="width:100%">
+                    <option value="">-Select Account-</option>
+                    <option value="All">All</option>
+                    <option value="11620">Mat Plastik</option>
+                    <option value="11621">Mat Painting</option>
+                    <option value="11630">Child Part</option>
+                </select>
+            </div>
+            <label class="col-sm-1 col-md-1 control-label text-muted" style="text-align:left; ">Site</label>
+            <div class="col-sm-2 col-md-2">
+                <select id="filterSite" class="form-control select2" style="width:100%">
+                    <option value="">-Select Site-</option>
+                    <option value="All">All</option>
+                    <option value="TSC1">TSC1</option>
+                    <option value="TSC3">TSC3</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-md-12">
+
+            <label class="col-sm-1 col-md-1 control-label text-muted" style="text-align:left; ">From Date</label>
+            <div class="col-sm-2 col-md-2">
+                <div class="input-group date" id="dtDari">
+                    <input type="text" class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <label class="col-sm-1 col-md-1 control-label text-muted" style="text-align:left; ">End Date</label>
+            <div class="col-sm-2 col-md-2">
+                <div class="input-group date" id="dtSampai">
+                    <input type="text" class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <label class="col-sm-1 col-md-1 control-label text-muted" style="text-align:left; ">&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <div class="col-lg-1">
+                <button class="btn btn-success pull-right" id="btnFifo" onclick="View()"><span class="bold fa fa-search"></span>&nbsp;&nbsp;View&nbsp;&nbsp;</button>
+            </div>
+            <div class="col-lg-1">
+                <button class="btn btn-success pull-right" id="btnExport" onclick="ExportExcel()"><span class="bold fa fa-file-excel-o"></span>&nbsp;&nbsp;Export&nbsp;&nbsp;</button>
+            </div>
+
+        </div>
+    </div>
+
+    @Html.Partial("Partial/Partial11")
+
+
+</section>
+
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script>
+        var filter = 0;
+        var filtertext = "";
+
+        $(document).ready(function () {
+            $('#dtDari').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+            $('#dtSampai').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+          
+            const today = new Date();
+            $('#dtDari').datepicker('setDate', today);
+            $('#dtSampai').datepicker('setDate', today);
+            var Fifo = "A";
+            var Site = "B";
+            var Account = "c";
+            var TglAwal = $('#dtDari').datepicker("getDate");
+            var TglAkhir = $('#dtSampai').datepicker("getDate");
+            console.log(Fifo);
+            console.log(Site);
+            console.log(TglAwal);
+            console.log(TglAkhir);
+            DataTableFifo(Fifo, Site, TglAwal, TglAkhir, Account);
+        })
+
+
+        var ListFifo = null;
+        var dtFifo;
+
+        function DataTableFifo(_Fifo, _Site, _TglAwal, _TglAkhir,_Account) {
+            //WaitingDialog.show('Please Wait...', {
+            //    dialogSize: 'm',
+            //    progressType: 'info'
+            //});
+            //ListFifo = {
+            //    init: function () {
+                    dtFifo = $('#tbFifo').DataTable({
+                        "scrollX": true,
+                        "scrollY": 500,
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "filter": false,
+                        "bInfo": false,
+                        "bPaginate": false,
+                        "ajax": {
+                            "url": "/GetFifo",
+                            "data": {
+                                Fifo: _Fifo,
+                                Site: _Site,
+                                Account: _Account,
+                                TglAwal: _TglAwal.toISOString(),
+                                TglAkhir: _TglAkhir.toISOString(),
+                            },
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            { "title": "InvtID", "data": "InvtID" },
+                            { "title": "Description", "data": "InvtName" },
+                            { "title": "Account", "data": "Account" },
+                            { "title": "Site", "data": "Site" },
+                            { "title": "Qty", "data": "Qty" ,"class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0) },
+                            { "title": "Satuan", "data": "Satuan" },
+                            
+                        ],
+                        "columnDefs": [
+                            { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                            //{ "className": "text-right custom-middle-align", "targets": [0] },
+                            //{ "visible": false, "targets": [0] },
+                        ],
+                        //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+                    });
+                }
+            //}
+            //ListFifo.init();
+
+            //WaitingDialog.hide();
+        //}
+
+
+        function View(e) {
+
+            var _TglAwal = $('#dtDari').datepicker("getDate");
+            var _TglAkhir = $('#dtSampai').datepicker("getDate");
+            var _Site = $('#filterSite').val();
+            var _Fifo = $('#filterFifo').val();
+            var _Account = $('#filterAccount').val();
+
+            if (_Fifo == "") {
+                alert("Select Report Fifo");
+            } else if (_Site == "") {
+                alert("Select Site");
+            } else if (_Account == "") {
+                alert("Select Account");
+            } else if (_TglAwal > _TglAkhir) {
+                alert("Periode Not Valid");
+            } else {
+                $("#tbFifo").dataTable().fnDestroy();
+                DataTableFifo(_Fifo, _Site, _TglAwal, _TglAkhir, _Account)
+            }
+           
+        }
+
+        function ExportExcel(e) {
+
+
+            var _TglAwal = $('#dtDari').datepicker("getDate");
+            var _TglAkhir = $('#dtSampai').datepicker("getDate");
+            var _Site = $('#filterSite').val();
+            var _Fifo = $('#filterFifo').val();
+            var _Account = $('#filterAccount').val();
+            var _FileName = "";
+
+            if (_Fifo == "IN") {
+                _FileName = "Report_Fifo_IN.xlsx"
+            }
+            else {
+                _FileName = "Report_Fifo_OUT.xlsx"
+            }
+
+            if (_Fifo == "") {
+                alert("Select Report Fifo");
+            } else if (_Site == "") {
+                alert("Select Site");
+            } else if (_Account == "") {
+                alert("Select Account");
+            } else if (_TglAwal > _TglAkhir) {
+                alert("Periode Not Valid");
+            } else {
+                 $.ajax({
+                    url: '@Url.Action("ExportExcel", "EMaterialKontrol", new { area ="User"})',
+                    //contentType: "application/json; charset=utf-8",
+                    dataType: "JSON",
+                    type: "POST",
+                    data: {
+                        TglAwal: _TglAwal.toISOString(),
+                        TglAkhir: _TglAkhir.toISOString(),
+                        Site: _Site,
+                        Fifo: _Fifo,
+                        Account : _Account,
+                    },
+                    beforeSend: function () {
+                        $('#BtnDownloadHistory').attr('disabled',true);
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            window.location.href = "@Url.RouteUrl(new { Controller = "EMaterialKontrol", Action = "Download" })/?fileName=" + _FileName;
+                        }
+                    },
+                    complete: function () {
+                        $('#BtnDownloadHistory').attr('disabled', false);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
+                    }
+        });
+            }
+
+       
+    }
+
+    
+        </script>
+    }
+

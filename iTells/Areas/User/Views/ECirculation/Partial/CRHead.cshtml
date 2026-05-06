@@ -1,0 +1,78 @@
+﻿
+@using BusinessObjects
+
+@{
+    List<BO_ECirculation> list = (List<BO_ECirculation>)ViewData["ListCRHead"];
+
+    int i = 0;
+}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <table class="table table-bordered table-striped table-condensed table-hover table-responsive" id="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>View</th>
+                            <th>Circulation No</th>
+                            <th>Title</th>
+                            <th>Date</th>
+                            <th>Dept</th>
+                            <th>Status</th>
+                            <th class="text-center">Requester</th>
+                            <th class="text-center">Dept Head</th>
+                            <th class="text-center">Div Head</th>
+                            <th class="text-center">Other Dept</th>
+                            <th class="text-center">Accounting</th>
+                            <th class="text-center">Purch</th>
+                            <th class="text-center">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var Item in list)
+                        {
+                            i++;
+                        <tr>
+                            <td class="text-center"> @i</td>
+                            <td class="text-center">
+                                <input class="hidden _levleuser" value="@Item.LevelUser" />
+                                <input class="hidden _id" value="@Item.CirculationNo" />
+                                <input class="hidden _status" value="@Item.Status" />
+                                <input class="hidden _luser" value="@Item.LevelUser" />
+                                <button class="btn btn-xs btn-info" title="Detail" onclick="return  DetailForm($(this))"><span class="fa fa-eye"></span></button>
+                            </td>
+                            <td> @Item.CirculationNo</td>
+                            <td class="text-left"> @Item.NameofItem</td>
+                            <td>@string.Format("{0:dd/MMM/yyyy}", @Item.Requirement) </td>
+                            <td>@Item.Dept</td>
+                            <td>@Item.Status</td>
+
+                            @*<td class="text-center"> @Html.CheckBoxFor(m => Item.Requester, new { @disabled = "disabled" }) </td>*@
+                            <td class="text-center" type="checkbox" onclick="return false"> @Html.CheckBoxFor(m => Item.Requester) </td>
+                            <td class="text-center" type="checkbox" onclick="return false"> @Html.CheckBoxFor(m => Item.DeptHead) </td>
+                            <td class="text-center" type="checkbox" onclick="return false"> @Html.CheckBoxFor(m => Item.DivHead) </td>
+                            <td class="text-center" type="checkbox" onclick="return false"> @Html.CheckBoxFor(m => Item.OtherDept) </td>
+                            <td class="text-center" type="checkbox" onclick="return false"> @Html.CheckBoxFor(m => Item.Accounting) </td>
+                            <td class="text-center" type="checkbox" onclick="return false"> @Html.CheckBoxFor(m => Item.Purch) </td>
+                            <td>@string.Format("{0:N0}", @Item.Amount)</td>
+
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+

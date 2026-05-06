@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>7TELLS</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    @Html.DevExpress().GetStyleSheets(
+        new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+        new StyleSheet { ExtensionSuite = ExtensionSuite.GridView }
+    )
+    @Html.DevExpress().GetScripts(
+        new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+        new Script { ExtensionSuite = ExtensionSuite.GridView }
+    )
+    @Styles.Render("~/AdminLTE/plugins/font-awesome/css")
+    @Styles.Render("~/AdminLTE/plugins/ionicons/css")
+    @Styles.Render("~/AdminLTE/bootstrap/css")
+    @Styles.Render("~/AdminLTE/dist/css")
+    @Styles.Render("~/AdminLTE/dist/css/skins")
+    @Styles.Render("~/AdminLTE/plugins/datatables/css")
+    @Styles.Render("~/AdminLTE/plugins/select2/css")
+    @Styles.Render("~/AdminLTE/plugins/datepicker/css")
+    @Styles.Render("~/AdminLTE/plugins/timepicker/css")
+    @Styles.Render("~/AdminLTE/plugins/icheck/css/blue")
+    @Styles.Render("~/AdminLTE/plugins/icheck/css")
+    @Styles.Render("~/Content/toastr")
+    @Styles.Render("~/Content/mine")
+    @Styles.Render("~/Content/miftah")
+</head>
+<body class="fixed sidebar-mini sidebar-mini-expand-feature pace-done skin-blue">
+    @*<body class="">*@
+    <div id="wr" class="wrapper">
+        <!-- Start Header -->
+        @{ Html.RenderAction("GetHeader", "Dashboard", new { area = "admin" });}
+        <!-- End Header -->
+        @{ Html.RenderAction("SidebarMenu", "Dashboard", new { area = "admin" });}
+
+        <!-- Content Wrapper. Contains page content -->
+        <div id="wrcw" class="content-wrapper">
+            @*<section class="content-header">
+                    <h1>
+                        @ViewBag.Title
+                        <small>@ViewBag.SubTitle</small>
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i>@ViewBag.SubTitle</a></li>
+                        @if (@ViewBag.SubTitle1 != "")
+                        {
+                            <li><a href="@ViewBag.Link">@ViewBag.SubTitle1</a></li>
+                            <li class="active">@ViewBag.Title</li>
+                        }
+                        else
+                        {
+                            <li class="active">@ViewBag.Title</li>
+                        }
+                    </ol>
+                </section>*@
+            <section class="content">
+                @RenderBody()
+            </section>
+        </div>
+
+        <!-- /.content-wrapper -->
+        @*<footer class="main-footer no-print">
+                <div class="pull-right hidden-xs">
+                    <b>Version</b> Beta
+                </div>
+                <strong>Copyrights | 7Tells-MIS Team Development | &copy; 2020 </strong> All rights
+                reserved.
+            </footer>*@
+    </div>
+    @Scripts.Render("~/AdminLTE/plugins/jquery/js")
+    @RenderSection("menu", required: false)
+    @Scripts.Render("~/AdminLTE/bootstrap/js")
+    @Scripts.Render("~/AdminLTE/plugins/slimscroll/js")
+    @Scripts.Render("~/AdminLTE/plugins/fastclick/js")
+    @Scripts.Render("~/Scripts/Shared/_Layout")
+    @Scripts.Render("~/AdminLTE/dist/js")
+    @Scripts.Render("~/AdminLTE/plugins/datatables/js")
+    @Scripts.Render("~/AdminLTE/plugins/datepicker/js")
+    @Scripts.Render("~/AdminLTE/plugins/timepicker/js")
+    @Scripts.Render("~/AdminLTE/plugins/select2/js")
+    @Scripts.Render("~/AdminLTE/plugins/icheck/js")
+    @Scripts.Render("~/bundles/moment")
+    @Scripts.Render("~/bundles/toastr")
+    @Scripts.Render("~/scripts/fixed")
+    @Scripts.Render("~/scripts/waitingfor")
+    @*@Scripts.Render("~/Scripts/jquery.validate.min.js")
+        @Scripts.Render("~/Scripts/jquery.validate.unobtrusive.min.js")*@
+    @RenderSection("scripts", required: false)
+</body>
+</html>

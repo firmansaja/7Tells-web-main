@@ -1,0 +1,44 @@
+﻿@model IEnumerable<iTells.Models.tblUser>
+@{
+    ViewBag.Title = "User List";
+    ViewBag.SubTitle = "Home";
+    iTells.Helper.GeneralHelper dHelper = new iTells.Helper.GeneralHelper();
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            @if (ViewBag.IsAdd == true)
+            {
+                <div class="box-header">
+                    <a href="/admin/user/create" class="btn btn-info pull-right">Add User</a>
+                </div>
+            }
+            @{Html.RenderAction("PopulateUser", "User");}
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="/scripts/Common.js"></script>
+    <script>
+        $(document).ready(function () {
+            var menuItem = $('#user');
+            menuItem.addClass('active');
+            $("#tblUser").DataTable();
+            $('.delete').click(function () {
+                var url = $(this).data('url');
+                $.get(url, function (data) {
+                    if (data.success == "0") {
+                        $('#tblUser').load(data.url);
+                        $("#tblUser").DataTable();
+                        $('#message').html(data.message);
+                    }
+                    else if (data.success == "3") {
+                        $('#message').html(data.message);
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+}

@@ -1,0 +1,355 @@
+﻿@*@using iTells.Extensions;*@
+@using System.Data;
+@using BusinessObjects;
+@model DataTable
+@{
+    ViewBag.Title = "Import";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    List<BO_EBudget> BudgetOpen = (List<BO_EBudget>)ViewData["ListBudgetOpen1"];
+
+    var tahun = "";
+    var semester = "";
+    var test = "";
+
+    foreach (var BudgetOpenItem in BudgetOpen)
+    {
+        tahun = BudgetOpenItem.OpenTahun;
+        semester = BudgetOpenItem.OpenSemester;
+    }
+
+
+
+}
+
+
+@*<html>
+    <body>*@
+
+<style type="text/css">
+    .modal {
+        position: fixed;
+        z-index: 999;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        background-color: Black;
+        filter: alpha(opacity=60);
+        opacity: 0.6;
+        display: none;
+    }
+
+</style>
+
+@using (Html.BeginForm("Import", "Ebudget", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div>
+        <table width="500">
+            <tr>
+                <th class="text-center"><input type="file" id="file" name="file" value="Pilih File" accept=".xl*" /></th>
+                <th class="text-center"> <input type="submit" value="Upload File" id="btnupload" /></th>
+                <th class="text-center"><input type="submit" value="Simpan" id="btnsimpan" /></th>
+            </tr>
+        </table>
+
+    </div>
+
+    <div id="loading">
+
+    </div>
+
+    @*<div class="modol" id="mloading">
+
+            <div class="modal-dialog center" role="document">
+
+                <img src="~/images/ajax-loader.gif" alt="" />
+
+            </div>
+        </div>*@
+    <div id="mloading" class="modal">
+        <div class="center">
+            <img src="~/images/ajax-loader.gif" />
+        </div>
+    </div>
+
+
+    <div class="box box-primary">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="LB" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">No</th>
+                                <th class="text-center">No Barang</th>
+                                <th style="width:500px">Account</th>
+                                <th style="width:500px">Acct Name</th>
+                                <th style="width:500px">Dept</th>
+                                <th style="width:500px">Site ID</th>
+                                <th style="width:500px">Tahun</th>
+                                <th style="width:500px">Keterangan</th>
+                                <th style="width:50px" class="text-center">Unit</th>
+
+                                <th style="width:100px" class="text-center">Jan Qty</th>
+                                <th style="width:100px" class="text-center">Feb Qty</th>
+                                <th style="width:100px" class="text-center">Mar Qty</th>
+                                <th style="width:100px" class="text-center">Apr Qty</th>
+                                <th style="width:100px" class="text-center">Mei Qty</th>
+                                <th style="width:100px" class="text-center">Jun Qty</th>
+                                <th style="width:100px" class="text-center">Jul Qty</th>
+                                <th style="width:100px" class="text-center">Ags Qty</th>
+                                <th style="width:100px" class="text-center">Sept Qty</th>
+                                <th style="width:100px" class="text-center">Okt Qty</th>
+                                <th style="width:100px" class="text-center">Nov Qty</th>
+                                <th style="width:100px" class="text-center">Des Qty</th>
+
+                                <th style="width:100px" class="text-right">Jan Harga</th>
+                                <th style="width:100px" class="text-right">Feb Harga</th>
+                                <th style="width:100px" class="text-right">Mar Harga</th>
+                                <th style="width:100px" class="text-right">Apr Harga</th>
+                                <th style="width:100px" class="text-right">Mei Harga</th>
+                                <th style="width:100px" class="text-right">Jun Harga</th>
+                                <th style="width:100px" class="text-right">Jul Harga</th>
+                                <th style="width:100px" class="text-right">Ags Harga</th>
+                                <th style="width:100px" class="text-right">Sept Harga</th>
+                                <th style="width:100px" class="text-right">Okt Harga</th>
+                                <th style="width:100px" class="text-right">Nov Harga</th>
+                                <th style="width:100px" class="text-right">Des Harga</th>
+
+                            </tr>
+
+                        </thead>
+                        <tbody>
+
+                            @for (int i = 0; i < Model.Rows.Count; i++)
+
+                            {
+                                //string style = (@Model.Rows[i]["jan_qty"]) < 0 ? "background-color:Red" : null;
+
+                            <tr>
+                                <td>@Model.Rows[i]["No"]</td>
+                                <td>@Model.Rows[i]["IdNo"]</td>
+
+                                <td class="@(Model.Rows[i]["AcctID"].ToString().Trim()==""?"bgrow":"") ">@Model.Rows[i]["AcctID"].ToString().Trim()</td>
+                                <td class="@(Model.Rows[i]["AcctName"].ToString().Trim()==""?"bgrow":"")">@Model.Rows[i]["AcctName"].ToString().Trim()</td>
+                                <td class="@(Model.Rows[i]["DeptID"].ToString()==""?"bgrow":"")"> @Model.Rows[i]["DeptID"].ToString().Trim()</td>
+                                <td class="@(Model.Rows[i]["SiteID"].ToString()==""?"bgrow":"")">@Model.Rows[i]["SiteID"].ToString().Trim()</td>
+                                <td class="@(Model.Rows[i]["Tahun"].ToString()==""?"bgrow":"")">@Model.Rows[i]["Tahun"].ToString().Trim()</td>
+                                <td class="@(Model.Rows[i]["Keterangan"].ToString()==""?"bgrow":"")">@Model.Rows[i]["Keterangan"].ToString().Trim()</td>
+                                <td class="@(Model.Rows[i]["Unit"].ToString().Trim()==""?"":"")">@Model.Rows[i]["Unit"].ToString().Trim()</td>
+
+                                <td class="@(Model.Rows[i]["jan_qty"].ToString()==""?"bgrow":"") text-center">@Model.Rows[i]["jan_qty"]</td>
+                                <td class="@(Model.Rows[i]["feb_qty"].ToString()==""?"bgrow":"") text-center">@Model.Rows[i]["feb_qty"]</td>
+                                <td class="@(Model.Rows[i]["mar_qty"].ToString()==""?"bgrow":"") text-center text-center">@Model.Rows[i]["mar_qty"]</td>
+                                <td class="@(Model.Rows[i]["apr_qty"].ToString()==""?"bgrow":"") text-center">@Model.Rows[i]["apr_qty"]</td>
+                                <td class="@(Model.Rows[i]["mei_qty"].ToString()==""?"bgrow":"") text-center">@Model.Rows[i]["mei_qty"]</td>
+                                <td class="@(Model.Rows[i]["jun_qty"].ToString()==""?"bgrow":"") text-center">@Model.Rows[i]["jun_qty"]</td>
+                                <td class="@(Model.Rows[i]["jul_qty"].ToString()==""?"bgrow":"") text-center">@Model.Rows[i]["jul_qty"]</td>
+                                <td class="@(Model.Rows[i]["agt_qty"].ToString()==""?"bgrow":"") text-center">@Model.Rows[i]["agt_qty"]</td>
+                                <td class="@(Model.Rows[i]["sep_qty"].ToString()==""?"bgrow":"") text-center">@Model.Rows[i]["sep_qty"]</td>
+                                <td class="@(Model.Rows[i]["okt_qty"].ToString()==""?"bgrow":"") text-center">@Model.Rows[i]["okt_qty"]</td>
+                                <td class="@(Model.Rows[i]["nov_qty"].ToString()==""?"bgrow":"") text-center">@Model.Rows[i]["nov_qty"]</td>
+                                <td class="@(Model.Rows[i]["des_qty"].ToString()==""?"bgrow":"") text-center">@Model.Rows[i]["des_qty"]</td>
+
+                                @*<td class="@(Model.Rows[i]["jan_harga"].ToString().Trim()==""?"bgrow":"") text-right">@string.Format("{0:N0}", Convert.ToInt32(Model.Rows[i]["jan_harga"].ToString()))</td>
+                                <td class="@(Model.Rows[i]["feb_harga"].ToString().Trim()==""?"bgrow":"") text-right">@string.Format("{0:N0}", Convert.ToInt32(Model.Rows[i]["feb_harga"].ToString()))</td>
+                                <td class="@(Model.Rows[i]["mar_harga"].ToString().Trim()==""?"bgrow":"") text-right">@string.Format("{0:N0}", Convert.ToInt32(Model.Rows[i]["mar_harga"].ToString()))</td>
+                                <td class="@(Model.Rows[i]["apr_qty"].ToString().Trim()==""?"bgrow":"") text-right">@string.Format("{0:N0}", Convert.ToInt32(Model.Rows[i]["apr_harga"].ToString()))</td>
+                                <td class="@(Model.Rows[i]["mei_harga"].ToString().Trim()==""?"bgrow":"") text-right">@string.Format("{0:N0}", Convert.ToInt32(Model.Rows[i]["mei_harga"].ToString()))</td>
+                                <td class="@(Model.Rows[i]["jun_harga"].ToString().Trim()==""?"bgrow":"") text-right">@string.Format("{0:N0}", Convert.ToInt32(Model.Rows[i]["jun_harga"].ToString()))</td>
+                                <td class="@(Model.Rows[i]["jul_harga"].ToString().Trim()==""?"bgrow":"") text-right">@string.Format("{0:N0}", Convert.ToInt32(Model.Rows[i]["jul_harga"].ToString()))</td>
+                                <td class="@(Model.Rows[i]["agt_harga"].ToString().Trim()==""?"bgrow":"") text-right">@string.Format("{0:N0}", Convert.ToInt32(Model.Rows[i]["agt_harga"].ToString()))</td>
+                                <td class="@(Model.Rows[i]["sep_harga"].ToString().Trim()==""?"bgrow":"") text-right">@string.Format("{0:N0}", Convert.ToInt32(Model.Rows[i]["sep_harga"].ToString()))</td>
+                                <td class="@(Model.Rows[i]["okt_harga"].ToString().Trim()==""?"bgrow":"") text-right">@string.Format("{0:N0}", Convert.ToInt32(Model.Rows[i]["okt_harga"].ToString()))</td>
+                                <td class="@(Model.Rows[i]["nov_harga"].ToString().Trim()==""?"bgrow":"") text-right">@string.Format("{0:N0}", Convert.ToInt32(Model.Rows[i]["nov_harga"].ToString()))</td>
+                                <td class="@(Model.Rows[i]["des_harga"].ToString().Trim()==""?"bgrow":"") text-right">@string.Format("{0:N0}", Convert.ToInt32(Model.Rows[i]["des_harga"].ToString()))</td>*@
+
+                                <td class="@(Model.Rows[i]["jan_harga"].ToString().Trim()==""?"bgrow":"") text-right">@Model.Rows[i]["jan_harga"]</td>
+                                <td class="@(Model.Rows[i]["feb_harga"].ToString().Trim()==""?"bgrow":"") text-right">@Model.Rows[i]["feb_harga"]</td>
+                                <td class="@(Model.Rows[i]["mar_harga"].ToString().Trim()==""?"bgrow":"") text-right">@Model.Rows[i]["mar_harga"]</td>
+                                <td class="@(Model.Rows[i]["apr_qty"].ToString().Trim()==""?"bgrow":"") text-right">@Model.Rows[i]["apr_harga"]</td>
+                                <td class="@(Model.Rows[i]["mei_harga"].ToString().Trim()==""?"bgrow":"") text-right">@Model.Rows[i]["mei_harga"]</td>
+                                <td class="@(Model.Rows[i]["jun_harga"].ToString().Trim()==""?"bgrow":"") text-right">@Model.Rows[i]["jun_harga"]</td>
+                                <td class="@(Model.Rows[i]["jul_harga"].ToString().Trim()==""?"bgrow":"") text-right">@Model.Rows[i]["jul_harga"]</td>
+                                <td class="@(Model.Rows[i]["agt_harga"].ToString().Trim()==""?"bgrow":"") text-right">@Model.Rows[i]["agt_harga"]</td>
+                                <td class="@(Model.Rows[i]["sep_harga"].ToString().Trim()==""?"bgrow":"") text-right">@Model.Rows[i]["sep_harga"]</td>
+                                <td class="@(Model.Rows[i]["okt_harga"].ToString().Trim()==""?"bgrow":"") text-right">@Model.Rows[i]["okt_harga"]</td>
+                                <td class="@(Model.Rows[i]["nov_harga"].ToString().Trim()==""?"bgrow":"") text-right">@Model.Rows[i]["nov_harga"]</td>
+                                <td class="@(Model.Rows[i]["des_harga"].ToString().Trim()==""?"bgrow":"") text-right">@Model.Rows[i]["des_harga"]</td>
+
+
+
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@*</body>
+    </html>*@
+
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+                $(document).ready(function () {
+                    $('#loading').hide()
+                    $('#LB').DataTable({
+                        "destroy": true,
+                        scrollY: "400px",
+                        scrollX: true,
+                        scrollCollapse: false,
+                        paging: false,
+                        //search: false,
+                        bFilter: false,
+                        fixedColumns: true,
+                        fixedColumns: {
+                            leftColumns: 2
+                        }
+                    });
+                })
+            })
+
+            function tdclick(data) {
+                //var Id = data.closest("tr").find("._id").val();
+                console.log(data)
+                var url = "/ShowEditData/" + data;
+                window.location.href = url;
+            };
+
+            $(document).on('click', '#btnsimpan', function (event) {
+                event.preventDefault();
+                //mloading();
+                var cek = true;
+
+                $("#LB TBODY TR").each(function () {
+                    var row = $(this);
+                    if (row.find("TD").eq(2).html().toString().trim() == ""
+                        || row.find("TD").eq(3).html().toString().trim() == ""
+                        || row.find("TD").eq(4).html().toString().trim() == ""
+                        || row.find("TD").eq(5).html().toString().trim() == ""
+                        || row.find("TD").eq(6).html().toString().trim() == ""
+                        || row.find("TD").eq(6).html() != '@tahun'
+                        || row.find("TD").eq(7).html().toString().trim() == ""
+                        //|| row.find("TD").eq(8).html().toString().trim() == ""
+                        || (row.find("TD").eq(9).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(10).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(11).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(12).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(13).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(14).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(15).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(16).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(17).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(18).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(19).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(20).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(21).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(22).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(23).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(24).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(25).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(26).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(26).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(27).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(28).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(29).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(30).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(31).html()).match(/\d/g) == null
+                        || (row.find("TD").eq(32).html()).match(/\d/g) == null )
+                    {
+                        cek = false;
+                        return;
+                    }
+                });
+                console.log(@tahun);
+                if (cek == true) {
+                    var Budget = new Array();
+
+                    $("#LB TBODY TR").each(function () {
+                        var row = $(this);
+                        var data = {};
+                        data.IdNo = (row.find("TD").eq(1).html()).replace(/^\s+|\s+$/gm, '');
+                        data.AcctID = (row.find("TD").eq(2).html()).replace(/^\s+|\s+$/gm, '');
+                        data.AcctName = (row.find("TD").eq(3).html()).replace(/^\s+|\s+$/gm, '');
+                        data.DeptID = (row.find("TD").eq(4).html()).replace(/^\s+|\s+$/gm, '');
+                        data.SiteID = (row.find("TD").eq(5).html()).replace(/^\s+|\s+$/gm, '');
+                        data.Tahun = (row.find("TD").eq(6).html()).replace(/^\s+|\s+$/gm, '');
+                        data.Keterangan = (row.find("TD").eq(7).html()).replace(/^\s+|\s+$/gm, '');
+                        data.Unit = (row.find("TD").eq(8).html()).replace(/^\s+|\s+$/gm, '');
+
+                        data.jan_qty = row.find("TD").eq(9).html();
+                        data.feb_qty = row.find("TD").eq(10).html();
+                        data.mar_qty = row.find("TD").eq(11).html();
+                        data.apr_qty = row.find("TD").eq(12).html();
+                        data.mei_qty = row.find("TD").eq(13).html();
+                        data.jun_qty = row.find("TD").eq(14).html();
+                        data.jul_qty = row.find("TD").eq(15).html();
+                        data.agt_qty = row.find("TD").eq(16).html();
+                        data.sep_qty = row.find("TD").eq(17).html();
+                        data.okt_qty = row.find("TD").eq(18).html();
+                        data.nov_qty = row.find("TD").eq(19).html();
+                        data.des_qty = row.find("TD").eq(20).html();
+
+                        data.jan_harga = row.find("TD").eq(21).html();
+                        data.feb_harga = row.find("TD").eq(22).html();
+                        data.mar_harga = row.find("TD").eq(23).html();
+                        data.apr_harga = row.find("TD").eq(24).html();
+                        data.mei_harga = row.find("TD").eq(25).html();
+                        data.jun_harga = row.find("TD").eq(26).html();
+                        data.jul_harga = row.find("TD").eq(27).html();
+                        data.agt_harga = row.find("TD").eq(28).html();
+                        data.sep_harga = row.find("TD").eq(29).html();
+                        data.okt_harga = row.find("TD").eq(30).html();
+                        data.nov_harga = row.find("TD").eq(31).html();
+                        data.des_harga = row.find("TD").eq(32).html();
+
+                        Budget.push(data);
+                    });
+                    var data = {
+                        BD : Budget,
+                        OpenTahun: '@tahun',
+                        OpenSemester : '@semester'
+
+                    }
+                    //console.log(data);
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("Simpan_Upload", "EBudget", new { area ="User"})',
+                        data: { data: data },
+                        success: function (r) {
+                            alert("Update Berhasil");
+                            window.location.href = "/ebudget_import/" + @tahun + "/Semester/" + @semester;
+                        }
+                    });
+                } else {
+                    alert("Inputan Ada yang Salah")
+                }
+
+            })
+
+        //$(document).on('click', '#btnupload', function (event) {
+        //    event.preventDefault();
+        //    mloading();
+        //})
+
+        function mloading() {
+            $("#mloading").modal({ backdrop: 'static' });
+        }
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+

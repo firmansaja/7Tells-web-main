@@ -1,0 +1,242 @@
+﻿
+
+@using BusinessObjects
+
+@{
+
+    List<BO_MaterialKontrol_ByAccount> ListData = (List<BO_MaterialKontrol_ByAccount>)ViewData["DataByAccount"];
+    int i = 0;
+
+}
+
+<div id="oktober" class="row">
+    <div class="col-xs-12">
+        <div class="box-body">
+            <table id="TB10" style="border-color:black" class="table table-bordered">
+                <thead>
+                    <tr style="background-color:#3C8EBE;border-color:black">
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3 ">No</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Account</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Name</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Jan</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Feb</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Mar</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Apr</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Mei</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Jun</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Jul</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Agu</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Sep</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Okt</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Nov</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3">Des</th>
+                    </tr>
+
+                </thead>
+                <tbody>
+
+                    @foreach (var item in @ListData)
+                    {
+                        i++;
+                    <tr>
+                        <td style="text-align:center;border-color:black; vertical-align:middle" class="style2">@i</td>
+                        <td style="vertical-align:middle;border-color:black" class="style2">@item.Account</td>
+                        <td style="vertical-align:middle;border-color:black" class="style2">@item.AccountName</td>
+
+                        @if (@item.Jan > 0)
+                        {
+                            @*<td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST01) </td>*@
+                            <td style="background:LightCoral;text-align:center;border-color:black; vertical-align:middle" class="style2 jan blink"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=1">@String.Format("{0,14:n0}", @item.Jan)</a></td>
+
+                        }
+                        else
+                        {
+                            @*<td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST01)</td>*@
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=1">@String.Format("{0,14:n0}", @item.Jan)</a></td>
+
+                        }
+
+                        @if (@item.Feb > 0)
+                        {
+                            <td style="background:LightCoral;text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=2">@String.Format("{0,14:n0}", @item.Feb)</a></td>
+
+                        }
+                        else
+                        {
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=2">@String.Format("{0,14:n0}", @item.Feb)</a></td>
+
+                        }
+
+                        @if (@item.Mar > 0)
+                        {
+                            <td style="background:LightCoral;text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=3">@String.Format("{0,14:n0}", @item.Mar)</a></td>
+
+                        }
+                        else
+                        {
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=3">@String.Format("{0,14:n0}", @item.Mar)</a></td>
+
+                        }
+
+                        @if (@item.Apr > 0)
+                        {
+                            <td style="background:LightCoral;text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=4">@String.Format("{0,14:n0}", @item.Apr)</a></td>
+
+                        }
+                        else
+                        {
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=4">@String.Format("{0,14:n0}", @item.Apr)</a></td>
+
+                        }
+
+                        @if (@item.Mei > 0)
+                        {
+                            <td style="background:LightCoral;text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=5">@String.Format("{0,14:n0}", @item.Mei)</a></td>
+
+                        }
+                        else
+                        {
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=5">@String.Format("{0,14:n0}", @item.Mei)</a></td>
+
+                        }
+
+                        @if (@item.Jun > 0)
+                        {
+                            <td style="background:LightCoral;text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=6">@String.Format("{0,14:n0}", @item.Jun)</a></td>
+
+                        }
+                        else
+                        {
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=6">@String.Format("{0,14:n0}", @item.Jun)</a></td>
+
+                        }
+                        @if (@item.Jul > 0)
+                        {
+                            <td style="background:LightCoral;text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=7">@String.Format("{0,14:n0}", @item.Jul)</a></td>
+
+                        }
+                        else
+                        {
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=7">@String.Format("{0,14:n0}", @item.Jul)</a></td>
+
+                        }
+
+                        @if (@item.Agu > 0)
+                        {
+                            <td style="background:LightCoral;text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=8">@String.Format("{0,14:n0}", @item.Agu)</a></td>
+
+                        }
+                        else
+                        {
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=8">@String.Format("{0,14:n0}", @item.Agu)</a></td>
+
+                        }
+
+                        @if (@item.Sep > 0)
+                        {
+                            <td style="background:LightCoral;text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=9">@String.Format("{0,14:n0}", @item.Sep)</a></td>
+
+                        }
+                        else
+                        {
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=9">@String.Format("{0,14:n0}", @item.Sep)</a></td>
+
+                        }
+
+                        @if (@item.Okt > 0)
+                        {
+                            <td style="background:LightCoral;text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=10">@String.Format("{0,14:n0}", @item.Okt)</a></td>
+
+                        }
+                        else
+                        {
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=10">@String.Format("{0,14:n0}", @item.Okt)</a></td>
+
+                        }
+                        @if (@item.Nov > 0)
+                        {
+                            <td style="background:LightCoral;text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=11">@String.Format("{0,14:n0}", @item.Nov)</a></td>
+
+                        }
+                        else
+                        {
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=11">@String.Format("{0,14:n0}", @item.Nov)</a></td>
+
+                        }
+
+                        @if (@item.Des > 0)
+                        {
+                            <td style="background:LightCoral;text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=12">@String.Format("{0,14:n0}", @item.Des)</a></td>
+
+                        }
+                        else
+                        {
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan"><a href="/user/EMaterialKontrol/StokMaterial?id=@ViewBag.Year&account=@item.Account&bulan=12">@String.Format("{0,14:n0}", @item.Des)</a></td>
+
+                        }
+
+
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script type="text/javascript">
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+        function PassFileName(tahun, acct) {
+
+            $.ajax({
+                type: "POST",
+                //url: '/loadBudgetDeptSummary',
+                url: '/StokMaterial',
+                data: {
+                    id: EncryptURL(tahun)
+                    , account: EncryptURL(acct)},
+                datatype: "json",
+                success: function (data) {
+                    window.location.href = data.redirectUrl;
+                    setTimeout(function () {
+                        WaitingDialog.hide();
+                    }, 3000);
+                }
+
+            });
+
+        }
+
+    </script>
+
+}
+
+
+
+
+
+
+
+
+

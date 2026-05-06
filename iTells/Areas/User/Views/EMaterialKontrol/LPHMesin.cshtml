@@ -1,0 +1,47 @@
+﻿@using BusinessObjects
+@{
+    ViewBag.Title = "LPHMesin";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    List<BO_NoMesin> ListMesin = (List<BO_NoMesin>)ViewData["DataMesin"];
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <label>No Mesin</label>
+                        <select id="noMesin" class="form-control select2" style="width:auto">
+                            <option value="">-- Pilih Mesin --</option>
+                            @foreach (var mesin in @ListMesin)
+                            {
+                                <option value="@mesin.NoMesin">@mesin.Desc</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            
+        })
+
+        $(document).on('change', '#noMesin', function (event) {
+            event.preventDefault();
+            var NoMesin = $('#noMesin').val();
+            if (NoMesin != "") {
+                var url = "/viewlphmesin/" + NoMesin;
+                window.location.href = url;
+            }
+        });
+    </script>
+}
+
+

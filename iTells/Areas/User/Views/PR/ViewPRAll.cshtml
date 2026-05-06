@@ -1,0 +1,168 @@
+﻿@using BusinessObjects;
+@{
+    ViewBag.Title = "PR Detail";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "E-PR";
+    ViewBag.Link = "/User/PR";
+    PR PRHeader = (PR)ViewData["PRHeader"];
+    List<PRDetail> ListPRDetail = (List<PRDetail>)ViewData["ListPRDetail"];
+    List<PRApproval> ListApproval = (List<PRApproval>)ViewData["ListApproval"];
+    PRAksesUser AkseUser = (PRAksesUser)ViewData["AksesUser"];
+    var Dept = @AkseUser.Dept;
+    int Kol = @AkseUser.Kol;
+    string Site = @AkseUser.Site;
+}
+
+<div class="box box-primary" style="overflow-x:auto">    
+    <div class="box-body">
+        <div class="row">
+            <div class="col-xs-12">
+                <table style="width:100%">
+                    <tr>
+                        <td colspan="2" rowspan="2" style="width:30%;text-align:center"><img class="rounded float-left" width="150" height="100" src="/Images/Logo.png" alt="Image"></td>
+                        <td colspan="3" style="width:60%;vertical-align:middle"><h3>PERMOHONAN PEMBELIAN BARANG / PURCHASE REQUEST</h3></td>
+                    </tr>
+                    <tr>
+                        <td style="width:20%;vertical-align:middle"><h5>Bagian&nbsp:&nbsp<b><span id="prBagian">@PRHeader.Description</span></b></h5></td>
+                        <td style="width:20%;vertical-align:middle"><h5>No&nbsp:&nbsp<b><span id="prNo">@PRHeader.PRNo</span></b></h5></td>
+                        <td style="width:20%;vertical-align:middle"><h5>Tanggal&nbsp:&nbsp<b><span id="prDate">@String.Format("{0:dd/MM/yyyy}", @PRHeader.PRDate)</span></b></h5></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="tblPRDetail" style="width:100%;border-color:black;overflow-x:auto;overflow-y:auto" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" width="30px">No</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Nama Barang</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" width="80px">InvtID</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" width="70px">Jumlah</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Dipergunakan Untuk</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" width="65px">Account</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" width="50px">Sub</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" width="80px">Terakhir<br />Beli</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" width="80px">Tanggal Kirim</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ListPRDetail)
+                        {
+                            <tr>
+                                <td style="text-align:center; vertical-align:middle;border-color:black">@item.No</td>
+                                <td style="word-wrap:break-word;white-space:pre-wrap;vertical-align:middle;border-color:black">@item.NamaBarang<br />@item.InvtSpec</td>
+                                <td style="vertical-align:middle;border-color:black">@item.InvtID</td>
+                                <td style="word-wrap:break-word;white-space:pre-wrap;vertical-align:middle;border-color:black">@item.Qty&nbsp @item.UnitQty</td>
+                                <td style="word-wrap: break-word;white-space: pre-wrap;vertical-align:middle;border-color:black">@item.Remark</td>
+                                <td style="vertical-align:middle;border-color:black">@item.Account<br />@item.AccountDesc</td>
+                                <td style="vertical-align:middle;border-color:black">@item.SubAccount</td>
+                                <td style="vertical-align:middle;border-color:black">@item.PODate</td>
+                                <td style="vertical-align:middle;border-color:black">@item.DelDate</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td colspan="2" style="text-align:center; vertical-align:middle;border-color:black">Diminta :</td>
+                            <td colspan="3" style="text-align:center; vertical-align:middle;border-color:black">Diketahui :</td>
+                            <td colspan="4" style="text-align:center; vertical-align:middle;border-color:black">Disetujui :</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align:center; vertical-align:middle;border-color:black" height="70px"><span id="prApproveBy1">By :</span></td>
+                            <td colspan="3" style="text-align:center; vertical-align:middle;border-color:black" height="70px"><span id="prApproveBy2">By :</span></td>
+                            <td colspan="4" style="text-align:center; vertical-align:middle;border-color:black" height="70px"><span id="prApproveBy3">By :</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align:center; vertical-align:middle;border-color:black"><span id="prApproveAt1">Tanggal :</span></td>
+                            <td colspan="3" style="text-align:center; vertical-align:middle;border-color:black"><span id="prApproveAt2">Tanggal :</span></td>
+                            <td colspan="4  " style="text-align:center; vertical-align:middle;border-color:black"><span id="prApproveAt3">Tanggal :</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-11">
+                <h5 class="pull-right">Tanggal Cetak : <span id="dtCetak"></span></h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-1">
+            </div>
+            @if (@PRHeader.OverBudget == "")
+            {
+                <div class="col-xs-11">
+                    <h5>-</h5>
+                </div>
+            }
+            else
+            {
+                <div class="col-xs-11">
+                    <h5>Over budget Account No : <span>@PRHeader.OverBudget</span></h5>
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-xs-1">
+            </div>
+            <div class="col-xs-11">
+                <h6 style="font-style: italic">@PRHeader.Remark</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <h6 style="font-style: italic">NB : Dokumen elektronik ini sudah merupakan bukti yang sah sebagai Permohonan Pembelian Barang / Purchase Request</h6>
+            </div>
+        </div>
+        <div class="row no-print">
+            <div class="col-xs-12">
+                <button class="btn btn-primary pull-right margin" id="btnViewReport">View Report</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+	    $(document).ready(function () {
+		    SetFooter();
+	    });	    
+
+	    function SetFooter() {
+            const today = new Date();
+            var TglCetak = ((today.getMonth() > 8) ? (today.getMonth() + 1) : ('0' + (today.getMonth() + 1))) + '-' + ((today.getDate() > 9) ? today.getDate() : ('0' + today.getDate())) + '-' + today.getFullYear();
+            $("#dtCetak").html(TglCetak);
+
+		    var xValue = @Html.Raw(Json.Encode(@ListApproval));
+		    for (var i = 0; i < xValue.length; i++) {
+			    if (xValue[i].Kol == 1) {
+				    $("#prApproveBy1").html(xValue[i].Status + " by " + xValue[i].UserName);
+				    $("#prApproveAt1").html("Tanggal : " + xValue[i].Tanggal);
+                    } else if (xValue[i].Kol == 2) {
+				    $("#prApproveBy2").html(xValue[i].Status + " by " + xValue[i].UserName);
+				    $("#prApproveAt2").html("Tanggal : " + xValue[i].Tanggal);
+                    } else if (xValue[i].Kol == 3) {
+				    $("#prApproveBy3").html(xValue[i].Status + " by " + xValue[i].UserName);
+				    $("#prApproveAt3").html("Tanggal : " + xValue[i].Tanggal);
+			    }
+            }
+        }
+
+        $(document).on('click', '#btnViewReport', function (event) {
+            event.preventDefault();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ViewReportPR", "PR", new { area ="User"})',
+                data: { PRNo: '@PRHeader.PRNo', Year: '', RptName: 'RptPRDetailAll' },
+                success: function (data) {
+                    if (!data.result) {
+                        alert("Error");
+                    }
+                    else {
+                        window.open("/Reports/ReportPR.aspx", '_blank');
+                    }
+                }
+            });
+        });
+    </script>
+}

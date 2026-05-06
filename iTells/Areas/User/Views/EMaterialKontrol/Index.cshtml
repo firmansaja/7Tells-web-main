@@ -1,0 +1,133 @@
+﻿
+
+@using BusinessObjects;
+
+
+
+@{
+    ViewBag.Title = "Kontrol Material";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+
+    var jumlah = 0;
+    var CurrentYear = 0;
+    var OldYear = 2020;
+    CurrentYear = Convert.ToInt32(@DateTime.Now.Year);
+    jumlah = CurrentYear - OldYear;
+
+}
+
+<section class="content">
+    <div id="MainForm">
+        <div class="row">
+            <div class="col-md-12 " id="div2">
+                <div class="form-group form-group-sm">
+                    <div class="col-sm-1 col-md-8">
+                        <font color="#ffffff" size="+1"><label class="  control-label text-muted" style="text-align:left;">@ViewBag.title</label></font>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table>
+                                <tr>
+                                    <td width="10%"></td>
+                                    <td>
+                                        <select id="tahun" class="form-control select2" style="width:100%">
+
+                                            <option value=0>Pilih Tahun</option>
+                                            @for (var i = CurrentYear; i > OldYear; i--)
+                                            {
+                                                <option value=@i>@i</option>
+                                            }
+
+                                        </select>
+                                    </td>
+                                    <td width="10%"></td>
+                                    <td><button type="button" class="btn btn-primary" id="BtnSubmit">Submit</button></td>
+                                </tr>
+                                <tr></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+@section Scripts
+{
+    <script src="~/Scripts/aes.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var menuItem = $('#materialkontrol');
+            menuItem.addClass('active');
+            var subMenuItem = menuItem.find('#materialkontrol_materialstok');
+            subMenuItem.addClass('active');
+        });
+
+        $(document).on('click', '#BtnSubmit', function (event) {
+            event.preventDefault();
+
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+            var _tahun = $('#tahun').val();
+
+            if (_tahun == 0) {
+                alert("Pilih Tahun");
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    //url: '/loadBudgetDeptSummary',
+                    url: '/loadStokMaterialByAccount',
+                    data: { Tahun: EncryptURL(_tahun) },
+                    datatype: "json",
+                    success: function (data) {
+                        window.location.href = data.redirectUrl;
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 3000);
+                    }
+
+                });
+            }
+
+
+        });
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+
+
+    </script>
+}

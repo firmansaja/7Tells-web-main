@@ -1,0 +1,218 @@
+﻿@using BusinessObjects;
+@{
+    ViewBag.Title = "E-BUDGET";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    List<ComboList> combo = (List<ComboList>)ViewData["ComboTahun"];
+    List<BO_EBudget> BudgetOpen = (List<BO_EBudget>)ViewData["ListBudgetOpen"];
+
+    string Tahun = "";
+    string Semester = "";
+    string OpenStatus = "";
+}
+
+@foreach (var BudgetOpenItem in BudgetOpen)
+{
+    Tahun = BudgetOpenItem.OpenTahun;
+    Semester = BudgetOpenItem.OpenSemester;
+    OpenStatus = BudgetOpenItem.OpenStatus;
+}
+
+@*<h2>ini Ebudget</h2>*@
+
+<head>
+
+
+    <style>
+
+        .packaging {
+            display: grid;
+            grid-template-columns: 150px 100px 100px 100px;
+            grid-template-areas: 'btn1 tahun lb semester';
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 5px;
+            grid-gap: 5px;
+        }
+
+        .btn1 {
+            grid-area: btn1;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+        }
+
+        .tahun {
+            grid-area: tahun;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lb {
+            grid-area: lb;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            justify-content:center;
+        }
+        .semester {
+            grid-area: semester;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @@media (max-width:450px) {
+            .packaging {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas: 'btn1 tahun''lb semester';
+                grid-gap: 5px;
+            }
+
+            .lb {
+                grid-area: lb;
+                padding-left: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<section class="content">
+
+    <div class="row">
+        @*<div class="col-md-12">
+                <div class="form-group form-group-sm">
+                    <div class="col-sm-1  col-md-2">
+                        <button type="button" class=" col-sm-1 col-md-2 btn btn-success" id="btn">Lihat Budget</button>
+                    </div>
+                    <div class="col-sm-4 col-md-2">
+                        <select id="tahun" class="form-control select2 " placeholder="Pilih Tahun">
+                            <option value="0">-- Pilih Tahun --</option>
+                            @foreach (var item in combo)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>*@
+
+        <div class="col-md-12 div2" id="div2">
+            <div class="packaging">
+                <div class="btn1">
+                    <button type="button" class="btn btn-warning " id="btnisi">Isi / Edit Budget</button>
+                </div>
+                <div class="tahun">
+                    <input id="tahun_isi" class="form-control input-sm" disabled="disabled" value="@Tahun" />
+                </div>
+                <label class="lb control-label text-muted">Semester</label>
+                <div class="semester">
+                    <input id="semester_isi" class="form-control input-sm" disabled="disabled" value="@Semester" />
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+</section>
+
+@section Scripts
+{
+    <script src="~/Scripts/aes.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+            var menuItem = $('#e-budget');
+            menuItem.addClass('active');
+            var subMenuItem = menuItem.find('#e-budget_budget');
+            subMenuItem.addClass('active');
+        });
+
+        $(document).on('click', '#btn', function (event) {
+            event.preventDefault();
+
+            var _tahun = $('#tahun').val();
+            console.log(_tahun)
+
+            $.ajax({
+                type: "POST",
+                url: '/loadbudget',
+                data: { Tahun: _tahun },
+                datatype: "json",
+                success: function (data) {
+                    window.location.href = data.redirectUrl;
+                }
+
+            });
+        });
+
+
+
+        $(document).on('click', '#btnisi', function (event) {
+            event.preventDefault();
+            var _th = $('#tahun_isi').val();
+            var _OpenStatus = '@OpenStatus';
+            var _tahun = EncryptURL(_th)
+            console.log(_tahun);
+            if (_OpenStatus == "Open") {
+                $.ajax({
+                    type: "POST",
+                    url: '/loadbudgetisi',
+                    data: { Tahun: _tahun },
+                    datatype: "json",
+                    success: function (data) {
+                        window.location.href = data.redirectUrl;
+                    }
+
+                });
+            }
+            else {
+                alert("Budget Sudah ditutup")
+
+            }
+
+        });
+
+
+        $(document).on('click', '#btnupload', function (event) {
+            event.preventDefault();
+            var _tahun = $('#tahun_isi').val();
+            var _semester = $('#semester_isi').val();
+
+            var url = "/ebudget_import/" + _tahun + "/Semester/" + _semester;
+            window.location.href = url;
+        });
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+    </script>
+}
+
+
+
+

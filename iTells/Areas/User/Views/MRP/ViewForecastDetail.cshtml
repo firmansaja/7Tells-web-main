@@ -1,0 +1,189 @@
+﻿@using BusinessObjects;
+@{
+    ViewBag.Title = "ViewForecastDetail";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    List<MRPForecastDetail> ListForecastDetail = (List<MRPForecastDetail>)ViewData["ListForecastDetail"];
+    int i = 0;
+}
+
+<style type="text/css">
+    .header-font {
+        font-size: 14px;
+        padding: 5px;
+    }
+
+    .header-font p {
+        font-size: 12px;
+        margin: 0px;
+    }
+
+    table, th, td {
+        font-size: 10px;
+        border: 1px solid black;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    th, td {
+        padding: 5px;
+    }
+</style>
+
+<div class="box box-primary" style="margin-bottom:5px">
+    <div class="box-body header-font">
+        <div class="row">
+            <div class="col-lg-2">
+                <h5 style="margin:0">Tahun : @ViewBag.Year</h5>
+            </div>
+            <div class="col-lg-3">
+                <h5 style="margin:0">Customer : @ViewBag.CustID</h5>
+            </div>
+            <div class="col-lg-4">
+                <h5 style="margin:0">Model : @ViewBag.Model</h5>
+            </div>
+            @*<div class="col-lg-3">
+                <button class="btn btn-success pull-right" id="btnExportForecast" onclick="ExportExcel()"><span class="bold fa fa-file-excel-o"></span>&nbsp;&nbsp;Export To Excel</button>
+            </div>*@
+        </div>
+    </div>
+</div>
+
+<div class="box box-primary">
+    <div class="box-header with-border header-font">
+        <div class="col-xs-12">
+            <div class="row">
+                <p>List Quantity Sales Forecast Detail</p>
+            </div>
+        </div>
+    </div>
+    <div class="box-body header-font">
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="tblForecast" style="border-color:black;width:100%">
+                    <thead>
+                        <tr style="background-color:lightskyblue;border-color:black">
+                            <th style="text-align:center;vertical-align:middle;border-color:black">No</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Invt ID</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Description</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Jan</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Feb</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Mar</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Apr</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Mei</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Jun</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Jul</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Agt</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sep</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Okt</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Nov</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Des</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in @ListForecastDetail)
+                        {
+                            i++;
+                            <tr>
+                                <td style="text-align:center;border-color:black; vertical-align:middle">@i</td>
+                                <td style="vertical-align:middle;border-color:black">@item.InvtID</td>
+                                <td style="vertical-align:middle;border-color:black">@item.Nama</td>
+                                @*--Bulan Januari*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.FCJan)</td>
+                                @*--Bulan Februari*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.FCFeb)</td>
+                                @*--Bulan Maret*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.FCMar)</td>
+                                @*--Bulan April*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.FCApr)</td>
+                                @*--Bulan Mei*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.FCMei)</td>
+                                @*--Bulan Juni*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.FCJun)</td>
+                                @*--Bulan Juli*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.FCJul)</td>
+                                @*--Bulan Agustus*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.FCAgt)</td>
+                                @*--Bulan September*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.FCSep)</td>
+                                @*--Bulan Oktober*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.FCOkt)</td>
+                                @*--Bulan November*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.FCNov)</td>
+                                @*--Bulan Desember*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.FCDes)</td>
+                            </tr>
+                        }
+                    </tbody>
+                    @*<tfoot>
+                        <tr>
+                            <th id="total" colspan="3">Total :</th>
+                            <td>200</td>
+                        </tr>
+                    </tfoot>*@
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#tblForecast').DataTable({
+                "destroy": true,
+                scrollY: "70vh",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                //search: true,
+                bFilter: false,
+                bInfo: false,
+                fixedColumns: {
+                    leftColumns: 3
+                },
+                //"aaSorting": [],
+                columnDefs: [
+                    { "width": "10px", "orderable": false, "targets": [0] },
+                ],
+            });
+
+        })
+
+        $(function () {
+            $(document).on('click', 'button[data-dismiss]', function (e) {
+                location.reload();
+            });
+        });
+
+        function ExportExcel(e) {
+            $.ajax({
+                url: '@Url.Action("ExportExcelForecastDetail", "MRP", new { area ="User"})',
+                dataType: "JSON",
+                type: "POST",
+                data: {
+                    CustID: '@ViewBag.CustID',
+                    Year: '@ViewBag.Year',
+                    Model: '@ViewBag.Model'
+                },
+                beforeSend: function () {
+                    $('#btnExportForecast').attr('disabled', true);
+                },
+                success: function (data) {
+                    if (data.success) {
+                        window.location.href = "@Url.RouteUrl(new { Controller = "MRP", Action = "Download" })/?fileName=" + "Report Forecast Detail.xlsx";
+                    }
+                },
+                complete: function () {
+                    $('#btnExportForecast').attr('disabled', false);
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+    </script>
+}
+

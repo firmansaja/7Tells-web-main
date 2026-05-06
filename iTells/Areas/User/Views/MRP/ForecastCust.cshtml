@@ -1,0 +1,262 @@
+﻿@using BusinessObjects;
+@{
+    ViewBag.Title = "Summary Forecast Customer";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    List<ComboList> Years = (List<ComboList>)ViewData["Year"];
+}
+
+<style type="text/css">
+    .header-font {
+        font-size: 14px;
+        padding: 5px;
+    }
+
+    .header-font p {
+        font-size: 12px;
+        margin: 0px;
+    }
+
+    table, th, td {
+        font-size: 10px;
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 5px;
+    }
+</style>
+
+<div class="box box-primary" style="margin-bottom:5px">
+    <div class="box-body header-font" >
+        <div class="row">
+            <div class="col-lg-1">
+                <h5 class="box-title">Tahun</h5>
+            </div>
+            <div class="col-lg-2">
+                <select id="filterYear" class="form-control select2 header-font" style="width:100%;border-radius:5px">
+                    @foreach (var item in Years)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+            @*<div class="col-lg-9">
+                <button class="btn btn-success pull-right" id="btnExportForecast" onclick="ExportExcel()"><span class="bold fa fa-file-excel-o"></span>&nbsp;&nbsp;Export To Excel</button>
+            </div>*@
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_ListForecastCust")
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script>
+        $(document).ready(function () {
+            var menuItem = $('#mrp');
+            menuItem.addClass('active');
+            var subMenuItem = menuItem.find('#mrp_forecast');
+            subMenuItem.addClass('active');
+
+            let year = new Date().getFullYear();
+            $('#filterYear').val(year);
+
+            DataTableForecastCust(year);
+        })
+
+        $(document).on('change', '#filterYear', function (event) {
+            event.preventDefault();
+            var year = $('#filterYear').val();
+            $("#tbForecastCust").dataTable().fnDestroy();
+            DataTableForecastCust(year);
+        });
+
+        var ListForecastCust = null;
+        var dtForecastCust;
+        function DataTableForecastCust(year) {
+            ListForecastCust = {
+                init: function () {
+                    dtForecastCust = $('#tbForecastCust').DataTable({
+                        "scrollX": true,
+                        "scrollY": 700,
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "bFilter": false,
+                        "bPaginate": false,
+                        "ajax": {
+                            "url": "/getForecastCust",
+                            "data": { Year: year },
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            {
+                                "title": "Cust ID",
+                                "data": "CustID",
+                                "class": "point",
+                                render: function (data,) {
+                                    return '<a id=btnCustID>' + data + '</a>'
+                                },
+                            },
+                            { "title": "Customer", "data": "Customer" },
+                            {
+                                "title": "Jan", "data": "FCJan",
+                                "render": function (value) {
+                                    if (value === null) return 0;
+                                    return formatNumber(value);
+                                }
+                            },
+                            {
+                                "title": "Feb", "data": "FCFeb",
+                                "render": function (value) {
+                                    if (value === null) return 0;
+                                    return formatNumber(value);
+                                }
+                            },
+                            {
+                                "title": "Mar", "data": "FCMar",
+                                "render": function (value) {
+                                    if (value === null) return 0;
+                                    return formatNumber(value);
+                                }
+                            },
+                            {
+                                "title": "Apr", "data": "FCApr",
+                                "render": function (value) {
+                                    if (value === null) return 0;
+                                    return formatNumber(value);
+                                }
+                            },
+                            {
+                                "title": "Mei", "data": "FCMei",
+                                "render": function (value) {
+                                    if (value === null) return 0;
+                                    return formatNumber(value);
+                                }
+                            },
+                            {
+                                "title": "Jun", "data": "FCJun",
+                                "render": function (value) {
+                                    if (value === null) return 0;
+                                    return formatNumber(value);
+                                }
+                            },
+                            {
+                                "title": "Jul", "data": "FCJul",
+                                "render": function (value) {
+                                    if (value === null) return 0;
+                                    return formatNumber(value);
+                                }
+                            },
+                            {
+                                "title": "Agt", "data": "FCAgt",
+                                "render": function (value) {
+                                    if (value === null) return 0;
+                                    return formatNumber(value);
+                                }
+                            },
+                            {
+                                "title": "Sep", "data": "FCSep",
+                                "render": function (value) {
+                                    if (value === null) return 0;
+                                    return formatNumber(value);
+                                }
+                            },
+                            {
+                                "title": "Okt", "data": "FCOkt",
+                                "render": function (value) {
+                                    if (value === null) return 0;
+                                    return formatNumber(value);
+                                }
+                            },
+                            {
+                                "title": "Nov", "data": "FCNov",
+                                "render": function (value) {
+                                    if (value === null) return 0;
+                                    return formatNumber(value);
+                                }
+                            },
+                            {
+                                "title": "Des", "data": "FCDes",
+                                "render": function (value) {
+                                    if (value === null) return 0;
+                                    return formatNumber(value);
+                                }
+                            },
+                        ],
+                        "columnDefs": [
+                            //{ "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                            { "className": "text-right custom-middle-align", "targets": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13] },
+                            //{ "visible": false, "targets": [0, 4, 6] },
+                        ],
+                        //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+                    });
+                }
+            }
+            ListForecastCust.init();
+        }
+
+        $(document).on('click', '#btnCustID', function (event) {
+            event.preventDefault();
+            var _year = $('#filterYear').val();
+            var row = $(this).closest('tr');
+            var data = $('#tbForecastCust').dataTable().fnGetData(row);
+            var _custID = EncryptURL(data.CustID);
+            var url = "/viewForecastModel/" + _custID + "/Year/" + _year;
+            window.location.href = url;
+        });
+
+        function ExportExcel(e) {
+            $.ajax({
+                url: '@Url.Action("ExportExcelForecastCust", "MRP", new { area ="User"})',
+                dataType: "JSON",
+                type: "POST",
+                data: {
+                    Year: $('#filterYear').val()
+                },
+                beforeSend: function () {
+                    $('#btnExportForecast').attr('disabled', true);
+                },
+                success: function (data) {
+                    if (data.success) {
+                        window.location.href = "@Url.RouteUrl(new { Controller = "MRP", Action = "Download" })/?fileName=" + "Report Forecast Customer.xlsx";
+                    }
+                },
+                complete: function () {
+                    $('#btnExportForecast').attr('disabled', false);
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+        function formatNumber(value) {
+            return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+        }
+
+    </script>
+}
+
+

@@ -1,0 +1,217 @@
+﻿@using BusinessObjects;
+@{
+    List<ComboList> tahun = (List<ComboList>)ViewData["Tahun"];
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.SubTitle1 = "";
+    var FilterTahun = "";
+
+    foreach (var item in tahun)
+    {
+        FilterTahun = item.Value;
+    }
+}
+
+<head>
+    <style>
+        .packaging {
+            display: grid;
+            grid-template-columns: 100px 100px 1fr;
+            grid-template-areas: 'btn1 btn2 judul';
+            margin-bottom: 5px;
+            background-color: #2E86C1;
+            padding: 5px;
+            border-radius: 5px;
+            grid-gap: 5px;
+        }
+
+        .btn1 {
+            grid-area: btn1;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .btn2 {
+            grid-area: btn2;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .judul {
+            grid-area: judul;
+            display: flex;
+            align-items: center;
+            padding-left: 5px;
+        }
+
+            .judul label {
+                color: white;
+            }
+
+        .packaging button {
+            border-radius: 5px;
+            padding-left: 5px;
+        }
+
+        @@media (max-width:600px) {
+            .packaging {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas: 'btn1 btn2' 'judul judul';
+                grid-gap: 5px;
+            }
+        }
+    </style>
+</head>
+
+<div id="MainForm">
+    <div class="row">
+        <div class="col-md-12 col-lg-12" id="div2">
+            <div class="packaging">
+                <button class="btn1 btn btn-warning" id="btnKembali">Kembali</button>
+                <button class="btn2 btn btn-success" id="btnExport">Export</button>
+                <div class="judul">
+                    <label class="control-label text-muted">@ViewBag.title</label>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="MainForm">
+    <div id="tablegrid">
+        @Html.Partial("_LihatBudgetvsActual")
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+            DataTable();
+        })
+
+        var ListVM;
+        function DataTable() {
+            var th = @FilterTahun;
+            ListVM = {
+                dt: null,
+
+                init: function () {
+                    dt = $('#tbLihatBudget').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "scrollY": "75vh",
+                        "scrollX": true,
+                        "scrollCollapse": true,
+                        "paging": true,
+                        "ajax": {
+                            "url": "/getActualDeptSummary",
+                            "data": { id: th },
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            { "title": "No", "data": "No", "width": "30px", "class": "text-center hh"},
+                            {
+                                "title": "DeptID",
+                                "data": "DeptID",
+                                "class": "text-center point",
+                                "width": "70px",
+                                render: function (data,) {
+                                    return '<a id=btnLihat>' + data + '</a>'
+                                },
+                            },
+                            { "title": "DeptName", "data": "DeptName", "width": "70px", "class": "text-left dept" },
+                            { "title": "SiteID", "data": "SiteID", "width": "70px", "class": "text-center dept" },
+                            { "title": "Tahun", "data": "Tahun", "width": "70px", "class": "text-center th" },
+                            { "title": "Subtotal Budget", "data": "BudgetSubtotal", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0) },
+                            { "title": "Subtotal Actual", "data": "ActualSubtotal", "width": "150px", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0) },
+                        ],
+                        "lengthMenu": [[50, 100], [50, 100]]
+
+                    });
+                }
+            }
+            ListVM.init();
+        }
+
+        $(document).on('click', '#btnLihat', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+
+            var data = $('#tbLihatBudget').dataTable().fnGetData(row);
+
+            var id = $(this).closest('tr').find('.th').text();
+            var dept = $(this).closest('tr').find('.point').text();
+
+            var url = "/lihatbudgetvsactualpresentasi/" + EncryptURL(id) + "/DeptId/" + EncryptURL(dept) ;
+
+            window.location.href = url;
+
+        });
+
+        $(document).on('click', '#btn', function (event) {
+            event.preventDefault();
+            var id = '@FilterTahun';
+            var dept = 'ALL';
+
+            var url = "/lihatbudgetvsactualpresentasi/" + id + "/DeptId/" + dept;
+
+            window.location.href = url;
+        });
+
+        $(document).on('click', '#btnExport', function (event) {
+        event.preventDefault();
+
+        var tahun = @FilterTahun;
+
+        $.ajax({
+                type: "POST",
+                url: '@Url.Action("CreateDataToExcel_ActualSummaryDept", "EBudget", new { area ="User"})',
+            data: { tahun : tahun  },
+                //datatype: "json",
+                success: function (data_) {
+                    console.log(data_);
+                    if (data_.success) {
+                        window.location.href = "@Url.RouteUrl(new { Controller = "EBudget", Action = "Download" })/?fileName=" + data_.namafile;
+                    }
+                    else {
+                        alert("Download GAGAL")
+                    }
+                }
+            });
+        });
+
+        $(document).on('click', '#btnKembali', function (event) {
+        event.preventDefault();
+        var url = '@Url.Action("BudgetvsActualDept", "EBudget", new { area = "User" })';
+        window.location.href = url;
+        });
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+    </script>
+}
+

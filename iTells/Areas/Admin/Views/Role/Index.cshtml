@@ -1,0 +1,69 @@
+﻿@model IEnumerable<iTells.Models.tblRole>
+@{
+    ViewBag.Title = "Role List";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    iTells.Helper.GeneralHelper dHelper = new iTells.Helper.GeneralHelper();
+}
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            @if (ViewBag.IsAdd == true)
+            {
+                <div class="box-header">
+                    <a href="/admin/role/create" class="btn btn-info pull-right">Add Role</a>
+                </div>
+            }
+            @{Html.RenderAction("PopulateRole", "Role");}
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="/scripts/Common.js"></script>
+    <script>
+        $(document).ready(function () {
+            //var menuItem = $('#user');
+            //menuItem.addClass('active');
+            $("#tblRole").DataTable();
+            $('.delete').click(function () {
+                var url = $(this).data('url');
+                $.get(url, function (data) {
+                    if (data.success == "0") {
+                        $('#tblRole').load(data.url);
+                        $("#tblRole").DataTable();
+                        $('#message').html(data.message);
+                        $('#message').fadeTo(2000, 0.01, function () {
+                            $(this).slideUp(200, function () {
+                                $(this).remove();
+                            });
+                        });
+                    }
+                    else if (data.success == "3") {
+                        $('#message').html(data.message);
+                        $('#message').fadeTo(2000, 0.01, function () {
+                            $(this).slideUp(200, function () {
+                                $(this).remove();
+                            });
+                        });
+                    }
+                });
+                return false;
+            });
+
+            var msg = localStorage.getItem("message");
+            console.log(msg);
+            if (msg != null) {
+                $('#message').html(msg);
+                $('#message').fadeTo(2000, 0.01, function () {
+                    $(this).slideUp(200, function () {
+                        $(this).remove();
+                    });
+                });
+                localStorage.removeItem("message");
+            }
+        });
+    </script>
+}

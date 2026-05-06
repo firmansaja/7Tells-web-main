@@ -1,0 +1,38 @@
+﻿@model IEnumerable<iTells.Models.tblRole>
+@{
+    iTells.Helper.GeneralHelper dHelper = new iTells.Helper.GeneralHelper();
+}
+<div class="box-body">
+    <span id="message"></span>
+    @Html.Raw(ViewBag.Message)
+    <table id="tblRole" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Display Name</th>
+                <th width="100px">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>
+                        @item.DisplayName
+                    </td>
+                    <td>
+                        @if (ViewBag.IsEdit == true)
+                        {
+                            <a href="/admin/role/edit?ID=@item.ID" class="btn btn-primary btn-xs">Edit</a>
+                        }
+                        @if (ViewBag.IsDelete == true)
+                        {
+                            <a data-url="/admin/role/delete/@item.ID" class="delete btn btn-warning btn-xs">Delete</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

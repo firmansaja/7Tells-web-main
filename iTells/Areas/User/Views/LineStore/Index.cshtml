@@ -1,0 +1,244 @@
+﻿
+@{
+    ViewBag.Title = "Control Stock F/G";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    * {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    /*Body {
+        background-color: #14599e;
+    }*/
+
+    .content {
+        padding: 0px;
+    }
+
+    .main-sidebar {
+        display: none;
+    }
+
+    .main-header {
+        display: none;
+    }
+
+    .sidebar-toggle {
+        display: none;
+    }
+
+    table, th, td {
+        border: 1px solid black;
+        text-align: center;
+        border-collapse: collapse;
+        font-size: 18px;
+    }
+
+    .th-sum {
+        border: none;
+        font-weight: bold;
+    }
+
+    .header-container {
+        margin: 2px;
+        display: grid;
+        grid-template-columns: 20% auto 20%;
+        text-align: center;
+        border: 1px solid;
+        align-content:center;
+        align-items:center;
+    }
+
+    .header-container h1, h3 {
+        margin: 5px;
+        font-weight: bold;
+    }
+
+    .logo {
+        grid-row-start: 1;
+        grid-row-end: 3;
+        border-right: 1px solid;
+    }
+
+    .title-container {
+        display: flex;
+        height: 100px;
+        justify-content: space-around;
+        flex-direction: column;
+    }
+
+    .sum-container {
+        display: grid;
+        grid-template-columns: repeat(4, [col-start] auto [col-end]);
+        grid-row-gap: 1px;
+        grid-column-gap: 4px;
+        text-align: center;
+        color: white;
+        margin: 2px;
+    }
+
+    .sum-container h3 {
+        margin: 5px;
+        font-weight: bold;
+    }
+
+    .sum-container h1 {
+        margin: 5px;
+        font-size: 60px;
+        font-weight: bold;
+        line-height: 1;
+    }
+
+    table {
+        margin: 0px 2px;
+    }
+
+    td {
+        padding: 5px;
+    }
+
+    th {
+        background-color: lightgrey;
+        padding: 5px;
+    }
+
+    /*.input-group-addon {
+        background-color: #eee;
+        font-size: large;
+        font-weight: bold;
+    }
+
+    .input-group,
+    .form-control {
+        font-size: large;
+        font-weight: bold;
+    }*/
+    table {
+        /*width: 50%;*/
+        counter-reset: row-num;
+    }
+
+    table tbody tr {
+        counter-increment: row-num;
+    }
+
+    table tbody tr td:first-child::before {
+        content: counter(row-num) "";
+    }
+</style>
+
+<div class="partialview">
+    <div id="tablegrid">
+        <div>
+            @Html.Partial("_ListLineStore")
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.signalR-2.1.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Scripts/bootstrap-datepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("body").removeClass();
+            document.getElementById('wr').classList.remove('wrapper')
+            document.getElementById('wrcw').classList.remove('content-wrapper')     
+
+            //DT1();
+
+            var notifications = $.connection.fifoHub;
+            notifications.client.updateData = function () {
+                getData()
+            };
+
+           $.connection.hub.start().done(function () {
+                getData();
+            }).fail(function (e) {
+                alert(e);
+            });
+
+            setInterval(function () {
+                let today = new Date();
+                let jam = today.getHours();
+                let shift = '2';
+
+                if (jam < 8) {
+                    shift = '3';
+                } else if (jam < 16) {
+                    shift = '1';
+                }
+
+                $('#hari').text(getDayName(today) + ' | Shift ' + shift);
+                $('#tgl').text(FormatDateTime('D MMM YYYY HH:mm:ss', today));
+
+            }, 1000)
+        })
+
+        //function DT1() {
+        //    $('#tblLineStock').DataTable({
+        //        paging: false,
+        //        //scrollY: "65vh",
+        //        //scrollX: "65vh",
+        //        //scrollX: true,
+        //        bSort: false,
+        //        bInfo: false,
+        //        //columnDefs: [
+        //        //    { "className": "text-center custom-middle-align", "targets": [0] },
+        //        //],
+        //        //pagingType: 'full_numbers',
+        //    });
+        //}
+
+        function getData() {
+            var tbl = $('#tablegrid');
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetDataLineStore", "LineStore")',
+                //data: { DTDari: dtDari, DTSampai: dtSampai },
+                success: function (data) {
+                    tbl.empty().append(data);
+                    setTimeout(function () {
+                        WaitingDialog.hide();
+                    }, 500);
+
+                    //return DT1();
+                },
+                error: function (data) {
+                    setTimeout(function () {
+                        WaitingDialog.hide();
+                    }, 500);
+                    alert('Error Load data');
+                }
+            });
+        }
+
+        function getDayName(date = new Date(), weekday = 'long', locale = 'en-US', ) {
+            return date.toLocaleDateString(locale, { weekday: weekday });
+        }
+
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+        function FormatDateTime(format, date = new Date()) {
+            var datetime = moment(date).format(format)
+            return datetime
+        }
+
+    </script>
+}
+

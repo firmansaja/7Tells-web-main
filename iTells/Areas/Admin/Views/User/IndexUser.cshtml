@@ -1,0 +1,257 @@
+﻿@using BusinessObjects;
+@{
+    ViewBag.Title = "List User";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    List<ComboList> Roles = (List<ComboList>)ViewData["Role"];
+}
+
+
+<div id="MainForm">
+    <div id="tablegrid">
+        @Html.Partial("_ListUser")
+    </div>
+</div>
+
+<div class="modal fade" id="_popUp" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title" id="_title"></h2>
+            </div>
+            <div class="modal-body">
+                @*<h4 style="color:red;" class="hidden" id="_delConfirm">Are your sure delete this data?</h4>*@
+                <div class="form-horizontal">
+                    <div class="form-group hidden">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">id</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="_inputState" class="form-control" />
+                            <input id="_id" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Username</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="username" class="form-control" autofocus />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Roles</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <select id="roles" class="form-control select2" style="width:100%">
+                                <option value="0">-- Pilih Tipe --</option>
+                                @foreach (var item in Roles)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="_saveBtn" class="btn btn-primary" onclick="return Edit()" style="width:100px">Simpan</button>&nbsp;
+                <button type="button" class="btn btn-primary" data-dismiss="modal" style="width:100px">Kembali</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            DataTable();
+            $(".select2").select2();
+            //var menuItem = $('#2');
+            //menuItem.addClass('active');
+            //var subMenuItem = menuItem.find('#18');
+            //subMenuItem.addClass('active');
+            console.log('@Roles');
+        });
+        
+        $(document).on('click', '#BtnEdit', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            //var Username = row.find('td:eq(2)').text();
+            //console.log(Username);
+            //console.log(Username1);
+
+            Init();
+            var data = $('#tbUser').dataTable().fnGetData(row);
+
+            var Id = data.Username;
+            console.log(data);
+            $("#_popUp").modal({ backdrop: 'static' });
+            $('#_title').text("Set User Role");
+
+            GetBarangById(Id);
+
+            $("#_inputState").val("Edit");
+
+            $("#_id").attr("disabled", "disabled");
+            $("#username").attr("disabled", "disabled");
+            $("#roles").removeAttr("disabled", "disabled");
+
+            $("#_saveBtn").removeClass("hidden");
+            $("#_saveBtn").html("Update");
+            $('#_popUp').on('shown.bs.modal', function () {
+                $('#roles').focus();
+            })
+        });
+
+        var Id;
+        var Kode;
+        var Deskripsi;
+        var Tipe;
+        var Satuan;
+        var Datas;
+
+        function ClearVar() {
+            Id = "";
+            Kode = "";
+            Deskripsi = "";
+            Tipe = "";
+            Satuan = "";
+        }
+        function Init() {
+            ClearVar();
+            $("#_id").val("");
+            $("#username").val("");
+            $("#roles").val("").trigger('change');
+        }
+
+        var ListVM;
+        function DataTable() {
+            ListVM = {
+                dt: null,
+
+                init: function () {
+                    dt = $('#tbUser').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "ajax": {
+                            "url": "@Url.Action("GetUsers", "User")",
+                            "type": 'POST',
+                            //"dataType": "JSON",
+                    },
+                        "columns": [
+                            { "title": "No", "data": "No", "searchable": false, "width": "20px" },
+                            {
+                                data: "No", "width": "40px", title: "Action", "orderable": false, "render": function (data) {
+                                    return '<button class="btn btn-xs btn-primary" id="BtnEdit" title="Edit" style="margin-right:5px"> <span class="fa fa-pencil"></span></button>';
+                                }
+                                //"data": null, "width": "40px", "title": "Action", "orderable": false, "render": function (data) {
+                                //    console.log(data.Username);
+                                //    if (data.Username !== 'Aan') {
+                                //        return '<button class="btn btn-xs btn-primary" id="BtnEdit" title="Edit" style="margin-right:5px"> <span class="fa fa-pencil"></span></button>';
+                                //    } else {
+                                //        return '';
+                                //    }
+                                //}
+                            },
+                            //{ "title": "User Id", "data": "UserId", "searchable": false, className: "_id", "visible": false },
+                            { "title": "Username", "data": "Username", "width": "100px" },
+                            { "title": "Group", "data": "UserGroupCode"},
+                            { "title": "Site", "data": "Site"},
+                            //{ "title": "Role", "data": "RoleID", "searchable": false, "visible": false },
+                            { "title": "Email", "data": "Email"}
+
+                        ],
+                        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+                    });
+                }
+            }
+          ListVM.init();
+
+        }
+
+        toastr.options = {
+            "positionClass": "toast-top-center",
+            "timeOut": "1000",
+            "preventDuplicates": true,
+            "closeButton": true,
+            "progressBar": true
+        }
+
+        function Edit() {
+            Id = $("#_id").val();
+            Username = $("#username").val();
+            Role = $('#roles').val();
+            console.log(Role);
+            if (Username == "") {
+                toastr.error("Username tidak boleh kosong.")
+            } else if (Role == "") {
+                toastr.error("Pilih Role")
+                $("#roles").focus();
+            } else {                
+                var model = {
+                    Username: Username,
+                    RoleID: Role
+                }
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("EditUser", "User", new {area="Admin"})',
+                    data: {
+                        model : model
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            //toastr.success(data.message);
+                            $("#_popUp").modal('hide');
+                            Init();
+                            $('#tbUser').DataTable().ajax.reload();
+                            var message = '<div class=\"alert alert-success fade in\">Successfully Edit User Role.</div>';
+                            $('#message').html(message);
+                            $('#message').fadeTo(2000, 0.01, function () {
+                                $(this).slideUp(200, function () {
+                                    $(this).remove();
+                                });
+                            });
+                        } else {
+                            //toastr.error(data.message);
+                            $("#_popUp").modal('hide');
+                            Init();
+                            var message = '<div class=\"alert alert-danger fade in\">Failed Edit User Role.</div>';
+                            $('#message').html(message);
+                            $('#message').fadeTo(2000, 0.01, function () {
+                                $(this).slideUp(200, function () {
+                                    $(this).remove();
+                                });
+                            });
+                        }
+                    },
+                });
+            }
+        }
+
+        
+        function GetBarangById(Id) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetUserById", "User", new { area="Admin" })',
+                data: {
+                    Username: Id
+                },
+                success: function (result) {
+                    if (result.length > 0) {
+                        $("#_id").val(result[0].UserId);
+                        $("#username").val(result[0].Username);
+                        $("#roles").val(result[0].RoleID).trigger('change');
+                        //$("#Add_Tgl_Produksi").val(convertJsonDateToShortDate(result[0].Tgl_Produksi));
+                        //$("#Add_WONo").val(result[0].WONo).trigger('change');
+                    }
+                },
+            });
+        }
+
+    </script>
+}
+

@@ -1,0 +1,242 @@
+﻿
+@{
+    ViewBag.Title = "LoadStokFifo";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+
+
+
+    @@keyframes blink {
+        0% {
+            background-color: #d73434 ;
+            color: black;
+        }
+
+        50% {
+            background-color: #c88e8e;
+            color: #c88e8e;
+        }
+
+        100% {
+            background-color: #d73434;
+            color: black;
+        }
+    }
+
+    @@-webkit-keyframes blink {
+        0% {
+            background-color: #d73434;
+            color: black;
+        }
+
+        50% {
+            background-color: #c88e8e;
+            color: #c88e8e;
+        }
+
+        100% {
+            background-color: #d73434;
+            color: black;
+        }
+    }
+
+    .blink {
+        -moz-transition: all 0.5s ease-in-out;
+        -webkit-transition: all 0.5s ease-in-out;
+        -o-transition: all 0.5s ease-in-out;
+        -ms-transition: all 0.5s ease-in-out;
+        transition: all 0.5s ease-in-out;
+        -moz-animation: blink normal 1.5s infinite ease-in-out;
+        /* Firefox */
+        -webkit-animation: blink normal 1.5s infinite ease-in-out;
+        /* Webkit */
+        -ms-animation: blink normal 1.5s infinite ease-in-out;
+        /* IE */
+        animation: blink normal 1.5s infinite ease-in-out;
+        /* Opera */
+    }
+
+    a {
+        color: black
+    }
+    h3 {
+        text-align: center;
+    }
+
+    
+</style>
+
+@*<div class="navbar-default">
+        <h2><marquee>MONITORING STOK BARANG ( TANGGAL @ViewBag.tgl )</marquee></h2>
+    </div>*@
+
+<div id="tablegrid">
+    @Html.Partial("Partial/PartialFIFO")
+</div>
+
+
+@*<div class="box box-primary scrollme">
+
+    </div>*@
+
+<!-- Bootstrap modal Approvepopup -->
+<div class="modal fade" id="ItemPopUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="myModalLabel">Lokasi Material</h3>
+            </div>
+            <div class="modal-body align-content-center">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of the boostrap modal popup -->
+
+
+@section scripts{
+    <script src="~/Scripts/jquery.signalR-2.1.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+            $("#ItemPopUp").modal('hide');
+            DT1();
+
+            $('#dtDari').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+
+            var notifications = $.connection.fifoHub;
+            console.log(notifications);
+            notifications.client.updateData = function () {
+                getData()
+            };
+
+           $.connection.hub.start().done(function () {
+                //alert("connection started")
+                getData();
+            }).fail(function (e) {
+                alert(e);
+            });
+        })
+
+        function DT1() {
+
+            $('#TBFIFO').DataTable({
+                paging: false,
+                scrollY: "65vh",
+                scrollX: "65vh",
+                scrollX: true,
+
+            });
+        }
+
+
+        function getData() {
+
+            var Tgl = new Date();
+            var tbl = $('#tablegrid');
+            var Tgl = new Date();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetDataStokFifo", "EMaterialKontrol")',
+                    data: {
+                        tgl: formatDate(Tgl)
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+
+
+
+                });
+        }
+
+
+
+        $(document).on('click', '#btn1', function (event) {
+            event.preventDefault();
+
+            //WaitingDialog.show('Please Wait...', {
+            //    dialogSize: 'm',
+            //    progressType: 'info'
+            //});
+            var tbl = $('#tablegrid');
+            var Tgl = new Date();
+            alert(formatDate(Tgl));
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetDataStokFifo", "EMaterialKontrol")',
+                    data: {
+                        tgl: formatDate(Tgl)
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        return DataTable();
+                    },
+                    error: function (data) {
+                        alert('Error Load data');
+                    }
+
+                });
+
+        });
+
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+        function ViewDetailStok(invtid,site) {
+             $("#ItemPopUp").modal({ backdrop: 'static' });
+
+                modal: false;
+                $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("LoadModal_Stok", "EMaterialKontrol")',
+                    data: { invtid: invtid, site : site},
+                            dataType: "html",
+                            success: function (response) {
+                                $("#ItemPopUp").find(".modal-body").html(response);
+                                $("#ItemPopUp").modal('show');
+                            },
+                            failure: function (response) {
+                                alert(response.responseText);
+                            },
+                            error: function (response) {
+                                alert(response.responseText);
+                            }
+                        });
+        }
+
+    </script>
+}
+

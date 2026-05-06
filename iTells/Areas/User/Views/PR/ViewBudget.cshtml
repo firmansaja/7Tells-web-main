@@ -1,0 +1,413 @@
+﻿@using BusinessObjects;
+@{
+    ViewBag.Title = "CONTROL BUDGET REPORT";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "E-PR";
+    ViewBag.Link = "/User/PR";
+    List<PRBudget> ListPRBudget = (List<PRBudget>)ViewData["ListPRBudget"];
+    int i = 0;
+}
+
+<div class="box box-primary" style="overflow-x:auto">
+    <div class="box-header with-border">
+        <div class="col-xs-12">
+            <div class="row">
+                <div class="col-xs-2">
+                    <h3 class="box-title">Fiscal Year : @ViewBag.Year</h3>
+                </div>
+                <div class="col-xs-4">
+                    <h3 class="box-title">Sub Account : @ViewBag.Sub</h3>
+                </div>
+                <div>
+                    <button class="btn btn-success pull-right" id="btnExportBudget" onclick="ExportExcel()"><span class="bold fa fa-file-excel-o"></span>&nbsp;&nbsp;Export To Excel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="tblBudget" style="border-color:black" class="table table-bordered">
+                    <thead>
+                        <tr style="background-color:lightskyblue;border-color:black">
+                            <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">No</th>
+                            <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Acct</th>
+                            <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Desct Acct</th>
+                            <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Januari</th>
+                            <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Februari</th>
+                            <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Maret</th>
+                            <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">April</th>
+                            <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Mei</th>
+                            <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Juni</th>
+                            <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Juli</th>
+                            <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Agustus</th>
+                            <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">September</th>
+                            <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Oktober</th>
+                            <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">November</th>
+                            <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Desember</th>
+                        </tr>
+                        <tr style="background-color:lightskyblue">
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Budget</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Budget</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Budget</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Budget</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Budget</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Budget</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Budget</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Budget</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Budget</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Budget</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Budget</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Budget</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in @ListPRBudget)
+                        {
+                            i++;
+                            <tr>
+                                <td style="text-align:center;border-color:black; vertical-align:middle">@i</td>
+                                <td style="vertical-align:middle;border-color:black">@item.Account</td>
+                                <td style="vertical-align:middle;border-color:black">@item.AccountDesc</td>
+                                @*--Bulan Januari*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget01)</td>
+                                @if (@item.Actual01 == 0)
+                                {
+                                    <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Actual01)</td>
+                                }
+                                else
+                                {
+                                    if (@item.Actual01 > @item.Budget01)
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a style="color:red" data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=1&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual01)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=1&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual01)</a></td>
+                                    }
+                                }
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Sisa01)</td>
+                                @*--Bulan Februari*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget02)</td>
+                                @if (@item.Actual02 == 0)
+                                {
+                                    <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Actual02)</td>
+                                }
+                                else
+                                {
+                                    if (@item.Actual02 > @item.Budget02)
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a style="color:red" data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=2&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual02)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=2&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual02)</a></td>
+                                    }
+                                }
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Sisa02)</td>
+                                @*--Bulan Maret*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget03)</td>
+                                @if (@item.Actual03 == 0)
+                                {
+                                    <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Actual03)</td>
+                                }
+                                else
+                                {
+                                    if (@item.Actual03 > @item.Budget03)
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a style="color:red" data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=3&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual03)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=3&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual03)</a></td>
+                                    }
+                                }
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Sisa03)</td>
+                                @*--Bulan April*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget04)</td>
+                                @if (@item.Actual04 == 0)
+                                {
+                                    <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Actual04)</td>
+                                }
+                                else
+                                {
+                                    if (@item.Actual04 > @item.Budget04)
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a style="color:red" data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=4&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual04)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=4&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual04)</a></td>
+                                    }
+                                }
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Sisa04)</td>
+                                @*--Bulan Mei*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget05)</td>
+                                @if (@item.Budget05 == 0)
+                                {
+                                    <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget05)</td>
+                                }
+                                else
+                                {
+                                    if (@item.Actual05 > @item.Budget05)
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a style="color:red" data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=5&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual05)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=5&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual05)</a></td>
+                                    }
+                                }
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Sisa05)</td>
+                                @*--Bulan Juni*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget06)</td>
+                                @if (@item.Actual06 == 0)
+                                {
+                                    <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Actual06)</td>
+                                }
+                                else
+                                {
+                                    if (@item.Actual06 > @item.Budget06)
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a style="color:red" data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=6&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual06)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=6&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual06)</a></td>
+                                    }
+                                }
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Sisa06)</td>
+                                @*--Bulan Juli*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget07)</td>
+                                @if (@item.Actual07 == 0)
+                                {
+                                    <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Actual07)</td>
+                                }
+                                else
+                                {
+                                    if (@item.Actual07 > @item.Budget07)
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a style="color:red" data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=7&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual07)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=7&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual07)</a></td>
+                                    }
+                                }
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Sisa07)</td>
+                                @*--Bulan Agustus*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget08)</td>
+                                @if (@item.Actual08 == 0)
+                                {
+                                    <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Actual08)</td>
+                                }
+                                else
+                                {
+                                    if (@item.Actual08 > @item.Budget08)
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a style="color:red" data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=8&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual08)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=8&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual08)</a></td>
+                                    }
+                                }
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Sisa08)</td>
+                                @*--Bulan September*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget09)</td>
+                                @if (@item.Actual09 == 0)
+                                {
+                                    <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Actual09)</td>
+                                }
+                                else
+                                {
+                                    if (@item.Actual09 > @item.Budget09)
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a style="color:red" data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=9&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual09)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=9&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual09)</a></td>
+                                    }
+                                }
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Sisa09)</td>
+                                @*--Bulan Oktober*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget10)</td>
+                                @if (@item.Actual10 == 0)
+                                {
+                                    <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Actual10)</td>
+                                }
+                                else
+                                {
+                                    if (@item.Actual10 > @item.Budget10)
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a style="color:red" data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=10&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual10)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=10&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual10)</a></td>
+                                    }
+                                }
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Sisa10)</td>
+                                @*--Bulan November*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget11)</td>
+                                @if (@item.Actual11 == 0)
+                                {
+                                    <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Actual11)</td>
+                                }
+                                else
+                                {
+                                    if (@item.Actual11 > @item.Budget11)
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a style="color:red" data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=11&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual11)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=11&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual11)</a></td>
+                                    }
+                                }
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Sisa11)</td>
+                                @*--Bulan Desember*@
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Budget12)</td>
+                                @if (@item.Actual12 == 0)
+                                {
+                                    <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Actual12)</td>
+                                }
+                                else
+                                {
+                                    if (@item.Actual12 > @item.Budget12)
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a style="color:red" data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=12&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual12)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border-color:black; vertical-align:middle"><a data-toggle="modal" href="/user/pr/viewbudgetdetail?Year=@ViewBag.Year&Month=12&Sub=@item.Sub&Acct=@item.Account" data-target="#modalBudgetDetail">@String.Format("{0,14:n0}", @item.Actual12)</a></td>
+                                    }
+                                }
+                                <td style="text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.Sisa12)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalBudgetDetail" role="dialog" aria-labelledby="ModalPopUp" aria-hidden="true">
+    <div class="modal-dialog" style="width:95%;height:90%" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#tblBudget').DataTable({
+                "destroy": true,
+                scrollY: "400px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                search: false,
+                bFilter: false,
+                bInfo: false,
+                fixedColumns: {
+                    leftColumns: 3
+                },
+                "aaSorting": [],
+                columnDefs: [
+                    { "width": "10px", "orderable": false, "targets": [0] },
+                ],
+            });
+
+        })
+
+        $(function () {
+            $(document).on('click', 'button[data-dismiss]', function (e) {
+                location.reload();
+            });
+        });
+
+        function ExportExcel(e) {
+            $.ajax({
+                url: '@Url.Action("ExportExcelBudget", "PR", new { area ="User"})',
+                dataType: "JSON",
+                type: "POST",
+                data: {
+                    Dept: '@ViewBag.Sub',
+                    Year: '@ViewBag.Year'
+                },
+                beforeSend: function () {
+                    $('#btnExportBudget').attr('disabled', true);
+                },
+                success: function (data) {
+                    if (data.success) {
+                        window.location.href = "@Url.RouteUrl(new { Controller = "PR", Action = "Download" })/?fileName=" + "Report Budget.xlsx";
+                    }
+                },
+                complete: function () {
+                    $('#btnExportBudget').attr('disabled', false);
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+        function ExportBudgetDetail(Month) {
+            $.ajax({
+                url: '@Url.Action("ExportExcelBudgetDetail", "PR", new { area ="User"})',
+                dataType: "JSON",
+                type: "POST",
+                data: {
+                    Year: '@ViewBag.Year',
+                    Month: Month,
+                    Sub: '@ViewBag.Sub',
+                    Acct: $('#txtAccount').html()
+                },
+                beforeSend: function () {
+                    $('#btnExportBudgetDetail').attr('disabled',true);
+                },
+                success: function (data) {
+                    if (data.success) {
+                        window.location.href = "@Url.RouteUrl(new { Controller = "PR", Action = "Download" })/?fileName=" + "Report Budget Detail.xlsx";
+                    }
+                },
+                complete: function () {
+                    $('#btnExportBudgetDetail').attr('disabled', false);
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+    </script>
+}
+

@@ -1,0 +1,86 @@
+﻿@using BusinessObjects
+@{
+    List<TrollyInOutDepoModel> DataTrollyInOut = (List<TrollyInOutDepoModel>)ViewData["DataTrollyInOut"];
+}
+
+<div class="row cmain-body">
+    <div class="col-xs-12">
+        <table id="tblTrollyInOut" style="width:100%" class="table table-bordered">
+            <thead>
+                <tr style="color:white">
+                    <th colspan="6" style="text-align:center;vertical-align:middle">Depo Nisho</th>
+                    <th colspan="3" style="text-align:center;vertical-align:middle">TSC</th>
+                </tr>
+                <tr style="color:white;text-align:center;vertical-align:middle;">
+                    <th>No Surat Jalan</th>
+                    <th>No Truck</th>
+                    <th>QR Trolly</th>
+                    <th>Tgl Scan</th>
+                    <th>Jam Scan</th>
+                    <th>Status</th>
+                    <th>Tgl Scan</th>
+                    <th>Jam Scan</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in @DataTrollyInOut)
+                {
+                    <tr style="color:white;text-align:center;vertical-align:middle;">
+                        <td>@item.NoTrans</td>
+                        <td>@item.NoMobil</td>
+                        <td>@item.KodeQR</td>
+                        <td>@Convert.ToDateTime(@item.TglTransDepo).ToString("dd/MM/yyyy")</td>
+                        <td>@Convert.ToDateTime(@item.TglTransDepo).ToString("HH:mm:ss")</td>
+                        @if (item.StatusTSC != "OK")
+                        {
+                            <td style="background-color:orange">@item.StatusDepo</td>
+                        }
+                        else
+                        {
+                            <td style="background-color:green">@item.StatusDepo</td>
+                        }
+                        @if (item.StatusTSC != "OK")
+                        {
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        }
+                        else
+                        {
+                            <td>@Convert.ToDateTime(@item.TglTransTSC).ToString("dd/MM/yyyy")</td>
+                            <td>@Convert.ToDateTime(@item.TglTransTSC).ToString("HH:mm:ss")</td>
+                            <td>@item.StatusTSC</td>
+                        }
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@*@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const today = new Date();
+
+            $('#dtDari').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+
+            $('#dtDisplaySampai').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+
+            $('#dtDari').datepicker('setDate', today);
+            $('#dtDisplaySampai').datepicker('setDate', today);
+        })        
+    </script>
+}*@

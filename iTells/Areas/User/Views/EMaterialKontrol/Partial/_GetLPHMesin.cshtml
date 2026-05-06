@@ -1,0 +1,248 @@
+﻿@using BusinessObjects
+@{
+    List<BO_HasilProduksiMesin> ListLPHMesin = (List<BO_HasilProduksiMesin>)ViewData["DataLPHMesin"];
+    int slide = 1;
+    int perSlide = ViewBag.PerSlide;
+    int indexRow = 0;
+    double totalSlide = Math.Ceiling((ListLPHMesin.Count * 1.0) / perSlide);
+    int totalLastSlide = ListLPHMesin.Count % perSlide;
+    string siteDesc = ViewBag.siteDesc;
+    string mesin = ViewBag.NoMesin.Replace("MC","");
+}
+
+<style>
+    .header-container {
+        padding: 5px;
+        background-color: blue;
+        color: white;
+        text-align: center;
+        font-size: 26px;
+        font-weight: 600;
+        grid-column-start: span 9;
+    }
+
+    .grid-container {
+        background-color: blue;
+        padding-bottom: 5px;
+        display: grid;
+        /*grid-template-columns: 90px auto auto 130px 120px 120px 100px 120px;*/
+        grid-template-columns: auto auto auto auto auto auto auto auto auto;
+        overflow-x: auto;
+        grid-gap: 5px;
+    }
+
+    .grid-header-container {
+        background-color: #fff;
+        padding: 5px;
+        text-align: center;
+        color: blue;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .row-mc-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        vertical-align: middle;
+        color: white;
+        font-size: 22px;
+        font-weight: 600;
+        min-width: 90px;
+    }
+
+    .row-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #000000;
+        padding: 5px;
+        color: crimson;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .row-container-non {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: crimson;
+        padding: 5px;
+        color: #000000;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .footer-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+    }
+</style>
+
+@*<div class="header-container">
+    MONITORING HASIL PRODUKSI @siteDesc MESIN @mesin (TANGGAL : <span id="tglHeader"></span>)
+</div>*@
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+    @if (totalSlide == 0)
+    {
+        <div class="header-container">
+            MONITORING HASIL PRODUKSI @siteDesc MESIN @mesin (TANGGAL : <span class="tglHeader"></span>)
+        </div>
+        <div class="grid-container" style="margin-top:5px">
+            <div class="grid-header-container">JAM</div>
+            <div class="grid-header-container">PART NO</div>
+            <div class="grid-header-container">PART NAME</div>
+            <div class="grid-header-container">CT (s)</div>
+            <div class="grid-header-container">TARGET</div>
+            <div class="grid-header-container">OK</div>
+            <div class="grid-header-container">NG</div>
+            <div class="grid-header-container">%</div>
+            <div class="grid-header-container">WAKTU (m)</div>
+        </div>
+    }
+    <div class="carousel-inner">
+        @for (var i = 1; i <= @totalSlide; i++)
+        {
+            var active = i == 1 ? "active" : "";
+            var sisaRow = (@slide == @totalSlide && @totalLastSlide != 0) ? @totalLastSlide : @perSlide;
+            <div class="item @active">
+                <div class="grid-container">
+                    <div class="header-container">
+                        MONITORING HASIL PRODUKSI @siteDesc MESIN @mesin (TANGGAL : <span class="tglHeader"></span>)
+                    </div>
+                    <div class="grid-header-container">JAM</div>
+                    <div class="grid-header-container">PART NO</div>
+                    <div class="grid-header-container">PART NAME</div>
+                    <div class="grid-header-container">CT (s)</div>
+                    <div class="grid-header-container">TARGET</div>
+                    <div class="grid-header-container">OK</div>
+                    <div class="grid-header-container">NG</div>
+                    <div class="grid-header-container">%</div>
+                    <div class="grid-header-container">WAKTU (m)</div>
+                    @for (var x = 0; x < @sisaRow; x++)
+                    {
+                        var target = Math.Round(3600 / @ListLPHMesin[indexRow].CTAktual);
+                        //var rasio = Math.Round((@ListLPHMesin[indexRow].Waktu / 60 * 100) * 100) / 100;
+                        //var rasio = Math.Round(((@ListLPHMesin[indexRow].OK + @ListLPHMesin[indexRow].Reject) / @target * 100) * 100) / 100;
+                        var rasio = Math.Round((@ListLPHMesin[indexRow].OK / @target * 100) * 100) / 100;
+                        var waktu = Math.Round(@ListLPHMesin[indexRow].Waktu * 100) / 100;
+                        @*if (@ListLPHMesin[indexRow].RowGroup == 1)
+                        {
+                            <div style="grid-row-start:span @ListLPHMesin[indexRow].TotalGroup" class="row-mc-container">@ListLPHMesin[indexRow].Jam</div>
+                        }*@
+                        <div class="row-mc-container">@ListLPHMesin[indexRow].Jam</div>
+                        if (@ListLPHMesin[indexRow].Tipe == "P")
+                        {
+                            <div class="row-container" style="min-width:250px; justify-content:flex-start">@ListLPHMesin[indexRow].AlternateID</div>
+                            <div class="row-container" style="min-width:420px; justify-content:flex-start">@ListLPHMesin[indexRow].Desc</div>
+                            <div class="row-container">@String.Format("{0,14:n0}", @ListLPHMesin[indexRow].CTAktual)</div>
+                            <div class="row-container">@String.Format("{0,14:n0}", @target)</div>
+                            <div class="row-container">@String.Format("{0,14:n0}", @ListLPHMesin[indexRow].OK)</div>
+                            <div class="row-container">@String.Format("{0,14:n0}", @ListLPHMesin[indexRow].Reject)</div>
+                            <div class="row-container">@rasio</div>
+                            <div class="row-container" style="min-width:110px; margin-right:5px">@waktu</div>
+                        }
+                        else
+                        {
+                            <div class="row-container-non" style="min-width:250px; justify-content:flex-start">@ListLPHMesin[indexRow].AlternateID</div>
+                            <div class="row-container-non" style="min-width:420px; justify-content:flex-start">@ListLPHMesin[indexRow].Desc</div>
+                            <div class="row-container-non">@String.Format("{0,14:n0}", @ListLPHMesin[indexRow].CTAktual)</div>
+                            <div class="row-container-non">@String.Format("{0,14:n0}", 0)</div>
+                            <div class="row-container-non">@String.Format("{0,14:n0}", @ListLPHMesin[indexRow].OK)</div>
+                            <div class="row-container-non">@String.Format("{0,14:n0}", @ListLPHMesin[indexRow].Reject)</div>
+                            <div class="row-container-non">0</div>
+                            <div class="row-container-non" style="min-width:110px; margin-right:5px">@waktu</div>
+                        }
+                        indexRow++;
+                    }
+                </div>
+            </div>
+            slide++;
+        }
+        <div class="footer-container">
+            <div>
+                <button style="padding:3px 5px 0px 5px" id="btnFilter">Filter</button>
+            </div>
+            <div style="display:flex;align-items:center;padding:3px 5px 0px 5px;background-color:white;font-weight:600">
+                <span id="slideKe">1</span>&nbsp;of&nbsp;@totalSlide
+            </div>
+            <div style="display:flex;align-items:center">
+                <div style="background-color:white;margin-right:5px;padding:3px 5px 0px 5px">
+                    <a href="#myCarousel" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                    </a>
+                </div>
+                <div id="containerPause" style="background-color:white;margin:0px 5px;padding:3px 5px 0px 5px">
+                    <a id="pause" href="#">
+                        <span class="glyphicon glyphicon-pause" id="classPause"></span>
+                    </a>
+                </div>
+                <div id="containerPlay" style="background-color:white;margin:0px 5px;padding:3px 5px 0px 5px">
+                    <a id="play" href="#">
+                        <span class="glyphicon glyphicon-play" id="classPlay"></span>
+                    </a>
+                </div>
+                <div style="background-color:white;margin-left:5px;padding:3px 5px 0px 5px">
+                    <a href="#myCarousel" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.carousel').carousel({
+            interval: 10000
+        })
+        $("#containerPlay").addClass('hidden');
+
+        var tgl = $('#tglProd').datepicker('getDate');
+        //$('#tglHeader').text(formatDateDMY(tgl));
+        $('.tglHeader').html(formatDateDMY(tgl));
+    });
+
+    $('#myCarousel').on('slide.bs.carousel', function (event) {
+        var active = $(event.target).find('.carousel-inner > .item.active');
+        var from = active.index();
+        var next = $(event.relatedTarget);
+        var to = next.index();
+        var direction = event.direction;
+        $('#slideKe').text(to + 1);
+    })
+
+    $(document).on('click', '#pause', function (event) {
+        event.preventDefault();
+        $("#myCarousel").carousel('pause');
+        var ePlay = document.getElementById("containerPlay");
+        ePlay.classList.remove("hidden");
+        $("#containerPause").addClass("hidden");
+    });
+
+    $(document).on('click', '#play', function (event) {
+        event.preventDefault();
+        $("#myCarousel").carousel('cycle');
+        var ePause = document.getElementById("containerPause");
+        ePause.classList.remove("hidden");
+        $("#containerPlay").addClass('hidden');
+    });
+
+    function formatDateDMY(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [day, month, year].join('-');
+    }
+</script>

@@ -1,0 +1,247 @@
+﻿@using BusinessObjects;
+@{
+    ViewBag.Title = "Surat Masuk";
+    ViewBag.SubTitle = "Home";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    List<ComboList> Kategori = (List<ComboList>)ViewData["Kategori"];
+}
+
+<div id="message"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-header">
+                <button type="button" class="btn btn-primary pull-right bottom" id="btnAdd"><span class="bold fa fa-plus"></span>&nbsp;&nbsp;Surat Masuk</button>
+            </div>
+            @Html.Partial("_SuratHeader")
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="_popUp" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title" id="_title"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group hidden">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">State</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="_inputState" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group hidden">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Id</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="id" class="form-control" equired placeholder="Id" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Tanggal</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="tanggal" class="form-control" equired placeholder="Tanggal" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">No. Urut Security</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="noUrut" class="form-control" equired placeholder="Otomatis" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Dari</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="dari" class="form-control" equired placeholder="Dari mana?" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Pengirim</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="pengirim" class="form-control" equired placeholder="Dari siapa?" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Untuk</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="tujuan" class="form-control" equired placeholder="Untuk siapa?" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Dept</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="dept" class="form-control" equired placeholder="Dept apa?" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Nama Security</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="security" class="form-control" equired placeholder="Siapa security penerima?" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Keterangan</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="ket" class="form-control" equired placeholder="Tulis keterangan" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Tgl Ambil</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="tglAmbil" class="form-control" equired placeholder="Kapan tanggal ambil?" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Ambil</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="penerima" class="form-control" placeholder="Siapa yang mengambil?" , required />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Dept</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="deptTerima" class="form-control" equired placeholder="Dept apa yang mengambil?" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnSimpan" class="btn btn-primary" style="width:100px">Simpan</button>&nbsp;
+                <button type="button" class="btn btn-primary" data-dismiss="modal" style="width:100px">Kembali</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bootstrapDialog" role="dialog" aria-labelledby="myModal-label" aria-hidden="true"></div>
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            DataTableReqMobil();
+        })
+
+        var List = null;
+        var dtReqMobil;
+        function DataTableReqMobil() {
+            List = {
+                init: function () {
+                    dtReqMobil = $('#tbSuratSec').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "ajax": {
+                            "url": "/getlistsuratsec",
+                            "data": {},
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            { "title": "No", "data": "Id" },
+                            { "title": "NoUrut", "data": "NoUrut" },
+                            //{ "title": "NoSurat", "data": "NoSurat" },
+                            { "title": "Tanggal", "data": "Tanggal" },
+                            { "title": "Dept", "data": "Dept" },
+                            //{ "title": "Kategori", "data": "Kategori" },
+                           // { "title": "Dari", "data": "Tujuan" },
+                            { "title": "Pengirim", "data": "Penerima" },
+                            { "title": "Penerima", "data": "Penerima" },
+                            { "title": "Perihal", "data": "Perihal" },
+                            {
+                                data: "id", "width": "70px", title: "Action", "orderable": false, "render": function (data) {
+                                     return '<button class="btn btn-xs btn-primary" title="Edit" id="BtnEdit" style="margin-right:5px"> <span class="fa fa-pencil"></span></button>' +
+                                            '<button class="btn btn-xs btn-danger" title="Delete" id="BtnDelete" style="margin-right:5px"><span class="fa fa-trash"></span></button>';
+                                }
+                            },
+                        ],
+                        "columnDefs": [
+                            { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                            { "className": "text-center custom-middle-align", "targets": [0] },
+                            //{ "visible": false, "targets": [0, 4, 6] },
+                        ],
+                        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+                    });
+                }
+            }
+            List.init();
+        }
+
+        //$(document).on('click', '#BtnSM', function (event) {
+        //    event.preventDefault();
+        //    var row = $(this).closest('tr');
+        //    var data = $('#tbSuratMasuk').dataTable().fnGetData(row);
+        //    var _Id= EncryptURL(data.Id);
+        //    var url = "/suratmasuk/" + _Id;
+        //    window.location.href = url;
+        //});
+
+
+
+        document.getElementById("BtnSS").onclick = function () {
+            location.href = "/SuratSecurity/SuratSecurity";
+        };
+
+
+                @*$(document).on('click', '#BtnSM', function (event) {
+            event.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                     url: '@Url.Action("loadsmadd", "SuratMasuk")',
+                    datatype: "json",
+                    success: function (data) {
+                        window.location.href = data.redirectUrl;
+                    }
+
+                });
+
+        });*@
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+    </script>
+}

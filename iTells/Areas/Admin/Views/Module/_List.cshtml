@@ -1,0 +1,25 @@
+﻿<div class="box-body">
+    @*<span id="message"></span>*@
+    @Html.Raw(ViewBag.Message)
+    <table id="tblModule" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th width="100px">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.ModuleList)
+            {
+                <tr>
+                    <td>@item.FullName</td>
+                    <td>
+                        <a data-url="/admin/module/edit?ID=@item.id" class="btn-bootstrap-dialog btn btn-primary btn-xs">Edit</a>
+                        <a data-url="/admin/module/delete/@item.id" class="delete btn btn-warning btn-xs">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

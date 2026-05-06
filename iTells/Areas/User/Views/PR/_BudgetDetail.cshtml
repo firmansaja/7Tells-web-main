@@ -1,0 +1,95 @@
+﻿@using BusinessObjects;
+@{
+    List<PRBudgetDetail> ListPRBudgetDetail = (List<PRBudgetDetail>)ViewData["ListPRBudgetDetail"];
+    int i = 0;
+    double TotalPR = 0;
+    double TotalPO = 0;
+}
+
+<div class="modal-header bg-primary">
+    <button type="button" class="close" data-dismiss="modal" data-reload="yes" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3 class="modal-title">PR DETAIL REPORT</h3>
+</div>
+
+<div class="modal-body">
+    <div class="container-fluid" style="height:90%;overflow-x:auto;overflow-y:auto">
+        <div class="row">
+            <div class="col-xs-4" style="padding-top:0">
+                <p style="font-size:18px">Sub Account :&nbsp<span>@ViewBag.Sub</span></p>
+            </div>
+            <div class="col-xs-4" style="padding-top:0">
+                <p style="font-size:18px">Account :&nbsp<span id="txtAccount">@ViewBag.Account</span></p>
+            </div>
+            <div>
+                <button class="btn btn-success pull-right" id="btnExportBudgetDetail" onclick="ExportBudgetDetail(@ViewBag.Month)"><span class="bold fa fa-file-excel-o"></span>&nbsp;&nbsp;Export To Excel</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-pull-12">
+                <table id="tblBudgetDetail" style="border-color:black;width:100%;height:100%" class="table table-bordered">
+                    <thead>
+                        <tr style="background-color:darkorange;border-color:black">
+                            <th rowspan="2" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">No</th>
+                            <th rowspan="2" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">No PR</th>
+                            <th rowspan="2" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">No<br />Urut</th>
+                            <th rowspan="2" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">Nama Barang</th>
+                            <th rowspan="2" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">Spesifikasi</th>
+                            <th rowspan="2" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">InvtID</th>
+                            <th colspan="3" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">Qty</th>
+                            <th colspan="2" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">Harga</th>
+                            <th colspan="2" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">Amount Actual</th>
+                            <th rowspan="2" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">Dipergunakan Untuk</th>
+                            @*<th rowspan="2" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">Account</th>
+                                <th rowspan="2" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">Sub<br />Account</th>*@
+                            <th rowspan="2" style="padding:5px;text-align:center;vertical-align:middle;border-color:black">Target<br />Datang</th>
+                        </tr>
+                        <tr style="background-color:darkorange">
+                            <th style="padding:5px;text-align:center;vertical-align:middle;border-color:black">PR</th>
+                            <th style="padding:5px;text-align:center;vertical-align:middle;border-color:black">PO</th>
+                            <th style="padding:5px;text-align:center;vertical-align:middle;border-color:black">Sisa</th>
+                            <th style="padding:5px;text-align:center;vertical-align:middle;border-color:black">PR</th>
+                            <th style="padding:5px;text-align:center;vertical-align:middle;border-color:black">PO</th>
+                            <th style="padding:5px;text-align:center;vertical-align:middle;border-color:black">PR</th>
+                            <th style="padding:5px;text-align:center;vertical-align:middle;border-color:black">PO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in @ListPRBudgetDetail)
+                        {
+                            i++;
+                            TotalPR += @item.AmountPR;
+                            TotalPO += @item.AmountPO;
+                            <tr>
+                                <td style="padding:5px;text-align:center;vertical-align:middle;border-color:black">@i</td>
+                                <td style="padding:5px;vertical-align:middle;border-color:black">@item.PRNo</td>
+                                <td style="padding:5px;text-align:center;vertical-align:middle;border-color:black">@item.XSeq</td>
+                                <td style="padding:5px;vertical-align:middle;border-color:black;word-wrap:break-word;white-space:pre-wrap">@item.InvtDescr</td>
+                                <td style="padding:5px;vertical-align:middle;border-color:black;word-wrap:break-word;white-space:pre-wrap">@item.InvtSpec</td>
+                                <td style="padding:5px;vertical-align:middle;border-color:black">@item.InvtId</td>
+                                <td style="padding:5px;text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.QtyPR)</td>
+                                <td style="padding:5px;text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.QtyPO)</td>
+                                <td style="padding:5px;text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.QtySisa)</td>
+                                <td style="padding:5px;text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.HargaPR)</td>
+                                <td style="padding:5px;text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.HargaPO)</td>
+                                <td style="padding:5px;text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.AmountPR)</td>
+                                <td style="padding:5px;text-align:right;border-color:black; vertical-align:middle">@String.Format("{0,14:n0}", @item.AmountPO)</td>
+                                <td style="padding:5px;vertical-align:middle;border-color:black;word-wrap:break-word;white-space:pre-wrap">@item.Remark</td>
+                                @*<td style="padding:5px;vertical-align:middle;border-color:black">@item.Account</td>
+                                    <td style="padding:5px;vertical-align:middle;border-color:black">@item.SubAccount</td>*@
+                                <td style="padding:5px;vertical-align:middle;border-color:black">@item.DelDate</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td colspan="11" style="padding:5px;text-align:center; vertical-align:middle;border-color:black"><b>Total</b></td>
+                            <td style="padding:5px;text-align:right; vertical-align:middle;border-color:black"><b>@String.Format("{0,14:n0}", TotalPR)</b></td>
+                            <td style="padding:5px;text-align:right; vertical-align:middle;border-color:black"><b>@String.Format("{0,14:n0}", TotalPO)</b></td>
+                            <td colspan="2" style="padding:5px;text-align:center; vertical-align:middle;border-color:black"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

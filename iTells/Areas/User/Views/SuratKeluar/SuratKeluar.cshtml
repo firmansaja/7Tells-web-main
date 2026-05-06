@@ -1,0 +1,210 @@
+﻿@*@model iTells.Models.tblSetting*@
+@model BusinessObjects.Surat.SuratKeluarModel
+
+@{
+    ViewBag.Title = "Tambah Surat Keluar";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+
+}
+
+
+<script src="/scripts/jquery.validate.min.js"></script>
+<script src="/scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div class="row">
+    <form action="/admin/setting" method="post" enctype="multipart/form-data">
+        <div class="col-md-12">
+            @Html.Raw(ViewBag.Message)
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Tambah Surat Masuk</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>No Urut Security</label>
+                                @Html.TextBoxFor(model => model.NoUrut, new { @class = "form-control", placeholder = "No. Urut Security", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label class="form-label">Upload Surat Masuk</label>
+                                        @Html.TextBox("LogoPath", "", new { @class = "form-control", type = "file" })
+                                    </div>
+                                </div>
+                                @*<div class="col-md-4">
+                                    <img class="img-md mCS_img_loaded" src="@ViewBag.LogoPath" alt="Preview">
+                                </div>*@
+                            </div>
+                        </div>
+                        @*<div class="col-xs-6">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label class="form-label">Fevicon</label>
+                                        @Html.TextBox("Fevicon", "", new { @class = "form-control", type = "file" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <img class="img-md mCS_img_loaded" src="@ViewBag.Fevicon" alt="Image">
+                                </div>
+                            </div>
+                        </div>*@
+                    </div>
+                </div>
+                <div class="box-header with-border">
+                    <h3 class="box-title"> + Surat Masuk </h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label>No. Surat</label>
+                                @Html.TextBoxFor(model => model.NoSurat, new { @class = "form-control", placeholder = "No. Surat", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label>Dari</label>
+                                @Html.TextBoxFor(model => model.Tujuan, new { @class = "form-control", placeholder = "Dari", @required = "required" })
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label>Kategori Surat</label>
+                                <br>
+                                <select>
+                                    <option value="pilih"> -- Pilih Kategori Surat -- </option>
+                                    <option value="BA">Berita Acara</option>
+                                    <option value="IM">Internal Memo</option>
+                                    <option value="SEdaran">Surat Edaran</option>
+                                    <option value="SKeluar">Surat Keluar</option>
+                                    <option value="SKeputusan">Surat Keputusan</option>
+                                    <option value="SKuasa">Surat Kuasa</option>
+                                    <option value="SMasuk">Surat Masuk</option>
+                                    <option value="SPemberitahuan">Surat Pemberitahuan</option>
+                                    <option value="SPengantar">Surat Pengantar</option>
+                                    <option value="SPerintah">Surat Perintah</option>
+                                    <option value="SPermohonan">Surat Permohonan</option>
+                                    <option value="STugas">Surat Tugas</option>
+                                    <option value="SUndangan">Surat Undangan</option>
+                                </select>
+                                @*@Html.TextBoxFor(model => model.Kategori, new { @class = "form-control", placeholder = "Kategori Surat", @required = "required" })*@
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label>Pengirim</label>
+                                @Html.TextBoxFor(model => model.Pengirim, new { @class = "form-control", placeholder = "Pengirim", @required = "required" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label>Jenis Surat</label>
+                                <br>
+                                <select>
+                                    <option value="pilih"> -- Pilih Jenis Surat -- </option>
+                                    <option value="internal">Internal</option>
+                                    <option value="Eksternal">Eksternal</option>
+                                </select>
+                                @*@Html.TextBoxFor(model => model.Jenis, new { @class = "form-control", placeholder = "Jenis Surat", @required = "required" })*@
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label>Untuk</label>
+                                @Html.TextBoxFor(model => model.Penerima, new { @class = "form-control", placeholder = "Untuk", @required = "required" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label>Media Surat</label>
+                                <br>
+                                <select>
+                                    <option value="pilih"> -- Pilih Media Surat -- </option>
+                                    <option value="internal">Hardcopy</option>
+                                    <option value="Eksternal">Softcopy</option>
+                                </select>
+                                @*@Html.TextBoxFor(model => model.Media, new { @class = "form-control", placeholder = "Media Surat", @required = "required" })*@
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label>Perihal</label>
+                                @Html.TextBoxFor(model => model.Perihal, new { @class = "form-control", placeholder = "Perihal", @required = "required" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label>Akses</label>
+                                <br>
+                                <select>
+                                    <option value="pilih"> -- Surat Dapat Diakses oleh Site? -- </option>
+                                    <option value="internal">All</option>
+                                    <option value="Eksternal">Tangerang</option>
+                                    <option value="Eksternal">Cikarang</option>
+                                </select>
+                                @*@Html.TextBoxFor(model => model.Akses, new { @class = "form-control", placeholder = "Akses", @required = "required" })*@
+                            </div>
+                        </div>
+
+
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label>Rahasia</label>
+                                <br>
+                                <select>
+                                    <option value="pilih"> -- Apakah Surat Confidential? -- </option>
+                                    <option value="internal">Ya</option>
+                                    <option value="Eksternal">Tidak</option>
+                                </select>
+                                @*@Html.TextBoxFor(model => model.Rahasia, new { @class = "form-control", placeholder = "Rahasia", @required = "required" })*@
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
+                    </div>
+                    <div class="box-footer">
+                        <div>
+                            <button type="submit" class="btn btn-primary pull-left">Simpan</button>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary pull-left">Kembali</button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+

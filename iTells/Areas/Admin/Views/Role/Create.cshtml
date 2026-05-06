@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "Role Create";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "Role List";
+    ViewBag.Link = "/admin/role";
+}
+
+
+@Html.Partial("_CreateOrUpdate")
+
+@section scripts{
+    <link rel="stylesheet" href="/content/dropify.min.css" />
+    <script src="~/Scripts/dropify.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        $('input[type="checkbox"].minimal').iCheck({
+            checkboxClass: 'icheckbox_minimal-blue'
+        });
+        var type = $('#type').val();
+        if (type == "1") {
+            $('#divPreviewPhoto').show();
+            $('#divUploadPhoto').hide();
+        }
+        else {
+            $('#divUploadPhotoButtons').hide();
+            $('#divPreviewPhoto').hide();
+            $('#divUploadPhoto').show();
+        }
+    });
+    function SuccessAddRole(data) {
+        if (data.status == "1") {
+            window.location = data.url;
+            localStorage.setItem("message", data.message)
+        }
+        if (data.status == "2") {
+            $('#message').html(data.message);
+        }
+    }
+
+    </script>
+}

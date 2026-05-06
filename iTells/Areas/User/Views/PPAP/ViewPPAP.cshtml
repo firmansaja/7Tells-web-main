@@ -1,0 +1,1170 @@
+﻿@using BusinessObjects.PPAP;
+@{
+    ViewBag.Title = "View PPAP";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "E-PPAP";
+    ViewBag.Link = "/User/PPAP";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    PPAPHeaderModel PPAPHeader = (PPAPHeaderModel)ViewData["PPAPHeader"];
+    List<PPAPAksesDeptModel> ListPPAPAksesDept = (List<PPAPAksesDeptModel>)ViewData["AksesDept"];
+    List<PPAPApprovalDeptModel> ListPPAPApprovalDept = (List<PPAPApprovalDeptModel>)ViewData["PPAPApprovalDept"];
+    List<PPAPDetailModel> ListPPAPDetail = (List<PPAPDetailModel>)ViewData["PPAPDetail"];
+    List<PPAPToolingModel> ListPPAPTooling = (List<PPAPToolingModel>)ViewData["PPAPTooling"];
+    List<PPAPQualityModel> ListPPAPQuality = (List<PPAPQualityModel>)ViewData["PPAPQuality"];
+    List<PPAPPreparationModel> ListPPAPPreparation = (List<PPAPPreparationModel>)ViewData["PPAPPreparation"];
+    List<PPAPDocumentModel> ListPPAPDocument = (List<PPAPDocumentModel>)ViewData["PPAPDocument"];
+    List<PPAPSupplierModel> ListPPAPSupplier = (List<PPAPSupplierModel>)ViewData["PPAPSupplier"];
+    List<PPAPPackingModel> ListPPAPPacking = (List<PPAPPackingModel>)ViewData["PPAPPacking"];
+    List<PPAPComparationModel> ListPPAPComparation = (List<PPAPComparationModel>)ViewData["PPAPComparation"];
+    List<PPAPPaintingModel> ListPPAPPainting = (List<PPAPPaintingModel>)ViewData["PPAPPainting"];
+    List<PPAPAssemblyModel> ListPPAPAssembly = (List<PPAPAssemblyModel>)ViewData["PPAPAssembly"];
+    string Dept = ViewBag.Dept;
+    int Level = ViewBag.Level;
+}
+
+<style type="text/css">
+    table, th, td {
+        font-size: 12px;
+    }
+
+    .col-view {
+        width: 1%;
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    #detailScroll {
+        max-height: 500px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+    }
+
+    #detailScroll thead th {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 1;
+    }
+
+    .tr-disabled {
+        background-color: #f2f2f2;
+        /*color: #999;*/
+    }
+
+    .text-kanan {
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    .text-tengah {
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+
+<div id="message"></div>
+<div class="box box-primary">
+    <div class="box-body" style="overflow-x:auto">
+        <div class="row">
+            <div class="col-xs-12">
+                <table style="width:100%">
+                    <tr style="border-bottom:2px solid black">
+                        <td colspan="6" style="width:100%;text-align:center;vertical-align:middle;font-size:20px"><b>PRODUCTION PART APPROVAL PROCESS</b></td>
+                    </tr>
+                    <tr>
+                        <td style="width:15%;vertical-align:middle"><h5>Status&nbsp:&nbsp<b><span id="ppapStatus">@PPAPHeader.Status</span></b></h5></td>
+                        <td style="width:20%;vertical-align:middle"><h5>Customer&nbsp:&nbsp<b><span id="ppapCustID">@PPAPHeader.CustID</span></b></h5></td>
+                        <td style="width:20%;vertical-align:middle"><h5>Project Name&nbsp:&nbsp<b><span id="ppapProjectName">@PPAPHeader.ProjectName</span></b></h5></td>
+                        <td style="width:20%;vertical-align:middle"><h5>Confirmation Date&nbsp:&nbsp<b><span id="ppapConfirmationDate">@String.Format("{0:dd-MMM-yy}", @PPAPHeader.ConfirmationDate)</span></b></h5></td>
+                        <td style="width:15%;vertical-align:middle"><h5>Production Date&nbsp:&nbsp<b><span id="ppapConfirmationDate">@String.Format("{0:MMM-yy}", @PPAPHeader.MassproductionDate)</span></b></h5></td>
+                        <td style="width:10%;vertical-align:middle"><h5>Overall Judgment&nbsp:&nbsp<b><span id="ppapOverallJudgment">@PPAPHeader.OverallJudgment</span></b></h5></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align:middle"><h5 style="margin:0">Overall Comment&nbsp:&nbsp</h5></td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="width:100%;vertical-align:middle;white-space: pre-line"><h5 style="margin-top:2px">@PPAPHeader.OverallComment</h5></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="tblPPAPDetail" style="border-color:black" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width:20%;text-align:center;vertical-align:middle;border-color:black">Parts No.</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Part Name</th>
+                            <th style="width:10%;text-align:center;vertical-align:middle;border-color:black">Forecast / Month</th>
+                            <th style="width:30%;text-align:center;vertical-align:middle;border-color:black">Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in @ListPPAPDetail)
+                        {
+                            <tr>
+                                @if (@item.Level == 1)
+                                {
+                                    <td style="vertical-align:middle;border-color:black"><b>@item.PartNumber</b></td>
+                                    <td style="vertical-align:middle;border-color:black"><b>@item.PartName</b></td>
+                                }
+                                else
+                                {
+                                    <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartNumber</td>
+                                    <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartName</td>
+                                }
+                                <td style="text-align:center; vertical-align:middle;border-color:black">@item.Forecast</td>
+                                <td style="vertical-align:middle;border-color:black">@item.Remark</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <ul id="tabStatus" class="nav nav-tabs">
+                    <li id="tabTooolingStatus" data-value="1"><a data-toggle="tab" href="#toolingStatus">Tooling Status</a></li>
+                    <li id="tabQualityStatus" data-value="2"><a data-toggle="tab" href="#qualityStatus">Quality Status</a></li>
+                    <li id="tabPreparationStatus" data-value="3"><a data-toggle="tab" href="#preparationStatus">Preparation Status</a></li>
+                    <li id="tabDocumentStatus" data-value="4"><a data-toggle="tab" href="#documentStatus">Document Status</a></li>
+                    <li id="tabDocumentSupplier" data-value="5"><a data-toggle="tab" href="#supplier">Document Supplier</a></li>
+                    <li id="tabPackingStatus" data-value="6"><a data-toggle="tab" href="#packingStatus">Packing Status</a></li>
+                    <li id="tabComparationStatus" data-value="7"><a data-toggle="tab" href="#comparationStatus">Comparation Status</a></li>
+                    <li id="tabConsumtionCat" data-value="8"><a data-toggle="tab" href="#consumtionCat">Consumtion Cat & Assembly</a></li>
+                    <li id="tabApprovalDept" data-value="0"><a data-toggle="tab" href="#approvalDept">Approval Dept</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div id="toolingStatus" class="tab-pane fade" style="padding-top:5px">
+                        <table id="tblPPAPToolingStatus" style="border-color:black" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Parts Name</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Part No</th>
+                                    <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Data</th>
+                                    <th colspan="4" style="text-align:center;vertical-align:middle;border-color:black">Die/Mold</th>
+                                    <th colspan="4" style="text-align:center;vertical-align:middle;border-color:black">Equipment Tools</th>
+                                    <th colspan="4" style="text-align:center;vertical-align:middle;border-color:black">C/F</th>
+                                </tr>
+                                <tr>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">2D</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">RN-ECI</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Grain</th>
+                                    <th style="word-wrap:break-word;white-space:pre-wrap;text-align:center;vertical-align:middle;border-color:black">Fabrication Location</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Problem</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Status</th>
+                                    <th style="word-wrap:break-word;white-space:pre-wrap;text-align:center;vertical-align:middle;border-color:black">Target Data To Complete</th>
+                                    <th style="word-wrap:break-word;white-space:pre-wrap;text-align:center;vertical-align:middle;border-color:black">Fabrication Location</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Problem</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Status</th>
+                                    <th style="word-wrap:break-word;white-space:pre-wrap;text-align:center;vertical-align:middle;border-color:black">Target Data To Complete</th>
+                                    <th style="word-wrap:break-word;white-space:pre-wrap;text-align:center;vertical-align:middle;border-color:black">Fabrication Location</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Problem</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Status</th>
+                                    <th style="word-wrap:break-word;white-space:pre-wrap;text-align:center;vertical-align:middle;border-color:black">Target Data To Complete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ListPPAPTooling)
+                                {
+                                    <tr>
+                                        @if (@item.Level == 1)
+                                        {
+                                            <td style="vertical-align:middle;border-color:black"><b>@item.PartName</b></td>
+                                            <td style="vertical-align:middle;border-color:black"><b>@item.PartNumber</b></td>
+                                        }
+                                        else
+                                        {
+                                            <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartName</td>
+                                            <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartNumber</td>
+                                        }
+                                        <td style="text-align:center; vertical-align:middle;border-color:black">@item.Data2D</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.DataRNECI</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.DataGrain</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.MoldFabricationLocation</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.MoldProblem</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.MoldStatus</td>
+                                        <td style="vertical-align:middle;border-color:black">@String.Format("{0:dd-MMM-yy}", @item.MoldTargetComplete)</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.ETFabricationLocation</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.ETProblem</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.ETStatus</td>
+                                        <td style="vertical-align:middle;border-color:black">@String.Format("{0:dd-MMM-yy}", @item.ETTargetComplete)</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.CFFabricationLocation</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.CFProblem</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.CFStatus</td>
+                                        <td style="vertical-align:middle;border-color:black">@String.Format("{0:dd-MMM-yy}", @item.CFTargetComplete)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="qualityStatus" class="tab-pane fade" style="padding-top:5px">
+                        <table id="tblPPAPQualityStatus" style="border-color:black" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Parts Name</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Part No</th>
+                                    <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Capability</th>
+                                    <th colspan="2" style="text-align:center;vertical-align:middle;border-color:black">Data</th>
+                                    <th colspan="2" style="text-align:center;vertical-align:middle;border-color:black">Limit Sample</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Problem Part</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Remark</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Target Date<br />To Complete</th>
+                                </tr>
+                                <tr>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Injection</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Painting</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Assembling</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Accuracy</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">N-1 Data</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Status</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ListPPAPQuality)
+                                {
+                                    <tr>
+                                        @if (@item.Level == 1)
+                                        {
+                                            <td style="vertical-align:middle;border-color:black"><b>@item.PartName</b></td>
+                                            <td style="vertical-align:middle;border-color:black"><b>@item.PartNumber</b></td>
+                                        }
+                                        else
+                                        {
+                                            <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartName</td>
+                                            <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartNumber</td>
+                                        }
+                                        <td style="text-align:center; vertical-align:middle;border-color:black">@item.CapabilityInjection</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.CapabilityPainting</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.CapabilityAssembling</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.DataAccuracy</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.DataN1</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.LimitSampleStatus</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.LimitSampleKeterangan</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.ProblemPart</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.Remark</td>
+                                        <td style="vertical-align:middle;border-color:black">@String.Format("{0:dd-MMM-yy}", @item.TargetComplete)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="preparationStatus" class="tab-pane fade" style="padding-top:5px">
+                        <table id="tblPPAPPreparationStatus" style="border-color:black" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Parts Name</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Part No</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Material</th>
+                                    <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Process Plan</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Machine</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Chuck<br />Robot</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Tools</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Jig Painting</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Jig Assy</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Meja Kerja</th>
+                                    <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Mapping Skill</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Remark</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Target Date<br />To Complete</th>
+                                </tr>
+                                <tr>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Injection</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Painting</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Assembling</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Injection</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Painting</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Assembling</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ListPPAPPreparation)
+                                {
+                                    <tr>
+                                        @if (@item.Level == 1)
+                                        {
+                                            <td style="vertical-align:middle;border-color:black"><b>@item.PartName</b></td>
+                                            <td style="vertical-align:middle;border-color:black"><b>@item.PartNumber</b></td>
+                                        }
+                                        else
+                                        {
+                                            <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartName</td>
+                                            <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartNumber</td>
+                                        }
+                                        <td style="text-align:center; vertical-align:middle;border-color:black">@item.Material</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.ProsesPlanInjection</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.ProsesPlanPainting</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.ProsesPlanAssembling</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.Machine</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.ChuckRobot</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.Tools</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.JigPainting</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.JigAssy</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.MejaKerja</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.MappingSkillInjection</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.MappingSkillPainting</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.MappingSkillAssembling</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.Remark</td>
+                                        <td style="vertical-align:middle;border-color:black">@String.Format("{0:dd-MMM-yy}", @item.TargetComplete)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="documentStatus" class="tab-pane fade" style="padding-top:5px">
+                        <table id="tblPPAPDocumentStatus" style="border-color:black" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="col-view" style="text-align:center;vertical-align:middle;border-color:black"></th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Part No</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Part Name</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Invt ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ListPPAPDocument)
+                                {
+                                    <tr>
+                                        <td class="col-view" style="border-color:black"><button class="btn btn-xs btn-info btnView" data-row='@Html.Raw(Json.Encode(item))' title="View" style="margin-right:5px"><i class="fa fa-eye"></i></button></td>
+                                        @if (@item.Level == 1)
+                                        {
+                                            <td style="vertical-align:middle;border-color:black"><b>@item.PartNumber</b></td>
+                                            <td style="vertical-align:middle;border-color:black"><b>@item.PartName</b></td>
+                                        }
+                                        else
+                                        {
+                                            <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartNumber</td>
+                                            <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartName</td>
+                                        }
+                                        <td style="vertical-align:middle;border-color:black">@item.InvtID</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="supplier" class="tab-pane fade" style="padding-top:5px">
+                        <table id="tblPPAPSupplier" style="border-color:black" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Parts Name</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Part No</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">PIS</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Control Plan &<br />Flow Process</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">IRD Check Sheet</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">N1 Data</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Limit Sample</th>
+                                    <th colspan="2" style="text-align:center;vertical-align:middle;border-color:black">Packing</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Remark</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Target Date<br />To Complete</th>
+                                </tr>
+                                <tr>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Packing Spec (L x W x H)</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Qty /Packing</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ListPPAPSupplier)
+                                {
+                                    <tr>
+                                        <td style="vertical-align:middle;border-color:black">@item.PartName</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PartNumber</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PIS</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.CPFP</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.IRDCheckSheet</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.N1Data</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.LimitSample</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PackingSpec</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PackingQty</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.Remark</td>
+                                        <td style="vertical-align:middle;border-color:black">@String.Format("{0:dd-MMM-yy}", @item.TargetComplete)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="packingStatus" class="tab-pane fade" style="padding-top:5px">
+                        <table id="tblPPAPPackingStatus" style="border-color:black" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Parts Name</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Part No</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">SPPS</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Packing Spec</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Type Packing</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Qty<br />(Pcs)</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Packing<br />Standard</th>
+                                    <th colspan="2" style="text-align:center;vertical-align:middle;border-color:black">Order Packing</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Remark</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Target Date<br />To Complete</th>
+                                </tr>
+                                <tr>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Plan</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ListPPAPPacking)
+                                {
+                                    <tr>
+                                        @if (@item.Level == 1)
+                                        {
+                                            <td style="vertical-align:middle;border-color:black"><b>@item.PartName</b></td>
+                                            <td style="vertical-align:middle;border-color:black"><b>@item.PartNumber</b></td>
+                                        }
+                                        else
+                                        {
+                                            <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartName</td>
+                                            <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartNumber</td>
+                                        }
+                                        <td style="vertical-align:middle;border-color:black">@item.SPPS</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PackingSpec</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.TypePacking</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.Qty</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PackingStandard</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.OrderPackingPlan</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.OrderPackingActual</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.Remark</td>
+                                        <td style="vertical-align:middle;border-color:black">@String.Format("{0:dd-MMM-yy}", @item.TargetComplete)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="comparationStatus" class="tab-pane fade" style="padding-top:5px">
+                        <table id="tblPPAPComparation" style="border-color:black" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Parts Name</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Part No</th>
+                                    <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Tonase MC</th>
+                                    <th colspan="3" style="text-align:center;vertical-align:middle;border-color:black">Cycle Time (s)</th>
+                                    <th colspan="4" style="text-align:center;vertical-align:middle;border-color:black">Part Weight (g)</th>
+                                </tr>
+                                <tr>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Mold Spec</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">No</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Spec</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">+ 5%</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">- 3%</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">2D Data</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">+ 3%</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ListPPAPComparation)
+                                {
+                                    <tr>
+                                        @if (@item.Level == 1)
+                                        {
+                                            <td style="vertical-align:middle;border-color:black"><b>@item.PartName</b></td>
+                                            <td style="vertical-align:middle;border-color:black"><b>@item.PartNumber</b></td>
+                                        }
+                                        else
+                                        {
+                                            <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartName</td>
+                                            <td style="padding-left:@(item.Level * 20)px;vertical-align:middle;border-color:black">@item.PartNumber</td>
+                                        }
+                                        <td style="vertical-align:middle;border-color:black">@item.TonaseMCMoldSpec</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.TonaseMCActual</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.TonaseMCNo</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.CycleTimeSpec</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.CycleTimePlus</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.CycleTimeActual</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PartWeightMinus</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PartWeight2DData</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PartWeightPlus</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PartWeightActual</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="consumtionCat" class="tab-pane fade" style="padding-top:5px">
+                        <div><b>Painting</b></div>
+                        <table id="tblPPAPConsumtionCat" style="border-color:black" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" class="col-view" style="text-align:center;vertical-align:middle;border-color:black"></th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Parts Name</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Part No</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Color Code</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Paint Maker</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Tools/Equipments</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Follow Document Standard</th>
+                                    <th colspan="2" style="text-align:center;vertical-align:middle;border-color:black">C/T Masking</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Margin</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">%</th>
+                                    <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black">Judgment</th>
+                                </tr>
+                                <tr>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Spec</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Actual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ListPPAPPainting)
+                                {
+                                    <tr>
+                                        <td class="col-view" style="border-color:black"><button class="btn btn-xs btn-info btnViewPainting" data-row='@Html.Raw(Json.Encode(item))' title="View" style="margin-right:5px"><i class="fa fa-eye"></i></button></td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PartName</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PartNumber</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.ColorCode</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PaintMaker</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.ToolsEquipments</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.FollowDocumentStandard</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.CTMaskingSpec</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.CTMaskingActual</td>
+                                        <td style="vertical-align:middle;border-color:black">@(item.CTMaskingSpec - item.CTMaskingActual)</td>
+                                        <td style="vertical-align:middle;border-color:black" class="percent" data-spec="@item.CTMaskingSpec" data-actual="@item.CTMaskingActual"></td>
+                                        <td style="vertical-align:middle;border-color:black">@item.Judgement</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div><b>Assembly</b></div>
+                        <table id="tblPPAPAssembly" style="border-color:black" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="col-view" style="text-align:center;vertical-align:middle;border-color:black"></th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Parts Name</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Part No</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ListPPAPAssembly)
+                                {
+                                    <tr>
+                                        <td class="col-view" style="border-color:black"><button class="btn btn-xs btn-info btnViewAssembly" data-row='@Html.Raw(Json.Encode(item))' title="View" style="margin-right:5px"><i class="fa fa-eye"></i></button></td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PartName</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.PartNumber</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="approvalDept" class="tab-pane fade" style="padding-top:5px">
+                        <table id="tblPPAPApprovalDept" style="border-color:black" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Check</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">View</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Dept</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Judgment</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Comment</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Approval</th>
+                                    <th style="text-align:center;vertical-align:middle;border-color:black">Tanggal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var item in ListPPAPApprovalDept)
+                                {
+                                    <tr>                                       
+                                        <td class="col-view" style="vertical-align:middle;border-color:black"><input type="checkbox" @(item.IsCheck ? "checked" : "") disabled/></td>
+                                        <td class="col-view" style="border-color:black"><button class="btn btn-xs btn-primary btnAssign" data-row='@Html.Raw(Json.Encode(item))' title="Assign" style="margin-right:5px")>Assign</button></td>
+                                        <td style="vertical-align:middle;border-color:black">@item.Descr</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.Judgment</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.Comment</td>
+                                        <td style="vertical-align:middle;border-color:black">@item.Nama</td>
+                                        <td style="vertical-align:middle;border-color:black">@String.Format("{0:dd-MM-yyyy}", @item.Tanggal)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row no-print">
+            <div class="col-xs-12">
+                @*<button class="btn btn-primary" id="btnAssign">Assign</button>*@
+                <button class="btn btn-info" id="btnViewReport">View Report</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="_popUp" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content modal-lg panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title" id="_title"></h2>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="form-group hidden" id="deptGroup">
+                                <label class="col-sm-2 col-md-2 control-label" style="text-align:left;">Dept</label>
+                                <label class="col-sm-1 col-md-1 control-label">:</label>
+                                <div class="col-sm-9 col-md-9">
+                                    <input id="dept" class="form-control" readonly />
+                                    <input id="deptDescr" class="form-control" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group" id="judgmentGroup">
+                                <label class="col-sm-2 col-md-2 control-label" style="text-align:left;">Judgment</label>
+                                <label class="col-sm-1 col-md-1 control-label">:</label>
+                                <div class="col-sm-9 col-md-9">
+                                    <select id="judgment" class="form-control select2" style="width:100%">
+                                        <option value="Oke">Oke</option>
+                                        <option value="Cancel">Cancel</option>
+                                        <option value="Pending">Pending</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="commentGroup">
+                                <label class="col-sm-2 col-md-2 control-label" style="text-align:left;">Comment</label>
+                                <label class="col-sm-1 col-md-1 control-label">:</label>
+                                <div class="col-sm-9 col-md-9">
+                                    <textarea rows="3" id="comment" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="btnSimpan" class="btn btn-primary" style="width:100px">Simpan</button>&nbsp;
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="width:100px">Kembali</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalDetail" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Document</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="col-xs-12">
+                    <table style="width:100%">
+                        <tr>
+                            <td style="width:40%;vertical-align:middle"><h5>Part No&nbsp:&nbsp<b><span id="dPartNo"></span></b></h5></td>
+                            <td style="width:60%;vertical-align:middle"><h5>Part Name&nbsp:&nbsp<b><span id="dPartName"></span></b></h5></td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="detailScroll">
+                    <table class="table table-bordered" id="tblDetail">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Item Requirement</th>
+                                <th>Status</th>
+                                <th>Remark</th>
+                                <th>Due Date</th>
+                                <th id="hFile">File</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal">
+                    Kembali
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalPaintingDetail" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Painting</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="col-xs-12">
+                    <table style="width:100%">
+                        <tr>
+                            <td style="width:60%;vertical-align:middle"><h5>Part Name&nbsp:&nbsp<b><span id="paintingPartName"></span></b></h5></td>
+                            <td style="width:40%;vertical-align:middle"><h5>Part No&nbsp:&nbsp<b><span id="paintingPartNo"></span></b></h5></td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="detailScroll">
+                    <table class="table table-bordered" id="tblPaintingDetail">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th>Product Name</th>
+                                <th>Spec</th>
+                                <th>Act</th>
+                                <th>Selisih</th>
+                                <th>%</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal">
+                    Kembali
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAssemblyDetail" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Painting</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="col-xs-12">
+                    <table style="width:100%">
+                        <tr>
+                            <td style="width:40%;vertical-align:middle"><h5>Part No&nbsp:&nbsp<b><span id="assemblyPartNo"></span></b></h5></td>
+                            <td style="width:60%;vertical-align:middle"><h5>Part Name&nbsp:&nbsp<b><span id="assemblyPartName"></span></b></h5></td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="detailScroll">
+                    <table class="table table-bordered" id="tblAssemblyDetail">
+                        <thead>
+                            <tr>
+                                <th class="text-tengah">Product Name</th>
+                                <th class="text-tengah">Qty</th>
+                                <th class="text-tengah">Process Name</th>
+                                <th class="text-tengah">Man Power</th>
+                                <th class="text-tengah">Act</th>
+                                <th class="text-tengah">Spec</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal">
+                    Kembali
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/aes.js"></script>
+    <script type="text/javascript">
+        var listApprovalDept = @Html.Raw(Json.Encode(ListPPAPApprovalDept));
+        var listAksesDept = @Html.Raw(Json.Encode(ListPPAPAksesDept));
+        $(document).ready(function () {
+            $("#message").slideDown(0).slideUp(0);
+            var msg = localStorage.getItem("message");
+            if (msg != null) {
+                var msg1 = '<h3 class=\"alert alert-success fade in\">' + msg + '</h3>';
+                $('#message').html(msg1);
+                $("#message").slideDown(1000).slideUp(2000);
+                localStorage.removeItem("message");
+            }
+
+            $("#btnAssign").each(function () {
+                var data = listApprovalDept.find(x => x.Dept === '@Dept');
+
+                if ((@PPAPHeader.IdStatus === 4 && @Level === 1) || !data || !data.IsCheck) {
+                    $(this)
+                        .prop("disabled", true)
+                        .addClass("btn-default")
+                        .removeClass("btn-primary")
+                        .attr("title", "Tidak ada akses approval");
+                }
+            });
+
+            $(".btnAssign").each(function () {
+                var data = JSON.parse($(this).attr("data-row"));
+                var dataAkses = listAksesDept.find(x => x.Dept === data.Dept);
+
+                if (!dataAkses || !data.IsCheck || (@PPAPHeader.IdStatus === 4 && dataAkses.Level === 1)) {
+                    $(this).prop("disabled", true);
+                } else {
+                    $(this).prop("disabled", false);
+                }
+            });
+
+            $("#tabTooolingStatus").each(function () {
+                aksesDept(this);
+            });
+
+            $("#tabQualityStatus").each(function () {
+                aksesDept(this);
+            });
+
+            $("#tabPreparationStatus").each(function () {
+                aksesDept(this);
+            });
+
+            $("#tabDocumentSupplier").each(function () {
+                aksesDept(this);
+            });
+
+            $("#tabPackingStatus").each(function () {
+                aksesDept(this);
+            });
+
+            $("#tabComparationStatus").each(function () {
+                aksesDept(this);
+            });
+
+            var $activeTab = $('.nav-tabs li.active:not(.hidden)');
+            if ($activeTab.length === 0) {                
+                var $firstVisibleTab = $('.nav-tabs li:not(.hidden)').first();
+                if ($firstVisibleTab.length > 0) {
+                    $firstVisibleTab.find('a').tab('show');
+                }
+            }
+        });
+
+        $("#comment").on("input", function () {
+            autoResizeTextarea(this);
+        });
+
+        @*$(document).on('click', '#btnAssign', function (event) {
+            event.preventDefault();
+            var data = listApprovalDept.find(x => x.Dept === '@Dept');
+
+            if (!data) {
+                alert("Data tidak ditemukan");
+                return;
+            }
+
+            if (data.IsCheck === false) {
+                alert("Tidak bisa melakukan assign");
+                return;
+            }
+
+            $("#_popUp").modal({ backdrop: 'static' });
+            $("#_title").text("Approval Dept");
+            $("#_inputState").val("Update");
+
+            $("#judgment").val(data.Judgment).trigger('change');
+            $("#comment").val(data.Comment);
+
+            $('#_popUp').on('shown.bs.modal', function () {
+                $('#judgment').focus();
+                autoResizeTextarea(document.getElementById("comment"));
+            })
+
+        });*@
+
+        $(document).on('click', '.btnAssign', function (event) {
+            event.preventDefault();
+            var data = JSON.parse($(this).attr("data-row"));
+
+            $("#_popUp").modal({ backdrop: 'static' });
+            $("#_title").text("Approval Dept");
+            $("#_inputState").val("Update");
+
+            $("#dept").val(data.Dept);
+            $("#deptDescr").val(data.Descr);
+            $("#judgment").val(data.Judgment).trigger('change');
+            $("#comment").val(data.Comment);
+
+            $('#_popUp').on('shown.bs.modal', function () {
+                $('#judgment').focus();
+                autoResizeTextarea(document.getElementById("comment"));
+            })
+
+        });
+
+        $(document).on('click', '.btnView', function () {
+            var data = JSON.parse($(this).attr("data-row"));
+
+            $.get("/PPAP/GetDocumentDetail", { noPPAP: data.NoPPAP, idStatus: data.IdStatus, code: data.Code })
+                .done(function (res) {
+                    if (!res.success) {
+                        alert(data.message);
+                        return;
+                    }
+
+                    $("#dPartNo").text(data.PartNumber);
+                    $("#dPartName").text(data.PartName);
+
+                    var tbody = $("#tblDetail tbody").empty();
+
+                    if (res.data.length === 0) {
+                        tbody.append("<tr><td colspan='2'>No Data</td></tr>");
+                    } else {                        
+                        var isFileAkses = @Level == 1 ? 'hidden' : '';
+                        $("#hFile").addClass(isFileAkses);
+                        $.each(res.data, function (i, item) {
+                            var rowClass = getRowClass(item);
+                            var isDownload = item.IsEdit ? '' : 'hidden';
+                            var disable = item.FileName == null ? 'disabled' : '';
+                            tbody.append(`
+                                <tr class="${rowClass}">
+                                    <td style="text-align:center;vertical-align:middle">${safeText(item.No)}</td>
+                                    <td>${safeText(item.Item)}</td>
+                                    <td>${safeText(item.Status)}</td>
+                                    <td></td>
+                                    <td>${safeText(item.DueDate)}</td>
+                                    <td class="col-view ${isFileAkses}"><button class="btn btn-xs btn-info btnDownload ${isDownload}" data-noppap="${item.NoPPAP}" data-idstatus="${item.IdStatus}" data-filename="${item.FileName}" ${disable} title="Download"><i class="fa fa-download"></i></button></td>
+                                </tr>
+                            `);
+                        });
+                    }
+
+                    $("#modalDetail").modal("show");
+                })
+                .fail(function () {
+                    alert("Gagal mengambil data");
+                });
+        });
+
+        $(document).on('click', '.btnViewPainting', function () {
+            var data = JSON.parse($(this).attr("data-row"));
+            $.get("/PPAP/GetPaintingDetail", { noPPAP: data.NoPPAP, idStatus: data.IdStatus, code: data.Code })
+                .done(function (res) {
+                    if (!res.success) {
+                        alert(data.message);
+                        return;
+                    }
+
+                    $("#paintingPartNo").text(data.PartNumber);
+                    $("#paintingPartName").text(data.PartName);
+
+                    var tbody = $("#tblPaintingDetail tbody").empty();
+
+                    if (res.data.length === 0) {
+                        tbody.append("<tr><td colspan='2'>No Data</td></tr>");
+                    } else {
+                        $.each(res.data, function (i, item) {
+                            const selisih = item.SubItem == null || item.Spec == null ? null : item.Spec - item.Actual;
+                            const persen = selisih == null || item.Actual == null ? null : selisih / item.Actual;
+                            tbody.append(`
+                                <tr class="${item.SubItem == null ? 'tr-disabled' : ''}"">
+                                    <td>${safeText(item.Item)}</td>
+                                    <td>${safeText(item.SubItem)}</td>
+                                    <td>${safeText(item.ProductName)}</td>
+                                    <td class="text-kanan">${safeText(item.Spec)}</td>
+                                    <td class="text-kanan">${safeText(item.Actual)}</td>
+                                    <td class="text-kanan">${formatDecimal(selisih, 2)}</td>
+                                    <td class="text-kanan">${formatPercent(persen, 2)}</td>
+                                </tr>
+                            `);
+                        });
+                    }
+
+                    $("#modalPaintingDetail").modal("show");
+                })
+                .fail(function () {
+                    alert("Gagal mengambil data");
+                });
+        });
+
+        $(document).on('click', '.btnViewAssembly', function () {
+            var data = JSON.parse($(this).attr("data-row"));
+            $.get("/PPAP/GetAssemblyDetail", { noPPAP: data.NoPPAP, idStatus: data.IdStatus, code: data.Code })
+                .done(function (res) {
+                    if (!res.success) {
+                        alert(data.message);
+                        return;
+                    }
+
+                    $("#assemblyPartNo").text(data.PartNumber);
+                    $("#assemblyPartName").text(data.PartName);
+
+                    var tbody = $("#tblAssemblyDetail tbody").empty();
+
+                    if (res.data.length === 0) {
+                        tbody.append("<tr><td colspan='2'>No Data</td></tr>");
+                    } else {
+                        $.each(res.data, function (i, item) {
+                            tbody.append(`
+                                <tr>
+                                    <td>${safeText(item.ComponentPart)}</td>
+                                    <td>${safeText(item.Qty)}</td>
+                                    <td>${safeText(item.ProcessName)}</td>
+                                    <td class="text-kanan">${safeText(item.ManPower)}</td>
+                                    <td class="text-kanan">${safeText(item.Actual)}</td>
+                                    <td class="text-kanan">${safeText(item.Spec)}</td>
+                                </tr>
+                            `);
+                        });
+                    }
+
+                    $("#modalAssemblyDetail").modal("show");
+                })
+                .fail(function () {
+                    alert("Gagal mengambil data");
+                });
+        });               
+
+        $(document).on('click', '.btnDownload', function () {
+            var noPPAP = $(this).data('noppap');
+            var idStatus = $(this).data('idstatus');
+            var fileName = $(this).data('filename');
+
+            if (!fileName) {
+                alert('File tidak ditemukan');
+                return;
+            }
+
+            var url = `/PPAP/DownloadDocument?noPPAP=${encodeURIComponent(noPPAP)}&idStatus=${idStatus}&fileName=${encodeURIComponent(fileName)}`;
+            window.location.href = url;
+        });
+
+        $(document).on('click', '#btnSimpan', function (event) {
+            event.preventDefault();
+
+            if (confirm('Apakah Yakin Ingin Approve ?')) {
+                var approvalDept = {
+                    NoPPAP : '@PPAPHeader.NoPPAP',
+                    IdStatus : '@PPAPHeader.IdStatus',
+                    Dept: $("#dept").val(),
+                    Username : "",
+                    Judgment : $("#judgment").val(),
+                    Comment : $("#comment").val()
+                };
+
+                $.ajax({
+                    url: '@Url.Action("UpdateApprovalDept", "PPAP", new { area ="User"})',
+                    dataType: "json",
+                    type: "POST",
+                    cache: false,
+                    data: { data: approvalDept} ,
+                    success: function (res) {
+                        if (res.success) {
+                            toastr.success(res.message);
+                            $("#_popUp").modal('hide');
+                            location.reload();
+                        } else {
+                            toastr.error(res.message);
+                            $("#_popUp").modal('hide');
+                        }
+                    },
+                    error: function (xhr) {
+                        alert("Error");
+                    }
+                });
+            } else {
+                return;
+            }
+        });
+
+        $(document).on('click', '#btnViewReport', function (event) {
+            event.preventDefault();
+            var noPPAP = '@PPAPHeader.NoPPAP';
+            var idStatus = @PPAPHeader.IdStatus;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ViewReportPPAP", "PPAP", new { area ="User"})',
+                data: { noPPAP: noPPAP, idStatus: idStatus },
+                success: function (data) {
+                    if (!data.result) {
+                        alert("Error");
+                    }
+                    else {
+                        window.open("/Reports/ReportPPAP.aspx", '_blank');
+                    }
+                }
+            });
+
+        });
+
+        $('.percent').each(function () {
+            const spec = parseFloat($(this).data('spec'));
+            const actual = parseFloat($(this).data('actual'));
+
+            const val = spec ? (spec - actual) / spec : null;
+            $(this).text(formatPercent(val));
+        });
+
+        toastr.options = {
+            "positionClass": "toast-top-center",
+            "timeOut": "1000",
+            "preventDuplicates": true,
+            "closeButton": true,
+            "progressBar": true
+        }
+
+        function aksesDept(el) {
+            var items = '@PPAPHeader.Item';
+            var value = $(el).attr("data-value");
+            var itemText = $(el).find("a").text().trim();
+
+            var ada = items
+                .split(",")
+                .map(x => x.trim())
+                .includes(value);
+            
+            var data = listAksesDept.find(x => x.Item === itemText);
+
+            if (!ada || !data || !data.Flag) {
+                $(el)
+                    .addClass("hidden")
+            }
+        };
+
+        function autoResizeTextarea(el) {
+            el.style.height = "auto";
+            el.style.height = el.scrollHeight + "px";
+        };
+
+        function formatDecimal(val, dec = 2) {
+            if (val == null || isNaN(val) || !isFinite(val)) return '';
+
+            return Number(val)
+                .toFixed(dec)
+                .replace(/\.?0+$/, '');
+        }
+
+        function formatPercent(val, dec = 0) {
+            if (val == null || isNaN(val) || !isFinite(val)) return '';
+
+            return new Intl.NumberFormat('id-ID', {
+                style: 'percent',
+                minimumFractionDigits: dec,
+                maximumFractionDigits: dec
+            }).format(val);
+        }
+
+        function getRowClass(item) {
+            return item.IsEdit === false ? 'tr-disabled' : '';
+        }
+
+        function safeText(val) {
+            return val === null || val === undefined ? '' : val;
+        }
+
+        function formatDate(date, format) {
+            const map = {
+                mm: date.getMonth() + 1,
+                dd: date.getDate(),
+                yy: date.getFullYear().toString().slice(-2),
+                yyyy: date.getFullYear()
+            }
+            return format.replace(/mm|dd|yy|yyy/gi, matched => map[matched])
+        }
+    </script>
+}

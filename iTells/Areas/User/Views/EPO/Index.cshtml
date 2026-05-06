@@ -1,0 +1,973 @@
+﻿@using BusinessObjects;
+
+
+
+@{
+    ViewBag.Title = "Electronic Purchase Order (e-PO)";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    List<ComboList> Years = (List<ComboList>)ViewData["FiscalYear"];
+    POAksesUser AkseUser = (POAksesUser)ViewData["AksesUser"];
+    //var Dept = @AkseUser.Dept;
+    //int Kol = @AkseUser.Kol;
+
+    //string Site = @AkseUser.Site;
+    int Kol = @AkseUser.Kol;
+    string Site = "Test";
+}
+
+<div id="message"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <table>
+                            <tr>
+                                <td>
+                                    @*<div class="form-group">*@
+                                    @* <label>Filter</label>*@
+                                    <select id="filterType" class="form-control select2" style="width:100%">
+                                        <option value=0>Non Approval</option>
+                                        <option value=1>Approved By User</option>
+                                        <option value=2>Approved By Div Head</option>
+                                        <option value=3>Non Confirm</option>
+                                        @*<option value=4>Supplier Approval</option>*@
+                                        <option value=5>PO History</option>
+                                    </select>
+                                    @*</div>*@
+                                </td>
+                                <td width="2%"></td>
+                                <td>
+                                    <div class="input-group date" id="dtDaricari">
+                                        <input type="text" class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+
+
+                                </td>
+                                <td width="2%"></td>
+                                <td>
+
+
+
+                                    <div class="input-group date" id="dtSampaicari">
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+
+
+                                </td>
+                                <td width="2%"></td>
+                                <td><button type="button" class="btn btn-primary" id="BtnCari">Cari</button></td>
+                                <td width="2%"></td>
+                                <td><button type="button" class="btn btn-primary" id="BtnRefresh">Refresh</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_NonApproval")
+@Html.Partial("_ApprovalByUser")
+@Html.Partial("_ApprovalSM")
+@Html.Partial("_NonConfirm")
+@Html.Partial("_History")
+@Html.Partial("_Supplier")
+
+<div class="modal fade" id="_popUp" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title" id="_title"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Nomor PR</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="txtPRNo" class="form-control" autofocus />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnProses" class="btn btn-primary" onclick="return ProsesOverBudget()" style="width:100px">Proses</button>&nbsp;
+                <button type="button" class="btn btn-primary" data-dismiss="modal" style="width:100px">Kembali</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script>
+        var filter = 0;
+        var filtertext = "";
+
+        $(document).ready(function () {
+            DataTableNonApproval();
+            DataTablePOByUser('1/1/1900', '1/1/1900');
+            DataTableApproveSM();
+            DataTableNonConfirm();
+            DataTableSupplierApproval();
+            $('#dtDari').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+            $('#dtSampai').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+            $('#dtDaricari').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+            $('#dtSampaicari').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+            const today = new Date();
+            $('#dtDari').datepicker('setDate', today);
+            $('#dtSampai').datepicker('setDate', today);
+            $('#dtDaricari').datepicker('setDate', today);
+            $('#dtSampaicari').datepicker('setDate', today);
+            DataTablePOHistory("", "");
+            HidePartial();
+            HideCari()
+            $('#parnonapproval').show();
+
+            //$('#clistbyuser').show();
+            $("#message").slideDown(0).slideUp(0);
+            var msg = localStorage.getItem("message");
+            if (msg != null) {
+                var msg1 = '<h3 class=\"alert alert-success fade in\">' + msg + '</h3>';
+                $('#message').html(msg1);
+                $("#message").slideDown(1000).slideUp(2000);
+                localStorage.removeItem("message");
+            }
+        })
+
+
+        function HidePartial() {
+            $('#parnonapproval').hide();
+            $('#clistbyuser').hide();
+            $('#clistBySM').hide();
+            $('#clistNonConfirm').hide();
+            $('#chistory').hide();
+            $('#clistSupplierApproval').hide();
+            //$('#chistory').hide();
+            //$('#cbudget').hide();
+            //$('#BtnOverBudget').hide();
+        }
+        function HideCari() {
+            $('#dtDaricari').hide();
+            $('#dtSampaicari').hide();
+            $('#BtnCari').hide();
+            $('#BtnRefresh').hide();
+
+        }
+        function ShowCari() {
+            $('#dtDaricari').show();
+            $('#dtSampaicari').show();
+            $('#BtnCari').show();
+            $('#BtnRefresh').show();
+
+        }
+
+
+        var ListPR = null;
+        var dtPR;
+        function DataTableNonApproval() {  
+            ListPR = {
+                init: function () {
+                    dtPR = $('#tbNonApproval').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "ajax": {
+                            "url": "/getmodelpo",
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            {
+                                "title": "PO No",
+                                "data": "PONumber",
+                                "class": "point",
+                                render: function (data,) {
+                                    return '<a id=btnPONo>' + data + '</a>'
+                                },
+                            },
+                            { "title": "Created", "data": "CreateUser" },
+                            { "title": "PO Date", "data": "PODate" },
+                            { "title": "Supplier", "data": "VendorName" },
+                            { "title": "Class ID", "data": "ClassID" },
+                            {
+                                "data": "null", "width": "170px", "title": "Pilihan", "orderable": false, "render": function (data, type, full) {
+                                    if (@Kol === 1) {
+                                        btn = '<button class="btn btn-xs btn-primary" title="Approve" id="BtnApprove" style="margin-right:5px">Approve</button>' +
+                                            '<button class="btn btn-xs btn-primary" title="Urgent" id="BtnUrgent" style="margin-right:5px">Urgent</button>' +
+                                            '<button class="btn btn-xs btn-primary" title="Print" id="BtnPrintPO_Noapproval" style="margin-right:5px">Print</button>';
+                                    } else {
+                                        btn = '<button class="btn btn-xs btn-primary" title="Approve" id="BtnApprove" style="margin-right:5px">Approve</button>' +
+                                            '<button class="btn btn-xs btn-primary" title="Reject" id="BtnReject" style="margin-right:5px">Reject</button>' +
+                                            '<button class="btn btn-xs btn-primary" title="Urgent" id="BtnUrgent" style="margin-right:5px">Urgent</button>';
+                                    }
+                                    return btn;
+                                }
+                            }
+                        ],
+                        "createdRow": function (row, data, dataIndex) {
+                            if (data.User6 == "U") {
+                                $(row).css('background-color', '#FF0000');
+                                //$(row).css('color', '#000099');
+                            }
+                            else if (data.User6 == "R") {
+                                $(row).css('background-color', '#FFFF00');
+                                //$(row).css('color', '#000099');
+                            }
+
+                        },
+                        "lengthMenu": [[100, 200, 300, 400], [100, 200, 300, 400]]
+                    });
+                }
+            }
+            ListPR.init();
+        }
+
+        var ListPOByUser;
+        var dtPOByUser;
+        function DataTablePOByUser(stDate, enDate) {
+            ListPOByUser = {
+                dtPOByUser: null,
+                init: function () {
+                    dtPOByUser = $('#tbPOByUser').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "ajax": {
+                            "data": {
+                                DTAwal: stDate,
+                                DTAkhir: enDate,
+                            },
+                            "url": "/getmodelpObyuser",
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            {
+                                "title": "PO No",
+                                "data": "PONumber",
+                                "class": "point",
+                                render: function (data,) {
+                                    return '<a id=btnPONoUser>' + data + '</a>'
+                                },
+                            },
+                            { "title": "Created", "data": "CreateUser" },
+                            { "title": "PO Date", "data": "PODate" },
+                            { "title": "Supplier", "data": "VendorName" },
+                            { "title": "Class ID", "data": "ClassID" },
+                            { "title": "User", "data": "Level1" },
+                            { "title": "Dept Head", "data": "Level2" },
+                            { "title": "SM", "data": "Level3" },
+                            { "title": "Supplier", "data": "Level4" },
+
+                            {
+                                "data": "null", "width": "170px", "title": "Pilihan", "orderable": false, "render": function (data, type, full) {
+                                    btn = '<button class="btn btn-xs btn-primary" title="Reject" id="BtnRejectUser" style="margin-right:5px">Reject</button>' +
+                                        '<button class="btn btn-xs btn-primary" title="Print" id="BtnPrintPO_ApprovalByuser" style="margin-right:5px">Print</button>';
+                                    return btn;
+                                }
+                            }
+                        ],
+                        //"columnDefs": [
+                        //    { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                        //    { "className": "text-center custom-middle-align", "targets": [0] },
+                        //    { "visible": false, "targets": [0, 4] },
+                        //],
+                        "createdRow": function (row, data, dataIndex) {
+                            if (data.User6 == "U") {
+                                $(row).css('background-color', '#FF0000');
+                                //$(row).css('color', '#000099');
+                            }
+                            else if (data.User6 == "R") {
+                                $(row).css('background-color', '#FFFF00');
+                                //$(row).css('color', '#000099');
+                            }
+
+                        },
+                        "lengthMenu": [[100, 200, 300, 400], [100, 200, 300, 400]]
+                    });
+                }
+            }
+            ListPOByUser.init()
+        }
+
+        var ListApproveSM = null;
+        var dtApproveSM;
+        function DataTableApproveSM() {
+            ListApproveSM = {
+                init: function () {
+                    dtApproveSM = $('#tbPOBySM').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "ajax": {
+                            "url": "/getmodelpOApproveSM",
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            {
+                                "title": "PO No",
+                                "data": "PONumber",
+                                "class": "point",
+                                render: function (data,) {
+                                    return '<a id=btnPONoSM>' + data + '</a>'
+                                },
+                            },
+                            { "title": "Created", "data": "CreateUser" },
+                            { "title": "PO Date", "data": "PODate" },
+                            { "title": "Supplier", "data": "VendorName" },
+                            { "title": "Class ID", "data": "ClassID" },
+                            { "title": "Level 1", "data": "Level1" },
+                            {
+                                "data": "null", "width": "170px", "title": "Pilihan", "orderable": false, "render": function (data, type, full) {
+                                    btn = '<button class="btn btn-xs btn-primary" title="Print" id="BtnPrintPO" style="margin-right:5px">Print</button>' +
+                                        '<button class="btn btn-xs btn-primary" title="PO Send" id="BtnSendPO" style="margin-right:5px">PO Send</button>';
+                                        //'<button class="btn btn-xs btn-primary" title="Send Mail" id="BtnSendMail" style="margin-right:5px">Send Mail</button>';
+                                        //'<button class="btn btn-xs btn-primary" title="Urgent" id="BtnUrgent1" style="margin-right:5px">Urgent</button>';
+                                    return btn;
+                                }
+                            }
+                        ],
+
+                        "createdRow": function (row, data, dataIndex) {
+                            if (data.User6 == "U") {
+                                $(row).css('background-color', '#FF0000');
+                                //$(row).css('color', '#000099');
+                            }
+                            else if (data.User6 == "R") {
+                                $(row).css('background-color', '#FFFF00');
+                                //$(row).css('color', '#000099');
+                            }
+
+                        },
+                        "lengthMenu": [[100, 200, 300, 400], [100, 200, 300, 400]]
+                    });
+                }
+            }
+            ListApproveSM.init();
+        }
+
+        var ListNonConfirm = null;
+        var dtNonConfirm;
+        function DataTableNonConfirm() {
+            ListNonConfirm = {
+                init: function () {
+                    dtNonConfirm = $('#tbPONonConfirm').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "ajax": {
+                            "url": "/getmodelpONonConfirm",
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            {
+                                "title": "PO No",
+                                "data": "PONumber",
+                                "class": "point",
+                                render: function (data,) {
+                                    return '<a id=btnPONoConfirm>' + data + '</a>'
+                                },
+                            },
+                            { "title": "Created", "data": "CreateUser" },
+                            { "title": "PO Date", "data": "PODate" },
+                            { "title": "Supplier", "data": "VendorName" },
+                            { "title": "Email", "data": "Email" },
+                            {
+                                "data": "null", "width": "170px", "title": "Pilihan", "orderable": false, "render": function (data, type, full) {
+                                    btn = '<button class="btn btn-xs btn-primary" title="Print" id="BtnPrintPO_Noconfirm" style="margin-right:5px">Print</button>';
+                                    //    '<button class="btn btn-xs btn-primary" title="PO Send" id="BtnSendPO" style="margin-right:5px">PO Send</button>';
+                                    //'<button class="btn btn-xs btn-primary" title="Send Mail" id="BtnSendMail" style="margin-right:5px">Send Mail</button>';
+                                    //'<button class="btn btn-xs btn-primary" title="Urgent" id="BtnUrgent1" style="margin-right:5px">Urgent</button>';
+                                    return btn;
+                                }
+                            }
+                        ],
+
+                        "createdRow": function (row, data, dataIndex) {
+                            if (data.User6 == "U") {
+                                $(row).css('background-color', '#FF0000');
+                                //$(row).css('color', '#000099');
+                            }
+                            else if (data.User6 == "R") {
+                                $(row).css('background-color', '#FFFF00');
+                                //$(row).css('color', '#000099');
+                            }
+
+                        },
+                        "lengthMenu": [[100, 200, 300, 400], [100, 200, 300, 400]]
+                    });
+                }
+            }
+            ListNonConfirm.init();
+        }
+
+        var ListSupplierApproval = null;
+        var dtSupplierApproval;
+        function DataTableSupplierApproval() {
+            ListSupplierApproval = {
+                init: function () {
+                    dtSupplierApproval = $('#tbPOSupplierApproval').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "ajax": {
+                            "url": "/getmodelpOSupplierApprove",
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            {
+                                "title": "PO No",
+                                "data": "PONumber",
+                                "class": "point",
+                                render: function (data,) {
+                                    return '<a id=btnPONoConfirm>' + data + '</a>'
+                                },
+                            },
+                            { "title": "Created", "data": "CreateUser" },
+                            { "title": "PO Date", "data": "PODate" },
+                            { "title": "Supplier", "data": "VendorName" },
+                            { "title": "Email", "data": "Email" },
+                            {
+                                "data": "null", "width": "170px", "title": "Pilihan", "orderable": false, "render": function (data, type, full) {
+                                    btn = '<button class="btn btn-xs btn-primary" title="Print" id="BtnPrintPO" style="margin-right:5px">Print</button>' +
+                                        '<button class="btn btn-xs btn-primary" title="PO Send" id="BtnSendPO" style="margin-right:5px">PO Send</button>';
+                                    //'<button class="btn btn-xs btn-primary" title="Send Mail" id="BtnSendMail" style="margin-right:5px">Send Mail</button>';
+                                    //'<button class="btn btn-xs btn-primary" title="Urgent" id="BtnUrgent1" style="margin-right:5px">Urgent</button>';
+                                    return btn;
+                                }
+                            }
+                        ],
+
+                        "createdRow": function (row, data, dataIndex) {
+                            if (data.User6 == "U") {
+                                $(row).css('background-color', '#FF0000');
+                                //$(row).css('color', '#000099');
+                            }
+                            else if (data.User6 == "R") {
+                                $(row).css('background-color', '#FFFF00');
+                                //$(row).css('color', '#000099');
+                            }
+
+                        },
+                        "lengthMenu": [[100, 200, 300, 400], [100, 200, 300, 400]]
+                    });
+                }
+            }
+            ListSupplierApproval.init();
+        }
+
+
+
+        $(document).on('click', '#btnPONo', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbNonApproval').dataTable().fnGetData(row);
+            //var _PRNo = EncryptURL(data.PONumber)
+            var _PONo = data.PONumber;
+            var url = "/viewpouser/" + _PONo;
+            window.location.href = url;
+           // window.open(url, '_blank');
+        });
+
+        $(document).on('click', '#btnPONoUser', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPOByUser').dataTable().fnGetData(row);
+            //var _PRNo = EncryptURL(data.PONumber)
+            var _PONo = data.PONumber;
+            var url = "/viewpoApproveUser/" + _PONo;
+            //window.location.href = url;
+            window.open(url, '_blank');
+        });
+
+        $(document).on('click', '#btnPONoSM', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPOBySM').dataTable().fnGetData(row);
+            //var _PRNo = EncryptURL(data.PONumber)
+            var _PONo = data.PONumber;
+            var url = "/viewpoApproveUser/" + _PONo;
+           // window.location.href = url;
+           // window.open = '_blank';
+            window.open(url, '_blank');
+        });
+
+        $(document).on('click', '#btnPRNoHis', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPOHistory').dataTable().fnGetData(row);
+            //var _PRNo = EncryptURL(data.PONumber)
+            var _PONo = data.PONbr;
+            var url = "/viewpoApproveUser/" + _PONo;
+            // window.location.href = url;
+            // window.open = '_blank';
+            window.open(url, '_blank');
+        });
+
+        $(document).on('click', '#btnPONoConfirm', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPONonConfirm').dataTable().fnGetData(row);
+            //var _PRNo = EncryptURL(data.PONumber)
+            var _PONo = data.PONumber;
+            var url = "/viewpoApproveUser/" + _PONo;
+            // window.location.href = url;
+            // window.open = '_blank';
+            window.open(url, '_blank');
+        });
+
+        $(document).on('change', '#filterType', function (event) {
+            event.preventDefault();
+            filter = $('#filterType').val();
+            filtertext = $('#filterType').text();
+            HideNShow();
+            if (filter == 1) {
+                ShowCari();
+            } else {
+                HideCari();
+            }
+
+        });
+
+         function HideNShow() {
+           filter = $('#filterType').val();
+            if (filter == 0) {
+                HidePartial();
+                $('#tbNonApproval').DataTable().ajax.reload();
+                $('#parnonapproval').show();
+            } else if (filter == 1) {
+                HidePartial();
+                $('#tbPOByUser').DataTable().ajax.reload();
+                $('#clistbyuser').show();
+            } else if (filter == 2) {
+                HidePartial();
+                $('#tbPOBySM').DataTable().ajax.reload();
+                $('#clistBySM').show();
+            } else if (filter == 3) {
+                HidePartial();
+                $('#tbPONonConfirm').DataTable().ajax.reload();
+                $('#clistNonConfirm').show();
+            } else if (filter == 4) {
+                HidePartial();
+                $('#tbPOSupplierApproval').DataTable().ajax.reload();
+                $('#clistSupplierApproval').show();
+            } else if (filter == 5) {
+                HidePartial();
+                $('#chistory').show();
+            //} else if (filter == 6) {
+            //    HidePartial();
+            //    $('#cbudget').show();
+            }
+        }
+
+        $(document).on('click', '#BtnRejectUser', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPOByUser').dataTable().fnGetData(row);
+            var _PONo = data.PONumber;
+            if (confirm('Anda yakin akan Reject PO ?')) {
+                UpdateReject(_PONo);
+            } else {
+                return false;
+            }
+        });
+
+        $(document).on('click', '#BtnReject', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbNonApproval').dataTable().fnGetData(row);
+            var _PONo = data.PONumber;
+            if (confirm('Anda yakin akan Reject PO ?')) {
+                UpdateRejectNon(_PONo);
+            } else {
+                return false;
+            }
+        });
+
+        function UpdateRejectNon(_PONo) {
+            $.ajax({
+                url: '@Url.Action("RejectPO", "EPO", new { area ="User"})',
+                dataType: "json",
+                type: "POST",
+                cache: false,
+                data: { PONo: _PONo} ,
+                success: function (data) {
+                    if (data.success) {
+                        $('#tbNonApproval').DataTable().ajax.reload();
+                        alert(data.message);
+                        //var message = '<h3 class=\"alert alert-success fade in\">' + data.message + '</h3>';
+                        //$('#message').html(message);
+                        //$("#message").slideDown(1000).slideUp(2000);
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText)
+                }
+            });
+        };
+
+        function UpdateReject(_PONo) {
+            $.ajax({
+                url: '@Url.Action("RejectPO", "EPO", new { area ="User"})',
+                dataType: "json",
+                type: "POST",
+                cache: false,
+                data: { PONo: _PONo} ,
+                success: function (data) {
+                    if (data.success) {
+                        $('#tbPOByUser').DataTable().ajax.reload();
+                        alert(data.message);
+
+                        //var message = '<h3 class=\"alert alert-success fade in\">' + data.message + '</h3>';
+                        //$('#message').html(message);
+                        //$("#message").slideDown(1000).slideUp(2000);
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        };
+
+
+
+        $(document).on('click', '#BtnApprove', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbNonApproval').dataTable().fnGetData(row);
+            var _PONo = data.PONumber;
+            if (confirm('Anda yakin akan Approve PO ?')) {
+                ApprovePO(_PONo);
+            } else {
+                return false;
+            }
+        });
+
+        function ApprovePO(_PONo) {
+            $.ajax({
+                url: '@Url.Action("ApprovePO", "EPO", new { area ="User"})',
+                dataType: "json",
+                type: "POST",
+                cache: false,
+                data: { PONo: _PONo} ,
+                success: function (data) {
+                    if (data.success) {
+                        $('#tbNonApproval').DataTable().ajax.reload();
+                        //var message = '<h3 class=\"alert alert-success fade in\">' + data.message + '</h3>';
+                        //$('#message').html(message);
+                        //$("#message").slideDown(1000).slideUp(2000);
+                        alert(data.message);
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+
+        $(document).on('click', '#BtnUrgent', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbNonApproval').dataTable().fnGetData(row);
+            var _PONo = data.PONumber;
+            if (confirm('Anda yakin PO ini Urgent?')) {
+                UpdateUrgent(_PONo);
+            } else {
+                return false;
+            }
+        });
+
+        function UpdateUrgent(_PONo) {
+            $.ajax({
+                url: '@Url.Action("UpdateUrgent", "EPO", new { area ="User"})',
+                dataType: "json",
+                type: "POST",
+                cache: false,
+                data: { PONo: _PONo} ,
+                success: function (data) {
+                    if (data.success) {
+                        $('#tbNonApproval').DataTable().ajax.reload();
+                        //var message = '<h3 class=\"alert alert-success fade in\">' + data.message + '</h3>';
+                        //$('#message').html(message);
+                        //$("#message").slideDown(1000).slideUp(2000);
+                        alert(data.message);
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+
+
+        $(document).on('click', '#BtnPrintPO_Noapproval', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbNonApproval').dataTable().fnGetData(row);
+            var _PONo = data.PONumber;
+            PrintPO(_PONo);
+        });
+
+        $(document).on('click', '#BtnPrintPO_ApprovalByuser', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPOByUser').dataTable().fnGetData(row);
+            var _PONo = data.PONumber;
+            PrintPO(_PONo);
+        });
+
+        $(document).on('click', '#BtnPrintPO', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPOBySM').dataTable().fnGetData(row);
+            var _PONo = data.PONumber;
+            PrintPO(_PONo);
+        });
+        $(document).on('click', '#BtnPrintPO_Noconfirm', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPONonConfirm').dataTable().fnGetData(row);
+            var _PONo = data.PONumber;
+            PrintPO(_PONo);
+        });
+        $(document).on('click', '#BtnPrintPO_History', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPOHistory').dataTable().fnGetData(row);
+            var _PONo = data.PONbr;
+            PrintPO(_PONo);
+        });
+
+        function PrintPO(_PONo) {
+            $.ajax({
+                url: '@Url.Action("PrintPO", "EPO", new { area ="User"})',
+                //dataType: "json",
+                type: "POST",
+                //cache: false,
+                data: { PONo: _PONo, Year: '', RptName: 'RptPODetail'} ,
+                success: function (data) {
+                    //if (data.success) {
+                    //    $('#tbPOBySM').DataTable().ajax.reload();
+                    //    var message = '<h3 class=\"alert alert-success fade in\">' + data.message + '</h3>';
+                    //    $('#message').html(message);
+                    //    $("#message").slideDown(1000).slideUp(2000);
+                    //}
+
+                    if (!data.result) {
+                        alert("Error");
+                    }
+                    else {
+                        window.open("/Reports/ReportPO.aspx", '_blank');
+                    }
+
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+        $(document).on('click', '#BtnSendPO', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPOBySM').dataTable().fnGetData(row);
+            var _PONo = data.PONumber;
+            if (confirm('Anda yakin PO Sudah Di Kirim?')) {
+                SendPO(_PONo);
+            } else {
+                return false;
+            }
+        });
+
+        function SendPO(_PONo) {
+            $.ajax({
+                url: '@Url.Action("SendPO", "EPO", new { area ="User"})',
+                dataType: "json",
+                type: "POST",
+                cache: false,
+                data: { PONo: _PONo} ,
+                success: function (data) {
+                    if (data.success) {
+                        $('#tbPOBySM').DataTable().ajax.reload();
+                        alert(data.message);
+                        //var message = '<h3 class=\"alert alert-success fade in\">' + data.message + '</h3>';
+                        //$('#message').html(message);
+                        //$("#message").slideDown(1000).slideUp(2000);
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+
+        $(document).on('click', '#BtnSendMail', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPOBySM').dataTable().fnGetData(row);
+            var _PONo = data.PONumber;
+            if (confirm('Anda yakin Kirim Email?')) {
+                SendEmail(_PONo);
+            } else {
+                return false;
+            }
+        });
+
+         function SendEmail(_PONo) {
+            $.ajax({
+                url: '@Url.Action("SendEmail", "EPO", new { area ="User"})',
+                dataType: "json",
+                type: "POST",
+                cache: false,
+                data: { PONo: _PONo} ,
+                success: function (data) {
+                    if (data.success) {
+                        $('#tbPOBySM').DataTable().ajax.reload();
+                        alert(data.message);
+                        //var message = '<h3 class=\"alert alert-success fade in\">' + data.message + '</h3>';
+                        //$('#message').html(message);
+                        //$("#message").slideDown(1000).slideUp(2000);
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+
+        $(document).on('click', '#BtnViewHistory', function (event) {
+            event.preventDefault();
+            var stDate = $('#dtDari').datepicker("getDate");
+            var enDate = $('#dtSampai').datepicker("getDate");
+            $("#tbPOHistory").dataTable().fnDestroy();
+            DataTablePOHistory(stDate.toISOString(), enDate.toISOString());
+        });
+
+        function DataTablePOHistory(stDate, enDate) {
+            dtPRHistory = $('#tbPOHistory').DataTable({
+                "serverSide": true,
+                "processing": true,
+                "autoWidth": false,
+                "bInfo": false,
+                "ajax": {
+                    "data": {
+                        DTDari: stDate,
+                        DTSampai: enDate,
+                        PONumber: $('#txtPO').val(),
+                        PRNumber: $('#txtPR').val(),
+                        Level: $('#txtApprove').val(),
+                        Supplier: $('#txtSupplier').val(),
+                        FileName: $('#txtFileName').val(),
+                    },
+                    "url": "/getmodelpOhistory",
+                    "type": 'POST',
+                },
+                "columns": [
+                    //{
+                    //    "data": "Name", title: "Action", "orderable": false, "render": function (data) {
+                    //        return '<button class="btn btn-xs btn-info" title="Edit" id="BtnView" style="margin-right:5px"> <span class="fa fa-eye"></span></button>';
+                    //    }
+                    //},
+                    {
+                        "title": "PO No",
+                        "data": "PONbr",
+                        "class": "point",
+                        render: function (data,) {
+                            return '<a id=btnPRNoHis>' + data + '</a>'
+                        },
+                    },
+                    {
+                        "title": "Prom Date", "data": "PromDate",
+                        "render": function (value) {
+                            if (value === null) return "";
+                            return moment(value).format('DD/MM/YYYY');
+                        }
+                    },
+                    //{ "title": "Prom Date", "data": "PromDate" },
+                    { "title": "PR No", "data": "PRNo" },
+                    { "title": "Supplier", "data": "Name" },
+                    //{ "title": "ClassID", "data": "ClassID" },
+                    //{ "title": "Email", "data": "Email" },
+                    { "title": "Invt Id", "data": "InvtID" },
+                    { "title": "Descr", "data": "TranDesc" },
+                    { "title": "Level", "data": "Level" },
+                    {
+                        "data": "null", "width": "170px", "title": "Pilihan", "orderable": false, "render": function (data, type, full) {
+                             btn = '<button class="btn btn-xs btn-primary" title="Print" id="BtnPrintPO_History" style="margin-right:5px">Print</button>';
+                             //+'<button class="btn btn-xs btn-primary" title="PO Send" id="BtnSendPO" style="margin-right:5px">PO Send</button>';
+                            return btn;
+                        }
+                    }
+
+
+
+                ],
+                //"columnDefs": [
+                //    { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                //    { "className": "text-center custom-middle-align", "targets": [0] },
+                //    { "visible": false, "targets": [0] },
+                //],
+                "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+            });
+        }
+
+        $(document).on('click', '#BtnCari', function (event) {
+            event.preventDefault();
+            var stDate = $('#dtDaricari').datepicker("getDate");
+            var enDate = $('#dtSampaicari').datepicker("getDate");
+            $("#tbPOByUser").dataTable().fnDestroy();
+            DataTablePOByUser(stDate.toISOString(), enDate.toISOString());
+        });
+
+        $(document).on('click', '#BtnRefresh', function (event) {
+            event.preventDefault();
+            $("#tbPOByUser").dataTable().fnDestroy();
+            DataTablePOByUser('1/1/1900', '1/1/1900');
+        });
+
+
+
+
+    </script>
+}
+
+
+

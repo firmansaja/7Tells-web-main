@@ -1,0 +1,310 @@
+﻿@using BusinessObjects;
+@{
+    List<CurrentLogin> Userlogin = (List<CurrentLogin>)ViewData["userlogin"];
+    List<BO_EBudget> filter = (List<BO_EBudget>)ViewData["Filter"];
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    //ViewBag.Title = "View Budget";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    var FilterTahun = "";
+    var deptid = "";
+
+    var Cuserlogin = "";
+    var Cuserdept = "";
+
+    foreach (var item in filter)
+    {
+        FilterTahun = item.FilterTahun;
+        deptid = item.FilterDeptID;
+
+    }
+
+    foreach (var CurrentLogin in Userlogin)
+    {
+        Cuserlogin = CurrentLogin.UserName;
+        Cuserdept = CurrentLogin.Dept;
+    }
+
+}
+
+<head>
+
+
+    <style>
+
+        .packaging {
+            display: grid;
+            grid-template-columns: 100px 100px 100px 1fr;
+            grid-template-areas: 'btn1 btn2 btn3 judul';
+            margin-bottom: 5px;
+            background-color: #2E86C1;
+            padding: 5px;
+            border-radius: 5px;
+            grid-gap: 5px;
+        }
+
+        .btn1 {
+            grid-area: btn1;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .btn2 {
+            grid-area: btn2;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .btn3 {
+            grid-area: btn3;
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+
+
+
+        .judul {
+            grid-area: judul;
+            display: flex;
+            align-items: center;
+            padding-left: 5px;
+        }
+
+         
+
+        .packaging button {
+            border-radius: 5px;
+            padding-left: 5px;
+        }
+
+        .packaging .judul{
+            color:white;
+        }
+
+
+        @@media (max-width:600px) {
+            .packaging {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-areas: 'btn1 btn2 btn3' 'judul judul judul';
+                grid-gap: 5px;
+            }
+        }
+    </style>
+</head>
+
+<div id="MainForm">
+    <div class="row">
+        <div class="col-md-12 " id="div2">
+            <div class="packaging">
+                <button class="btn1 btn btn-warning " id="btnKembali">Kembali</button>
+                <button class="btn2 btn btn-success " id="btnExport">Export</button>
+                <button class="btn3 btn btn-success " id="btnAllDept">All Dept</button>
+                <label class="judul control-label text-muted">@ViewBag.title</label>
+            </div>
+        </div>
+    </div>
+
+    <div id="tablegrid">
+        @Html.Partial("PartialLihatBudget")
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("body").addClass("sidebar-collapse");
+            $("#btnAllDept").addClass("hidden");
+                var Deptlogin = "";
+                Deptlogin = '@Cuserdept';
+            if (Deptlogin == '1FAC' || Deptlogin == '3FAC' || Deptlogin == '1MIS') {
+                    $("#btnAllDept").removeClass("hidden");
+                }
+            DataTable();
+        })
+
+        var ListVM;
+
+        function DataTable() {
+            var th = @FilterTahun;
+            var a = '@deptid';
+            ListVM = {
+                dt: null,
+
+                init: function () {
+                    dt = $('#tbLihatBudget').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "scrollY": "75vh",
+                        "scrollX": true,
+                        "scrollCollapse": true,
+                        "paging": true,
+                        "bfilter": false,
+                        "binfo": false,
+                        //"fixedColumns": true,
+                        //"fixedColumns": {
+                        //    "leftColumns": 2
+                        //},
+                        //fixedColumns: true,
+                        //fixedColumns: {
+                        //    leftColumns: 2
+                        //},
+                        "ajax": {
+                            "url": "/getbudgetpresentasi",
+                            "data": {
+                                tahun: th,
+                                dept: a
+                            },
+                            "type": 'POST',
+                        },
+
+                        "columns": [
+                            { "title": "No", "data": "No", "width": "30px", "class": "text-center hh" },
+                            {
+                                "title": "AcctID",
+                                "data": "AcctID",
+                                "class": "text-center point",
+                                "width": "70px",
+                                render: function (data,) {
+                                    return '<a id=btnLihat>' + data + '</a>'
+                                },
+
+                            },
+
+                            //{ "title": "AcctID", "data": "AcctID", "width": "70px", "class": "text-center" },
+                            { "title": "AcctName", "data": "AcctName", "width": "200px", "class": "text-left" },
+                            { "title": "Tahun", "data": "Tahun", "width": "70px", "class": "text-center th" },
+                            { "title": "DeptID", "data": "DeptID", "width": "70px", "class": "text-center dept" },
+                            { "title": "Jan", "data": "Jan", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Feb", "data": "Feb", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Mar", "data": "Mar", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Apr", "data": "Apr", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Mei", "data": "Mei", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Jun", "data": "Jun", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Jul", "data": "Jul", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Agst", "data": "Agst", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Sept", "data": "Sept", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Okt", "data": "Okt", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Nov", "data": "Nov", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0)},
+                            { "title": "Des", "data": "Des", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0) },
+                            { "title": "Subtotal", "data": "Subtotal", "class": "text-right", render: $.fn.dataTable.render.number(',', '.', 0) },
+                        ],
+                        "lengthMenu": [[50, 100], [50, 100]]
+
+                    });
+                }
+            }
+            ListVM.init();
+        }
+
+        $(document).on('click', '#btnLihat', function (event) {
+            event.preventDefault();
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbLihatBudget').dataTable().fnGetData(row);
+            console.log(data);
+            var _AcctId = $(this).closest('tr').find('.point').text();
+            var _Tahun = $(this).closest('tr').find('.th').text();
+            var _Dept = $(this).closest('tr').find('.dept').text();
+            //var url = "/showBudgetDetail_isi/" + _AcctId + "/Tahun/" + _Tahun + "/Dept/" + _Dept;
+            //window.location.href = url;
+            var url = "/showBudgetDetail/" + EncryptURL(_AcctId) + "/Tahun/" + EncryptURL(_Tahun) + "/Dept/" + EncryptURL(_Dept);
+            window.location.href = url;
+
+        });
+
+         $(document).on('click', '#btnExport', function (event) {
+            event.preventDefault();
+
+             var _tahun = '@FilterTahun';
+             var _dept = '@deptid'
+
+            $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("CreateDataToExcel_BudgetSummaryAccount", "EBudget", new { area ="User"})',
+                data: {
+                    tahun: _tahun,
+                    dept:_dept},
+                    //datatype: "json",
+                    success: function (data_) {
+                        console.log(data_);
+                        if (data_.success) {
+                            window.location.href = "@Url.RouteUrl(new { Controller = "EBudget", Action = "Download" })/?fileName=" + data_.namafile;
+                        }
+                        else {
+                            alert("Download GAGAL")
+                        }
+                    }
+
+                });
+
+         });
+
+
+        $(document).on('click', '#btnAllDept', function (event) {
+            event.preventDefault();
+
+             var _tahun = '@FilterTahun';
+             var _dept = '@deptid'
+
+            $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("CreateDataToExcel_BudgetSummaryAccount_All", "EBudget", new { area ="User"})',
+                data: {
+                    tahun: _tahun,
+                    dept:_dept},
+                    //datatype: "json",
+                    success: function (data_) {
+                        console.log(data_);
+                        if (data_.success) {
+                            window.location.href = "@Url.RouteUrl(new { Controller = "EBudget", Action = "Download" })/?fileName=" + data_.namafile;
+                        }
+                        else {
+                            alert("Download GAGAL")
+                        }
+                    }
+
+                });
+
+         });
+
+
+          $(document).on('click', '#btnKembali', function (event) {
+            event.preventDefault();
+              var _tahun = '@FilterTahun';
+              var url = "@Url.RouteUrl(new { Controller = "EBudget", Action = "Budgetdeptsummary" })/?id=" + EncryptURL(_tahun);
+            window.location.href = url;
+          });
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+    </script>
+}
+
+
+

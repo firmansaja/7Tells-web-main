@@ -1,0 +1,132 @@
+﻿@using BusinessObjects;
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    string FilterId = "";
+
+    FilterId = ViewBag.filter;
+
+
+}
+
+<div id="MainForm">
+    <div class="row">
+        <div class="col-md-12 " id="div2">
+            <div class="form-group form-group-sm">
+                <div class="col-sm-1 col-md-8">
+                    <font color="#ffffff" size="+1"><label class="  control-label text-muted" style="text-align:left;">@ViewBag.title</label></font>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="MainForm">
+    <div id="tbOrdNbr">
+        @Html.Partial("PartialByOrd")
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            DataTable();
+        });
+
+
+     var ListVM;
+        function DataTable() {
+            var ord = "@FilterId";
+            ListVM = {
+                dt: null,
+
+                init: function () {
+                    dt = $('#tbord').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": true,
+                        "scrollY": "400px",
+                        "scrollX": true,
+                        "scrollCollapse": true,
+                        "paging": true,
+                        //fixedColumns: true,
+                        //fixedColumns: {leftColumns: 1},
+                        "ajax": {
+                            "url": "/loaddataByOrdNbr",
+                            "data": { OrdNbr: ord },
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            {
+                                "title": "No",
+                                "data": "No",
+                                "class": "text-center point",
+                                //"width": "70px",
+                                render: function (data,) {
+                                    return '<a id=btnLihat>' + data + '</a>'
+                                },
+                            },
+                            //{ "title": "No", "data": "No", "class": "text-center hh"},
+                            { "title": "OrdNbr", "data": "OrdNbr", "class": "text-center" },
+                            { "title": "PO Number", "data": "CustOrdNbr", "class": "text-center" },
+
+                        ],
+                        "lengthMenu": [[100, 200], [100, 200]]
+
+                    });
+                }
+            }
+            ListVM.init();
+        }
+
+
+        $(document).on('click', '#btnLihat', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbord').dataTable().fnGetData(row);
+            //var _PRNo = EncryptURL(data.PONumber)
+            var _CustOrdNbr = data.CustOrdNbr;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Load_Os_SalesOrder", "SO", new { area ="User"})',
+                data: { CustOrdNbr: EncryptURL(_CustOrdNbr) },
+                datatype: "json",
+                success: function (data) {
+                    window.location.href = data.redirectUrl;
+                }
+            });
+        });
+
+
+
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+
+
+
+    </script>
+}
+
+
+

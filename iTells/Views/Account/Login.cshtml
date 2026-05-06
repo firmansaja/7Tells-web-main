@@ -1,0 +1,104 @@
+﻿@model iTells.Helper.LoginViewModel
+@{
+    Layout = null;
+    ViewBag.Title = "Log in";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>iTells</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    @Styles.Render("~/AdminLTE/bootstrap/css")
+    @Styles.Render("~/AdminLTE/plugins/font-awesome/css")
+    @Styles.Render("~/AdminLTE/plugins/ionicons/css")
+    @Styles.Render("~/AdminLTE/dist/css")
+    @Styles.Render("~/AdminLTE/plugins/icheck/css/sqare/blue")
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        body {
+            background-color: #f9fafb;
+            /*font-family: 'Open Sans', sans-serif;*/
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .login-box-body {
+            border-radius: 15px;
+        }
+
+        #password, #btnSubmit, #email {
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body style="background-color:black; background-repeat: no-repeat">
+    <div class="login-box">
+        <div class="login-box-body">
+            <img src="~/images/Tells.png" err-src="~/images/Tells.png" style="width:120px;height:120px;display: block;
+                    margin-left: auto;
+                    margin-right: auto;" class="center">
+            <hr />
+            <p class="login-box-msg">Sign in to start your session</p>
+            <form action="/account/login" method="post">
+                @Html.Raw(ViewBag.Message)
+                <div class="form-group has-feedback">
+                    @Html.TextBoxFor(model => model.Email, new { @class = "form-control", placeholder = "Enter UserName", @required = "required", @id="email" })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    @Html.TextBoxFor(model => model.Password, new { @class = "form-control", type = "password", placeholder = "Enter Password", @required = "required", @id="password" })
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                <div class="row">
+                    <div class="col-xs-8">
+                        @*<div class="checkbox icheck">
+                                <label>
+                                    <input name="remember" type="checkbox"> Remember Me
+                                </label>
+                            </div>*@
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-xs-4">
+                        <button id="btnSubmit" type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+            @*<div class="social-auth-links text-center">
+                    <p>- OR -</p>
+                    <a href="#" class="btn btn-block btn-social btn-facebook btn-flat">
+                        <i class="fa fa-facebook"></i> Sign in using
+                        Facebook
+                    </a>
+                    <a href="#" class="btn btn-block btn-social btn-google btn-flat">
+                        <i class="fa fa-google-plus"></i> Sign in using
+                        Google+
+                    </a>
+                </div>
+                <a href="#">I forgot my password</a><br>*@
+            @*<a href="@Url.Action("Register", "Account")" class="text-center">Register as a new user</a>*@
+        </div>
+    </div>
+
+    @Scripts.Render("~/AdminLTE/plugins/jquery/js")
+    @Scripts.Render("~/AdminLTE/bootstrap/js")
+    @Scripts.Render("~/AdminLTE/plugins/icheck/js")
+    @Scripts.Render("~/AdminLTE/plugins/jquery-validate/js")
+    @Scripts.Render("~/Scripts/Account/Login")
+
+</body>
+</html>

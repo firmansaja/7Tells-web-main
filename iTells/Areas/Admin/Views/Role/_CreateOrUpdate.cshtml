@@ -1,0 +1,92 @@
+﻿@model iTells.Helper.RoleViewModel
+@{
+    iTells.Helper.GeneralHelper dHelper = new iTells.Helper.GeneralHelper();
+}
+
+
+<div class="row">
+    @using (Ajax.BeginForm("Create", "Role", new { }, new AjaxOptions { OnSuccess = "SuccessAddRole" }, new { enctype = "multipart/form-data" }))
+    {
+        @Html.HiddenFor(model => model.ID)
+        <div class="col-md-12">
+            <div id="message"> </div>
+            @Html.Raw(ViewBag.Message)
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">General</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>Name @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })</label>
+                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Name" })
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>Display Name</label>
+                                @Html.TextBoxFor(model => model.DisplayName, new { @class = "form-control", placeholder = "Display Name" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Permissions</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th width="150px">View</th>
+                                        <th width="150px">Create</th>
+                                        <th width="150px">Edit</th>
+                                        <th width="150px">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in ViewBag.ModuleList)
+                                    {
+                                        <tr>
+                                            <td>@item.FullName</td>
+                                            <td>
+                                                <label class="switch m-r-20">
+                                                    <input type="checkbox" name="view[@item.id]" class="minimal" @dHelper.CheckRolePermission("view", item.id, ViewBag.RoleID)>
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <label class="switch m-r-20">
+                                                    <input type="checkbox" name="create[@item.id]" class="minimal" @dHelper.CheckRolePermission("create", item.id, ViewBag.RoleID)>
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <label class="switch m-r-20">
+                                                    <input type="checkbox" name="edit[@item.id]" class="minimal" @dHelper.CheckRolePermission("edit", item.id, ViewBag.RoleID)>
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <label class="switch m-r-20">
+                                                    <input type="checkbox" name="delete[@item.id]" class="minimal" @dHelper.CheckRolePermission("delete", item.id, ViewBag.RoleID)>
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <a href="/admin/role" class="btn btn-default pull-right margin">Cancel</a>
+                    <button type="submit" class="btn btn-primary pull-right margin">Submit</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<input type="hidden" id="type" value="@ViewBag.Edit" />

@@ -1,0 +1,147 @@
+﻿
+@using BusinessObjects
+@model List<BO_EBudget>
+@{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box ">
+                 <table id="LB" class="table table-striped table-condensed table-hover table-responsive">
+                    <thead>
+                        <tr>
+                            <th ></th>
+                            <th colspan="3" class="text-center">Januari</th>
+                            <th colspan="3" class="text-center">Februari</th>
+                            <th colspan="3" class="text-center">Maret</th>
+                            <th colspan="3" class="text-center">April</th>
+                            <th colspan="3" class="text-center">Mei</th>
+                            <th colspan="3" class="text-center">Juni</th>
+                            <th colspan="3" class="text-center">Juli</th>
+                            <th colspan="3" class="text-center">Agustus</th>
+                            <th colspan="3" class="text-center">September</th>
+                            <th colspan="3" class="text-center">Oktober</th>
+                            <th colspan="3" class="text-center">November</th>
+                            <th colspan="3" class="text-center">Desember</th>
+
+
+                        </tr>
+
+                        <tr>
+                            <th style="width:500px">Nama Barang</th>
+
+                            <th style="width:50px" class="text-center">Qty</th>
+                            <th style="width:100px" class="text-center">Harga</th>
+                            <th style="width:100px" class="text-center">Total</th>
+
+                            <th style="width:50px" class="text-center">Qty</th>
+                            <th style="width:100px" class="text-center">Harga</th>
+                            <th style="width:100px" class="text-center">Total</th>
+
+                            <th style="width:50px" class="text-center">Qty</th>
+                            <th style="width:100px" class="text-center">Harga</th>
+                            <th style="width:100px" class="text-center">Total</th>
+
+                            <th class="text-center">Qty</th>
+                            <th class="text-center">Harga</th>
+                            <th class="text-center">Total</th>
+
+                            <th class="text-center">Qty</th>
+                            <th class="text-center">Harga</th>
+                            <th class="text-center">Total</th>
+
+                            <th class="text-center">Qty</th>
+                            <th class="text-center">Harga</th>
+                            <th class="text-center">Total</th>
+
+                            <th class="text-center">Qty</th>
+                            <th class="text-center">Harga</th>
+                            <th class="text-center">Total</th>
+
+                            <th class="text-center">Qty</th>
+                            <th class="text-center">Harga</th>
+                            <th class="text-center">Total</th>
+
+                            <th class="text-center">Qty</th>
+                            <th class="text-center">Harga</th>
+                            <th class="text-center">Total</th>
+
+                            <th class="text-center">Qty</th>
+                            <th class="text-center">Harga</th>
+                            <th class="text-center">Total</th>
+
+                            <th class="text-center">Qty</th>
+                            <th class="text-center">Harga</th>
+                            <th class="text-center">Total</th>
+
+                            <th class="text-center">Qty</th>
+                            <th class="text-center">Harga</th>
+                            <th class="text-center">Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>  @item.Keterangan</td>
+                                @*januari*@
+                                <td class="text-center">@string.Format("{0:N0}", item.jan_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.jan_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Jan)</td>
+                                @*Februari*@
+                                <td class="text-center">@string.Format("{0:N0}", item.feb_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.feb_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Feb)</td>
+                                @*Maret*@
+                                <td class="text-center">@string.Format("{0:N0}", item.mar_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.mar_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Mar)</td>
+                                April
+                                <td class="text-center">@string.Format("{0:N0}", item.apr_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.apr_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Apr)</td>
+                                Mei
+                                <td class="text-center">@string.Format("{0:N0}", item.mei_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.mei_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Mei)</td>
+                                Jun
+                                <td class="text-center">@string.Format("{0:N0}", item.jun_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.jun_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Jun)</td>
+                                Jul
+                                <td class="text-center">@string.Format("{0:N0}", item.jul_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.jul_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Jul)</td>
+                                Agustus
+                                <td class="text-center">@string.Format("{0:N0}", item.agt_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.agt_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Agst)</td>
+                                September
+                                <td class="text-center">@string.Format("{0:N0}", item.sep_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.sep_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Sept)</td>
+                                Oktober
+                                <td class="text-center">@string.Format("{0:N0}", item.okt_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.okt_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Okt)</td>
+                                November
+                                <td class="text-center">@string.Format("{0:N0}", item.nov_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.nov_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Nov)</td>
+                                Desember
+                                <td class="text-center">@string.Format("{0:N0}", item.des_qty)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.des_harga)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Des)</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+

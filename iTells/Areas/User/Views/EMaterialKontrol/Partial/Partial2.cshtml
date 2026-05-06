@@ -1,0 +1,95 @@
+﻿
+
+
+@using BusinessObjects
+
+@{
+
+    List<BO_MaterialKontrol> ListPRBudget = (List<BO_MaterialKontrol>)ViewData["Februari"];
+    int i = 0;
+
+}
+
+<div id="februari" class="row">
+    <div class="col-xs-12">
+        <div class="box-body">
+            <table id="TB2" style="border-color:black" class="table table-bordered">
+                <thead>
+                    <tr style="background-color:lightgreen;border-color:black">
+                        <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3 ">No</th>
+                        <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Invt</th>
+                        <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Desc</th>
+                        <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Unit</th>
+                        <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Site</th>
+                        <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Min</th>
+                        <th colspan="7" style="text-align:center;vertical-align:middle;border-color:black" class="style3 feb">Februari</th>
+                    </tr>
+                    <tr style="background-color:lightgreen">
+
+
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 feb">FC</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 feb">ST Awal</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 feb">Masuk</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 feb">Keluar</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 feb">Balance</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 feb">PR</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 feb">PO</th>
+
+
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in @ListPRBudget)
+                    {
+                        i++;
+                    <tr>
+                        <td style="text-align:center;border-color:black; vertical-align:middle" class="style2">@i</td>
+                        <td style="vertical-align:middle;border-color:black" class="style2">@item.InvtID</td>
+                        <td style="vertical-align:middle;border-color:black" class="style2">@item.Desc</td>
+                        <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                        <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                        <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin02)</td>
+
+
+
+
+                        <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 feb">@String.Format("{0,14:n0}", @item.FC02)</td>
+                        <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 feb">@String.Format("{0,14:n2}", @item.STAwal02)</td>
+                        <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 feb">@String.Format("{0,14:n2}", @item.STIN02)</td>
+                        <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 feb">@String.Format("{0,14:n2}", @item.STOut02)</td>
+                        @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 feb">@String.Format("{0,14:n0}", 0)</td>*@
+                        @if (@item.ST02 < @item.STMin02)
+                        {
+                            <td style=" background:red; text-align:right;border-color:black; vertical-align:middle" class="style2 feb">@String.Format("{0,14:n2}", @item.ST02)</td>
+                        }
+                        else
+                        {
+                            <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 feb">@String.Format("{0,14:n2}", @item.ST02)</td>
+                        }
+                        <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 feb">@String.Format("{0,14:n0}", @item.PR02)</td>
+                        <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 feb">@String.Format("{0,14:n0}", @item.PO02)</td>
+
+
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

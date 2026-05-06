@@ -1,0 +1,93 @@
+﻿@using BusinessObjects
+@{
+    List<TrollyInOutModel> DataTrollyInOut = (List<TrollyInOutModel>)ViewData["DataTrollyInOut"];
+}
+
+@*<div class="cmain-navbar">
+    <h1><marquee>MONITORING TROLLY TSC</marquee></h1>
+</div>*@
+
+<div class="row cmain-body">
+    <div class="col-xs-12">
+        <table id="tblTrollyInOut" style="width:100%" class="table table-bordered">
+            <thead>
+                <tr style="color:white">
+                    <th colspan="7" style="text-align:center;vertical-align:middle">TSC</th>
+                    <th colspan="4" style="text-align:center;vertical-align:middle">Depo Nisho</th>
+                </tr>
+                <tr style="color:white;text-align:center;vertical-align:middle;">
+                    <th>No Surat Jalan</th>
+                    <th>No Truck</th>
+                    <th>QR Trolly</th>
+                    <th>Tgl Scan</th>
+                    <th>Jam Scan</th>
+                    <th>Status</th>
+                    <th>Qty Part</th>
+                    <th>Tgl Scan</th>
+                    <th>Jam Scan</th>
+                    <th>Status</th>
+                    <th>Qty Part</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in @DataTrollyInOut)
+                {
+                <tr style="color:white;text-align:center;vertical-align:middle;">
+                    <td><a href="@Url.Action("GetTrollyInOutDetail", "Trolly", new { noTrans = item.NoTrans, kodeQR="All" })" target="_blank">@item.NoTrans</a></td>
+                    @*<td><a data-toggle="modal" href="/user/trolly/viewtrollydetail?noTrans=@item.NoTrans&kodeQR=All" data-target="#modalTrollyDetail">@item.NoTrans</a></td>
+        <td><a data-toggle="modal" href="/user/trolly/viewtrollydetail?noTrans=@item.NoTrans&kodeQR=All" data-target="#modalTrollyDetail">@item.NoMobil</a></td>*@
+                    <td><a href="@Url.Action("GetTrollyInOutDetail", "Trolly", new { noTrans = item.NoTrans, kodeQR="All" })" target="_blank">@item.NoMobil</a></td>
+                    <td>@item.KodeQR</td>
+                    <td>@Convert.ToDateTime(@item.TglTransTSC).ToString("dd/MM/yyyy")</td>
+                    <td>@Convert.ToDateTime(@item.TglTransTSC).ToString("HH:mm:ss")</td>
+                    @if (item.StatusDepo != "OK")
+                    {
+                        <td style="background-color:orange">@item.StatusTSC</td>
+                    }
+                    else
+                    {
+                        <td style="background-color:green">@item.StatusTSC</td>
+                    }
+                    @if (item.QtyTrollyTSC > 1)
+                    {
+                        @*<td style="background-color:#FFD300"><a data-toggle="modal" href="/user/trolly/viewtrollydetail?noTrans=@item.NoTrans&kodeQR=@item.KodeQR" data-target="#modalTrollyDetail">@item.QtyPartTSC</a></td>*@
+                        <td style="background-color:#FFD300"><a href="@Url.Action("GetTrollyInOutDetail", "Trolly", new { noTrans = item.NoTrans, kodeQR=item.KodeQR })" target="_blank">@item.QtyPartTSC</a></td>
+                    }
+                    else if (item.Qty != item.QtyPartTSC)
+                    {
+                        @*<td style="background-color:hotpink"><a data-toggle="modal" href="/user/trolly/viewtrollydetail?noTrans=@item.NoTrans&kodeQR=@item.KodeQR" data-target="#modalTrollyDetail">@item.QtyPartTSC</a></td>*@
+                        <td style="background-color:hotpink"><a href="@Url.Action("GetTrollyInOutDetail", "Trolly", new { noTrans = item.NoTrans, kodeQR=item.KodeQR })" target="_blank">@item.QtyPartTSC</a></td>
+                    }
+                    else
+                    {
+                        @*<td><a data-toggle="modal" href="/user/trolly/viewtrollydetail?NoTrans=@item.NoTrans&KodeQR=@item.KodeQR" data-target="#modalTrollyDetail">@item.QtyPartTSC</a></td>*@
+                        <td><a href="@Url.Action("GetTrollyInOutDetail", "Trolly", new { noTrans = item.NoTrans, kodeQR=item.KodeQR })" target="_blank">@item.QtyPartTSC</a></td>
+                    }
+                    @if (item.StatusDepo != "OK")
+                    {
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@Convert.ToDateTime(@item.TglTransDepo).ToString("dd/MM/yyyy")</td>
+                        <td>@Convert.ToDateTime(@item.TglTransDepo).ToString("HH:mm:ss")</td>
+                        <td>@item.StatusDepo</td>
+                        if (item.QtyPartTSC != item.QtyPartDepo)
+                        {
+                            <td style="background-color:red">@item.QtyPartDepo</td>
+                        }
+                        else
+                        {
+                            <td>@item.QtyPartDepo</td>
+                        }
+                    }
+
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

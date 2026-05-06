@@ -1,0 +1,189 @@
+﻿
+@*@using Approval.Models.Circulation
+@model Approval.Models.Circulation.ModelCRHeadDetail
+@using Approval.Helpers*@
+
+@using BusinessObjects;
+
+@{
+
+
+    CRAkses _cRAkses = (CRAkses)ViewData["AksesUser"];
+    List<BO_ECirculation> list = (List<BO_ECirculation>)ViewData["ListCRHeadDetail"];
+    List<BO_ECirculation> other = (List<BO_ECirculation>)ViewData["ListOtherDept"];
+
+
+
+    var CirculationNo = "";
+    var CRType = "";
+    var POType = "";
+    var NameofItem = "";
+    var Reason = "";
+    var BudgetType = "";
+    var PONumber = "";
+    var ParentCR = "";
+    var Spesification = "";
+    var Customer = "";
+    var Tanggal = "";
+    var LevelUser = "";
+    var dept = "";
+    var DeptGroup = 0;
+
+
+
+
+
+    if (list != null)
+    {
+        foreach (var item in list)
+        {
+
+            CirculationNo = item.CirculationNo;
+            CRType = item.CRType;
+            POType = item.POType;
+            NameofItem = item.NameofItem;
+            Reason = item.Reason;
+            BudgetType = item.BudgetType;
+            PONumber = item.POType;
+            ParentCR = item.ParentCR;
+            Spesification = item.Spesification;
+            Customer = item.Customer;
+            Tanggal = item.Tanggal.ToString("dd/MM/yyyy");
+            LevelUser = _cRAkses.Level.ToString();
+            DeptGroup = item.DeptGroup;
+        }
+
+    }
+
+
+    if (other != null)
+    {
+        for (int i = 0; i < other.Count(); i++)
+        {
+
+            dept = dept + (other[i].Dept).ToString() + ",";
+
+        }
+
+    }
+
+}
+
+<head>
+
+    <style>
+
+
+        .headercontainer {
+            display: grid;
+            grid-template-columns: 0.8fr 1.5fr 0.8fr 1.5fr 0.8fr 1.5fr 0.8fr 1.5fr;
+            grid-gap: 5px;
+            font-size:10px;
+        }
+
+        .headercontainer input {
+            font-size: 10px;
+        }
+
+        @@media (max-width:900px) {
+            .headercontainer {
+                display: grid;
+                grid-template-columns: 0.8fr 1.5fr 0.8fr 1.5fr;
+                grid-gap: 5px;
+            }
+            @@media (max-width:500px) {
+                .headercontainer {
+                    display: grid;
+                    grid-template-columns: 0.4fr 1fr;
+                    grid-gap: 5px;
+                }
+            }
+
+
+    </style>
+
+</head>
+
+
+<div class="box-body">
+
+    <div class="headercontainer">
+
+        <div class="lbl_circulation">
+            <input id="User_Name" class="hidden" />
+            <label class=" control-label text-muted" style="text-align:left;">CR</label>
+        </div>
+
+        <div class="t_circulation">
+            <input id="T_CRNo" type="text" class="form-control input-sm" disabled="disabled" value=@CirculationNo>
+            <input id="lusr" type="text" class="hidden" disabled="disabled" value=@LevelUser>
+            <input id="vdeptgroup" type="text" class="hidden" disabled="disabled" value=@DeptGroup>
+        </div>
+
+
+        <div class="lbl_tgl">
+            <label class="control-label text-muted" style="text-align:left;">Date</label>
+        </div>
+
+        <div class="t_tanggal">
+            <input id="T_CRtgl" type="text" class="form-control input-sm" disabled="disabled" value=@Tanggal>
+        </div>
+
+        <div class="lbl_type">
+            <label class=" control-label text-muted">CR Type</label>
+        </div>
+
+        <div class="t_type">
+            <input id="T_CRType" type="text" class="form-control input-sm" disabled="disabled" value=@CRType>
+        </div>
+
+        <div class="lbl_item">
+            <label class="control-label text-muted">Item</label>
+        </div>
+
+        <div class="t_item">
+            <input id="T_CRNameofItem" type="text" class="form-control input-sm" disabled="disabled" value=@NameofItem>
+        </div>
+
+        <div class="lbl_spesification">
+            <label class="control-label text-muted">Spec</label>
+        </div>
+
+        <div class="t_spec">
+            <input id="T_CRSpesification" type="text" class="form-control input-sm" disabled="disabled" value=@Spesification>
+        </div>
+
+        <div class="lbl_dept">
+            <label class="control-label text-muted">Dept</label>
+        </div>
+
+        <div class="t_dept">
+            <input id="T_Other" type="text" class="form-control input-sm" disabled="disabled" value=@dept>
+        </div>
+
+
+        <div class="lbl_reason">
+            <label class="control-label text-muted">Reason</label>
+        </div>
+
+        <div class="t_reason">
+            <input id="T_CRReason" type="text" class="form-control input-sm" disabled="disabled" value=@Reason>
+        </div>
+
+
+       
+
+
+    </div>
+</div>
+   
+
+
+
+
+
+
+
+
+
+

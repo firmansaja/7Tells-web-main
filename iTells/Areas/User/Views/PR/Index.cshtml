@@ -1,0 +1,1118 @@
+﻿@using BusinessObjects;
+@{
+    ViewBag.Title = "Electronic Purchase Request Approval (e-PR)";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+    List<ComboList> Years = (List<ComboList>)ViewData["FiscalYear"];
+    List<ComboList> Menu = (List<ComboList>)ViewData["ListMenu"];
+    PRAksesUser AkseUser = (PRAksesUser)ViewData["AksesUser"];
+    var Dept = @AkseUser.Dept;
+    int Kol = @AkseUser.Kol;
+    string Site = @AkseUser.Site;
+}
+
+<div id="message"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div class="form-group">
+                                        <label>Filter</label>
+                                        <select id="filterType" class="form-control select2" style="width:100%">
+                                            @foreach (var item in Menu)
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </td>
+                                <td width="5%"></td>
+                                <td>
+                                    <div class="form-group">
+                                        <label>Fiscal Year</label>
+                                        <select id="fiscalyear" class="form-control select2" style="width:100%">
+                                            @foreach (var item in Years)
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </td>
+                                <td width="5%"></td>
+                                <td><button type="button" class="btn btn-primary" id="BtnOverBudget">PR Over Budget</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_List")
+@Html.Partial("_ListByUser")
+@Html.Partial("_ListByAll")
+@Html.Partial("_ListPurchase")
+@Html.Partial("_ListProject")
+@Html.Partial("_History")
+@Html.Partial("_Budget")
+@Html.Partial("_ListProgress")
+
+<div class="modal fade" id="_popUp" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title" id="_title"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Nomor PR</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="txtPRNo" class="form-control" autofocus />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnProses" class="btn btn-primary" onclick="return ProsesOverBudget()" style="width:100px">Proses</button>&nbsp;
+                <button type="button" class="btn btn-primary" data-dismiss="modal" style="width:100px">Kembali</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var menuItem = $('#pr');
+            menuItem.addClass('active');
+            var subMenuItem = menuItem.find('#pr_e-pr');
+            subMenuItem.addClass('active');
+
+            DataTablePR();
+            DataTablePRByUser();
+            DataTablePRByAll();
+            DataTablePRPur();
+            //DataTablePRProject();
+            const today = new Date();
+
+            $('#fiscalyear').val(today.getFullYear());
+            $('#txtFiscalYearBudget').val(today.getFullYear());
+
+            $('#dtDari').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+            $('#dtSampai').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+            $('#dtDari').datepicker('setDate', today);
+            $( '#dtSampai').datepicker('setDate', today);
+            DataTablePRHistory("", "");
+
+            $('#dtDariP').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+            $('#dtSampaiP').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+            $('#dtDariP').datepicker('setDate', today);
+            $('#dtSampaiP').datepicker('setDate', today);
+            DataTablePRProgress("", "");
+            //HidePartial();
+
+            HideNShow();
+            //$(".select2").select2();
+            //$('#clistpr').show();
+            //$("#message").slideDown(0).slideUp(0);
+            var msg = localStorage.getItem("message");
+            var scs = localStorage.getItem("success");
+            if (msg != null) {
+            //var msg1 = '<h3 class=\"alert alert-success fade in\">' + msg + '</h3>';
+            //$('#message').html(msg1);
+            //$("#message").slideDown(1000).slideUp(2000);
+            PopupMessage(scs, msg);
+            localStorage.removeItem("message");
+            localStorage.removeItem("success");
+            }
+        })
+
+        $(document).on('change', '#filterType', function (event) {
+            event.preventDefault();
+            HideNShow();
+        });
+
+        function HideNShow() {
+            let filter = $('#filterType').val();
+            if (filter == 0) {
+                HidePartial();
+                $('#tbPR').DataTable().ajax.reload();
+                $('#clistpr').show();
+            } else if (filter == 1) {
+                HidePartial();
+                $('#tbPRByUser').DataTable().ajax.reload();
+                $('#clistbyuser').show();
+            } else if (filter == 2) {
+                HidePartial();
+                $('#tbPRByAll').DataTable().ajax.reload();
+                $('#clistbyall').show();
+            } else if (filter == 3) {
+                HidePartial();
+                $('#tbPRPur').DataTable().ajax.reload();
+                $('#clistpur').show();
+                $('#BtnOverBudget').show();
+                @*if ('@Dept'.substring(1, 4) == "PUR" || '@Dept'.substring(1, 4) == "PVM") {
+                    HidePartial();
+                    $('#tbPRPur').DataTable().ajax.reload();
+                    $('#clistpur').show();
+                    $('#BtnOverBudget').show();
+                } else {
+                    alert('Sorry, You Dont Have Access');
+                    HidePartial();
+                    $('#tbPR').DataTable().ajax.reload();
+                    $('#filterType').val(0);
+                    $('#clistpr').show();
+                }*@
+            } else if (filter == 4) {
+                HidePartial();
+                $('#clistproject').show();
+                @*if ('@Dept'.substring(1, 4) == "PUR" || '@Dept'.substring(1, 4) == "PVM") {
+                    HidePartial();
+                    $('#clistproject').show();
+                    //$('#tbPRProject').DataTable().ajax.reload();
+                } else {
+                    HidePartial();
+                    alert('Sorry, You Dont Have Access');
+                    $('#tbPR').DataTable().ajax.reload();
+                    $('#clistpr').show();
+                    $('#filterType').val(0);
+                }*@
+            } else if (filter == 5) {
+                HidePartial();
+                $('#chistory').show();
+            } else if (filter == 6) {
+                HidePartial();
+                $('#cbudget').show();
+            } else if (filter == 7) {
+                HidePartial();
+                $('#cprogress').show();
+                @*if ('@Dept'.substring(1, 4) == "PUR" || '@Dept'.substring(1, 4) == "PVM") {
+                    HidePartial();
+                    $('#cprogress').show();
+                } else {
+                    HidePartial();
+                    alert('Sorry, You Dont Have Access');
+                    $('#tbPR').DataTable().ajax.reload();
+                    $('#clistpr').show();
+                    $('#filterType').val(0);
+                }*@
+            }
+        }
+
+        function HidePartial() {
+            $('#clistpr').hide();
+            $('#clistbyuser').hide();
+            $('#clistbyall').hide();
+            $('#clistpur').hide();
+            $('#clistproject').hide();
+            $('#chistory').hide();
+            $('#cbudget').hide();
+            $('#BtnOverBudget').hide();
+            $('#cprogress').hide();
+        }
+
+        // List PR Non Approval
+        var ListPR = null;
+        var dtPR;
+        function DataTablePR() {
+            ListPR = {
+                init: function () {
+                    dtPR = $('#tbPR').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "bPaginate": false,
+                        "ajax": {
+                            "url": "/getmodelpr",
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            {
+                                "data": "null", "title": "Action", "render": function (data) {
+                                    return '<button class="btn btn-xs btn-info" title="Edit" id="BtnEditPR" style="margin-right:5px"> <span class="fa fa-eye"></span></button>';
+                                }
+                            },
+                            { "title": "Departement", "data": "Description" },
+                            {
+                                "title": "PR Date", "data": "PRDate",
+                                "render": function (value) {
+                                    if (value === null) return "";
+                                    return moment(value).format('DD/MM/YYYY');
+                                }
+                            },
+                            {
+                                "title": "PR No",
+                                "data": "PRNo",
+                                "class": "point",
+                                render: function (data,) {
+                                    return '<a id=btnPRNo>' + data + '</a>'
+                                },
+                            },
+                            { "title": "Approval PIC", "data": "ApprovalPIC" },
+                            { "title": "Purchase Type", "data": "PurchaseType" },
+                            { "title": "Remark", "data": "Remark" },
+                            { "title": "User Buat", "data": "UserBuat" },
+                            {
+                                "data": "null", "width": "170px", "title": "Pilihan", "orderable": false, "render": function (data, type, full) {
+                                    @*if (full.Remark !== "") {
+                                        if (full.Remark.substring(1, 3) === '@Site'.substring(1, 3)) {
+                                            btn = '<button class="btn btn-xs btn-danger" title="Reject" id="BtnReject" style="margin-right:5px">Reject</button>';
+                                            if (@Kol === 1) {
+                                                btn = '<button class="btn btn-xs btn-primary" title="Circulation" id="BtnCirc" style="margin-right:5px">Circulation</button>' +
+                                                    '<button class="btn btn-xs btn-primary" title="Urgent" id="BtnUrgent" style="margin-right:5px">Urgent</button>' +
+                                                    '<button class="btn btn-xs btn-primary" title="Project" id="BtnProject" style="margin-right:5px">Project</button>';
+                                            }
+                                        } else {
+                                            btn = full.Remark;
+                                        }
+                                    } else {
+                                        if (@Kol === 1) {
+                                            btn = '<button class="btn btn-xs btn-primary" title="Circulation" id="BtnCirc" style="margin-right:5px">Circulation</button>' +
+                                                '<button class="btn btn-xs btn-primary" title="Urgent" id="BtnUrgent" style="margin-right:5px">Urgent</button>' +
+                                                '<button class="btn btn-xs btn-primary" title="Project" id="BtnProject" style="margin-right:5px">Project</button>';
+                                        } else {
+                                            btn = '<button class="btn btn-xs btn-danger" title="Reject" id="BtnReject" style="margin-right:5px">Reject</button>';
+                                        }
+                                    }*@
+                                    if (@Kol === 1) {
+                                        btn = '<button class="btn btn-xs btn-primary" title="Circulation" id="BtnCirc" style="margin-right:5px">Circulation</button>' +
+                                            '<button class="btn btn-xs btn-primary" title="Urgent" id="BtnUrgent" style="margin-right:5px">Urgent</button>' +
+                                            '<button class="btn btn-xs btn-primary" title="Project" id="BtnProject" style="margin-right:5px">Project</button>' +
+                                            '<button class="btn btn-xs btn-primary" title="Over Budget" id="BtnPROverBudget" style="margin-right:5px">Over Budget</button>';
+                                    } else {
+                                        btn = '<button class="btn btn-xs btn-danger" title="Reject" id="BtnReject" style="margin-right:5px">Reject</button>';
+                                    }
+                                    return btn;
+                                }
+                            }
+                        ],
+                        "columnDefs": [
+                            { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                            { "className": "text-center custom-middle-align", "targets": [0] },
+                            { "visible": false, "targets": [0, 4, 6] },
+                        ],
+                        "createdRow": function (row, data, dataIndex) {
+                            if (data.ApprovalPIC == "C") {
+                                $(row).css('background-color', '#FF99CC');
+                                $(row).css('color', '#000099');
+                            }
+                            else if (data.ApprovalPIC == "B") {
+                                $(row).css('background-color', '#CCFF99');
+                                $(row).css('color', '#000099');
+                            }
+                            else if (data.ApprovalPIC == "U") {
+                                $(row).css('background-color', '#CCCCFF');
+                                $(row).css('color', '#FFFF99');
+                            }
+                            else if (data.ApprovalPIC == "T") {
+                                $(row).css('background-color', '#00FFFF');
+                                $(row).css('color', '#FF0000');
+                            }
+                        },
+                        //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+                    });
+                }
+            }
+            ListPR.init();
+        }
+
+        $(document).on('click', '#btnPRNo', function (event) {
+            event.preventDefault();
+            if ($('#fiscalyear').val() == "0") {
+                alert("Pilih Fiscal Year Dulu!");
+            } else {
+                var row = $(this).closest('tr');
+                var data = $('#tbPR').dataTable().fnGetData(row);
+                var _PRNo = EncryptURL(data.PRNo);
+                var _Year = EncryptURL($('#fiscalyear').val());
+                //var _PRNo = data.PRNo;
+                //var _Year = $('#fiscalyear').val();
+                var url = "/viewpr/" + _PRNo + "/Year/" + _Year;
+                window.location.href = url;
+            }
+        });
+
+        $(document).on('click', '#BtnCirc', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPR').dataTable().fnGetData(row);
+            var _PRNo = data.PRNo;
+            if (confirm('Apakah PR Adalah Circulation ?')) {
+                return UpdatePilihan(_PRNo, 'B');
+            } else {
+                return false;
+            }
+        });
+
+        $(document).on('click', '#BtnUrgent', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPR').dataTable().fnGetData(row);
+            var _PRNo = data.PRNo;
+            if (confirm('Apakah PR Adalah Urgent ?')) {
+                return UpdatePilihan(_PRNo, 'U');
+            } else {
+                return false;
+            }
+        });
+
+        $(document).on('click', '#BtnProject', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPR').dataTable().fnGetData(row);
+            var _PRNo = data.PRNo;
+            if (confirm('Apakah PR Adalah Project ?')) {
+                return UpdatePilihan(_PRNo, 'T');
+            } else {
+                return false;
+            }
+        });
+
+        $(document).on('click', '#BtnPROverBudget', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPR').dataTable().fnGetData(row);
+            var _PRNo = data.PRNo;
+            if (confirm('Apakah PR Adalah Over Budget ?')) {
+                $.ajax({
+                    url: '@Url.Action("UpdateStatusBudget", "PR", new { area ="User"})',
+                    dataType: "json",
+                    type: "POST",
+                    cache: false,
+                    data: { PRNo: _PRNo} ,
+                    success: function (data) {
+                        if (data.success) {
+                            $('#tbPR').DataTable().ajax.reload();
+                            PopupMessage(true, data.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
+                    }
+                });
+            } else {
+                return false;
+            }
+        });
+
+        function UpdatePilihan(__prno, app) {
+            $.ajax({
+                url: '@Url.Action("UpdateFlagPR", "PR", new { area ="User"})',
+                dataType: "json",
+                type: "POST",
+                cache: false,
+                data: { PRNo: __prno, ApprovalPIC: app} ,
+                success: function (data) {
+                    if (data.success) {
+                        $('#tbPR').DataTable().ajax.reload();
+                        //var message = '<h3 class=\"alert alert-success fade in\">' + data.message + '</h3>';
+                        //$('#message').html(message);
+                        //$("#message").slideDown(1000).slideUp(2000);
+                        PopupMessage(true, data.message);
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+        $(document).on('click', '#BtnReject', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPR').dataTable().fnGetData(row);
+            var _PRNo = data.PRNo;
+            if (confirm('Anda yakin akan Reject PR ?')) {
+                UpdateReject(_PRNo);
+            } else {
+                return false;
+            }
+        });
+
+        function UpdateReject(__prno) {
+            $.ajax({
+                url: '@Url.Action("UpdateFlagPRReject", "PR", new { area ="User"})',
+                dataType: "json",
+                type: "POST",
+                cache: false,
+                data: { PRNo: __prno, Kol: @Kol} ,
+                success: function (data) {
+                    if (data.success) {
+                        $('#tbPR').DataTable().ajax.reload();
+                        //var message = '<h3 class=\"alert alert-success fade in\">' + data.message + '</h3>';
+                        //$('#message').html(message);
+                        //$("#message").slideDown(1000).slideUp(2000);
+                        PopupMessage(true, data.message);
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+        // List PR Approved By User
+        var ListPRByUser;
+        var dtPRByUser;
+        function DataTablePRByUser() {
+            ListPRByUser = {
+                dtPRByUser: null,
+                init: function () {
+                    dtPRByUser = $('#tbPRByUser').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "bPaginate": false,
+                        "ajax": {
+                            "url": "/getmodelprbyuser",
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            {
+                                "data": "null", title: "Action", "orderable": false, "render": function (data) {
+                                    return '<button class="btn btn-xs btn-info" title="Edit" id="BtnEdit" style="margin-right:5px"> <span class="fa fa-eye"></span></button>';
+                                }
+                            },
+                            { "title": "Departement", "data": "Description" },
+                            {
+                                "title": "PR Date", "data": "PRDate",
+                                "render": function (value) {
+                                    if (value === null) return "";
+                                    return moment(value).format('DD/MM/YYYY');
+                                }
+                            },
+                            {
+                                "title": "PR No",
+                                "data": "PRNo",
+                                "class": "point",
+                                render: function (data,) {
+                                    return '<a id=btnPRNoUser>' + data + '</a>'
+                                },
+                            },
+                            { "title": "User Buat", "data": "UserBuat" },
+                            {
+                                "data": "null", "width": "170px", title: "Pilihan", "orderable": false, "render": function (data, type, full) {
+                                    if (@Kol == 1) {
+                                        if (full.Kol2 == "0" && full.QtyPO == "0") {
+                                            btn = '<button class="btn btn-xs btn-danger" title="Edit" id="BtnRejectUser" style="margin-right:5px">Reject</button>';
+                                        } else {
+                                            btn = "";
+                                        }
+                                    } else if (@Kol == 2) {
+                                        if (full.Kol3 == "0" && full.QtyPO == "0") {
+                                            btn = '<button class="btn btn-xs btn-danger" title="Edit" id="BtnRejectUser" style="margin-right:5px">Reject</button>';
+                                        } else {
+                                            btn = "";
+                                        }
+                                    } else
+                                        if (full.QtyPO == "0") {
+                                            btn = '<button class="btn btn-xs btn-danger" title="Edit" id="BtnRejectUser" style="margin-right:5px">Reject</button>';
+                                        } else {
+                                            btn = "";
+                                        }
+                                    return btn;
+                                }
+                            }
+                        ],
+                        "columnDefs": [
+                            { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                            { "className": "text-center custom-middle-align", "targets": [0] },
+                            { "visible": false, "targets": [0] },
+                        ],
+                        //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+                    });
+                }
+            }
+            ListPRByUser.init();
+        }
+
+        $(document).on('click', '#btnPRNoUser', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPRByUser').dataTable().fnGetData(row);
+            var _PRNo = EncryptURL(data.PRNo)
+            //var _PRNo = data.PRNo;
+            var url = "/viewpruser/" + _PRNo;
+            window.location.href = url;
+        });
+
+        $(document).on('click', '#BtnRejectUser', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPRByUser').dataTable().fnGetData(row);
+            var _PRNo = data.PRNo;
+            if (confirm('Anda yakin akan Reject PR ?')) {
+                UpdateReject(_PRNo);
+                $('#tbPRByUser').DataTable().ajax.reload();
+            } else {
+                return false;
+            }
+        });
+
+        // List PR Approved By All
+        var ListPRByAll;
+        var dtPRByAll;
+        function DataTablePRByAll() {
+            ListPRByAll = {
+                dtPRByAll: null,
+                init: function () {
+                    dtPRByAll = $('#tbPRByAll').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "bPaginate": false,
+                        "ajax": {
+                            "url": "/getmodelprbyall",
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            {
+                                data: "null", title: "Action", "orderable": false, "render": function (data) {
+                                    return '<button class="btn btn-xs btn-info" title="Edit" id="BtnEdit" style="margin-right:5px"> <span class="fa fa-eye"></span></button>';
+                                }
+                            },
+                            { "title": "Departement", "data": "Description" },
+                            {
+                                "title": "PR Date", "data": "PRDate",
+                                "render": function (value) {
+                                    if (value === null) return "";
+                                    return moment(value).format('DD/MM/YYYY');
+                                }
+                            },
+                            {
+                                "title": "PR No",
+                                "data": "PRNo",
+                                "class": "point",
+                                render: function (data,) {
+                                    return '<a id=btnPRNoAll>' + data + '</a>'
+                                },
+                            },
+                            { "title": "Purchase Type", "data": "PurchaseType" },
+                            { "title": "User Buat", "data": "UserBuat" },
+                        ],
+                        "columnDefs": [
+                            { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                            { "className": "text-center custom-middle-align", "targets": [0] },
+                            { "visible": false, "targets": [0] },
+                        ],
+                        //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+                    });
+                }
+            }
+            ListPRByAll.init();
+        }
+
+        $(document).on('click', '#btnPRNoAll', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPRByAll').dataTable().fnGetData(row);
+            var _PRNo = EncryptURL(data.PRNo);
+            //var _PRNo = data.PRNo;
+            if ('@Dept'.substring(1, 4) == "PUR" || '@Dept'.substring(1, 4) == "PVM") {
+                var url = "/viewprpurchase/" + _PRNo;
+            } else {
+                var url = "/viewprall/" + _PRNo;
+            }
+            //window.location.href = url;
+            window.open(url, '_blank');
+        });
+
+        // List PR Purchasing Area
+        var ListPRPur = null;
+        var dtPRPur;
+        function DataTablePRPur() {
+            ListPRPur = {
+                dtPRPur: null,
+                init: function () {
+                    dtPRPur = $('#tbPRPur').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "bPaginate": false,
+                        "ajax": {
+                            "url": "/getmodelprpur",
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            {
+                                "data": "null", "title": "Action", "render": function (data) {
+                                    return '<button class="btn btn-xs btn-info" title="Edit" id="BtnEditPR" style="margin-right:5px"> <span class="fa fa-eye"></span></button>';
+                                }
+                            },
+                            { "title": "Departement", "data": "Description" },
+                            {
+                                "title": "PR Date", "data": "PRDate",
+                                "render": function (value) {
+                                    if (value === null) return "";
+                                    return moment(value).format('DD/MM/YYYY');
+                                }
+                            },
+                            { "title": "Approval Date", "data": "Tanggal" },
+                            {
+                                "title": "PR No",
+                                "data": "PRNo",
+                                "class": "point",
+                                render: function (data,) {
+                                    return '<a id=btnPRNoPur>' + data + '</a>'
+                                },
+                            },
+                            { "title": "Approval PIC", "data": "ApprovalPIC" },
+                            { "title": "Purchase Type", "data": "PurchaseType" },
+                            { "title": "Remark", "data": "Remark" },
+                            {
+                                "data": "null", "width": "170px", "title": "Pilihan", "orderable": false, "render": function (data, type, full) {
+                                    if (full.QtyPO == "0") {
+                                        btn = '<button class="btn btn-xs btn-primary" title="Pricing" id="BtnPricing" style="margin-right:5px">Pricing</button>' +
+                                            '<button class="btn btn-xs btn-primary" title="UnRelease" id="BtnUnRelease" style="margin-right:5px">UnRelease</button>' +
+                                            '<button class="btn btn-xs btn-primary" title="Close PR" id="BtnClosePR" style="margin-right:5px">Close PR</button>' +
+                                            '<button class="btn btn-xs btn-danger" title="Reject" id="BtnRejectPur" style="margin-right:5px">Reject</button>';
+                                    } else {
+                                        btn = '<button class="btn btn-xs btn-primary" title="Pricing" id="BtnPricing" style="margin-right:5px">Pricing</button>' +
+                                            '<button class="btn btn-xs btn-primary" title="UnRelease" id="BtnUnRelease" style="margin-right:5px">UnRelease</button>' +
+                                            '<button class="btn btn-xs btn-primary" title="Close PR" id="BtnClosePR" style="margin-right:5px">Close PR</button>';
+                                    }
+                                    return btn;
+                                }
+                            }
+                        ],
+                        "columnDefs": [
+                            { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                            { "className": "text-center custom-middle-align", "targets": [0] },
+                            { "visible": false, "targets": [0, 5, 7] },
+                        ],
+                        "createdRow": function (row, data, dataIndex) {
+                            if (data.ApprovalPIC == "P") {
+                                $(row).css('background-color', '#FFFF99');
+                                $(row).css('color', '#000099');
+                            }
+                            else if (data.ApprovalPIC == "B") {
+                                $(row).css('background-color', '#CCFF99');
+                                $(row).css('color', '#000099');
+                            }
+                            else if (data.ApprovalPIC == "U") {
+                                $(row).css('background-color', '#CCCCFF');
+                                $(row).css('color', '#FFFF99');
+                            }
+                            else if (data.ApprovalPIC == "T") {
+                                $(row).css('background-color', '#00FFFF');
+                                $(row).css('color', '#FF0000');
+                            }
+                        },
+                        //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+                    });
+                }
+            }
+            ListPRPur.init();
+        }
+
+        $(document).on('click', '#btnPRNoPur', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPRPur').dataTable().fnGetData(row);
+            var _PRNo = EncryptURL(data.PRNo);
+            var url = "/viewprpurchase/" + _PRNo;
+            //window.location.href = url;
+            window.open(url, '_blank');
+        });
+
+        $(document).on('click', '#BtnPricing', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPRPur').dataTable().fnGetData(row);
+            var _PRNo = data.PRNo;
+            if (confirm('Apakah PR sudah diberi keterangan ?')) {
+                return UpdatePilihanPurchase(1, _PRNo);
+            } else {
+                return false;
+            }
+        });
+
+        $(document).on('click', '#BtnUnRelease', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPRPur').dataTable().fnGetData(row);
+            var _PRNo = data.PRNo;
+            if (confirm('Anda yakin akan UnRelease PR ?')) {
+                return UpdatePilihanPurchase(2, _PRNo);
+            } else {
+                return false;
+            }
+        });
+
+        $(document).on('click', '#BtnClosePR', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPRPur').dataTable().fnGetData(row);
+            var _PRNo = data.PRNo;
+            if (confirm('Anda yakin akan Close PR ?')) {
+                return UpdatePilihanPurchase(3, _PRNo);
+            } else {
+                return false;
+            }
+        });
+
+        $(document).on('click', '#BtnRejectPur', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPRPur').dataTable().fnGetData(row);
+            var _PRNo = data.PRNo;
+            if (confirm('Anda yakin akan Reject PR ?')) {
+                UpdateReject(_PRNo);
+                $('#tbPRPur').DataTable().ajax.reload();
+            } else {
+                return false;
+            }
+        });
+
+        function UpdatePilihanPurchase(_Action, __prno) {
+            $.ajax({
+                url: '@Url.Action("UpdatePilihanPurchase", "PR", new { area ="User"})',
+                dataType: "json",
+                type: "POST",
+                cache: false,
+                data: { Action: _Action, PRNo: __prno} ,
+                success: function (data) {
+                    if (data.success) {
+                        $('#tbPRPur').DataTable().ajax.reload();
+                        //var message = '<h3 class=\"alert alert-success fade in\">' + data.message + '</h3>';
+                        //$('#message').html(message);
+                        //$("#message").slideDown(1000).slideUp(2000);
+
+                        PopupMessage(true, data.message);
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+        $(document).on('click', '#BtnOverBudget', function (event) {
+            event.preventDefault();
+            $("#_popUp").modal({ backdrop: 'static' });
+            $('#_title').text("PROSES PR OVER BUDGET");
+
+            $('#_popUp').on('shown.bs.modal', function () {
+                $('#txtPRNo').focus();
+            })
+        });
+
+        function ProsesOverBudget() {
+            var PRNo = $("#txtPRNo").val();
+            if (PRNo == "") {
+                toastr.error("Input PR No.")
+            } else {
+                if (confirm('Anda Yakin Ingin Over Budget ?')) {
+                    $.ajax({
+                        url: '@Url.Action("UpdateOverBudgetPR", "PR", new { area ="User"})',
+                        dataType: "json",
+                        type: "POST",
+                        cache: false,
+                        data: { PRNo: PRNo} ,
+                        success: function (data) {
+                            $("#txtPRNo").val("");
+                            $("#_popUp").modal('hide');
+                            if (data.success) {
+                                //$('#tbPRPur').DataTable().ajax.reload();
+                                //var message = '<h3 class=\"alert alert-success fade in\">' + data.message + '</h3>';
+                                PopupMessage(true, data.message);
+                                $('#filterType').val(3);
+                                HideNShow();
+                            } else {
+                                PopupMessage(false, data.message);
+                                //var message = '<h3 class=\"alert alert-danger fade in\">' + data.message + '</h3>';
+                            }
+                            //$('#message').html(message);
+                            //$("#message").slideDown(1000).slideUp(2000);
+                        },
+                        error: function (xhr) {
+                            alert(xhr.responseText);
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        function DataTablePRProject() {
+            dtPRProject = $('#tbPRProject').DataTable({
+                "serverSide": true,
+                "processing": true,
+                "autoWidth": false,
+                "bInfo": false,
+                "bPaginate": false,
+                "columns": [
+                    { "title": "Departement"},
+                    {
+                        "title": "PR Date", "data": "PRDate",
+                        "render": function (value) {
+                            if (value === null) return "";
+                            return moment(value).format('DD/MM/YYYY');
+                        }
+                    },
+                    {
+                        "title": "PR No",
+                        "data": "PRNo",
+                        "class": "point",
+                        render: function (data,) {
+                            return '<a id=btnPRNoHis>' + data + '</a>'
+                        },
+                    },
+                    { "title": "Purchase Type", "data": "PurchaseType" }
+                ],
+                "columnDefs": [
+                    { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                    { "className": "text-center custom-middle-align", "targets": [0] },
+                    { "visible": false, "targets": [0] },
+                ],
+                //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+            });
+        }
+
+        function DataTablePRHistory(stDate, enDate) {
+            dtPRHistory = $('#tbPRHistory').DataTable({
+                "serverSide": true,
+                "processing": true,
+                "autoWidth": false,
+                "bInfo": false,
+                "bPaginate": false,
+                "ajax": {
+                    "data": {
+                        DTDari: stDate,
+                        DTSampai: enDate,
+                        Cabang: $('#txtCabang').val(),
+                        Dept: $('#txtDept').val(),
+                        PurchaseType: $('#txtPurType').val(),
+                        FileName: $('#txtFileName').val(),
+                        Status: $('#txtStatus').val(),
+                    },
+                    "url": "/getmodelprhistory",
+                    "type": 'POST',
+                },
+                "columns": [
+                    {
+                        "data": "Description", title: "Action", "orderable": false, "render": function (data) {
+                            return '<button class="btn btn-xs btn-info" title="Edit" id="BtnView" style="margin-right:5px"> <span class="fa fa-eye"></span></button>';
+                        }
+                    },
+                    { "title": "Departement", "data": "Description" },
+                    {
+                        "title": "PR Date", "data": "PRDate",
+                        "render": function (value) {
+                            if (value === null) return "";
+                            return moment(value).format('DD/MM/YYYY');
+                        }
+                    },
+                    {
+                        "title": "PR No",
+                        "data": "PRNo",
+                        "class": "point",
+                        render: function (data,) {
+                            return '<a id=btnPRNoHis>' + data + '</a>'
+                        },
+                    },
+                    { "title": "Purchase Type", "data": "PurchaseType" }
+                ],
+                "columnDefs": [
+                    { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                    { "className": "text-center custom-middle-align", "targets": [0] },
+                    { "visible": false, "targets": [0] },
+                ],
+                //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+            });
+        }
+
+        $(document).on('click', '#BtnViewHistory', function (event) {
+            event.preventDefault();
+            var stDate = $('#dtDari').datepicker("getDate");
+            var enDate = $('#dtSampai').datepicker("getDate");
+            $("#tbPRHistory").dataTable().fnDestroy();
+            DataTablePRHistory(stDate.toISOString(), enDate.toISOString());
+        });
+
+        $(document).on('click', '#btnPRNoHis', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPRHistory').dataTable().fnGetData(row);
+            var _PRNo = EncryptURL(data.PRNo);
+            //var _PRNo = data.PRNo;
+            var url = "/viewprall/" + _PRNo;
+            //window.location.href = url;
+            window.open(url, '_blank');
+        });
+
+        $(document).on('click', '#BtnSubmitBudget', function (event) {
+            event.preventDefault();
+            var _Dept = $('#txtSubAcct').val();
+            var _Year = $('#txtFiscalYearBudget').val();
+            if (_Year == 0) {
+                alert("Pilih Fiscal Year");
+            } else if (_Dept == 0) {
+                alert("Pilih Sub Accountnya");
+            } else {
+                var Dept_ = EncryptURL(_Dept)
+                var url = "/viewbudget/" + Dept_ + "/Year/" + _Year;
+                window.location.href = url;
+            }
+        });
+        
+        // List PR Progress
+        function DataTablePRProgress(stDate, enDate) {
+            dtPRProgress = $('#tbPRProgress').DataTable({
+                "serverSide": true,
+                "processing": true,
+                "autoWidth": false,
+                "bInfo": false,
+                "bPaginate": false,
+                "ajax": {
+                    "data": {
+                        DTDari: stDate,
+                        DTSampai: enDate,
+                        Cabang: $('#txtCabangP').val(),
+                        Dept: $('#txtDeptP').val(),
+                        PurchaseType: $('#txtPurTypeP').val(),
+                        FileName: $('#txtFileNameP').val()
+                    },
+                    "url": "/getmodelprprogress",
+                    "type": 'POST',
+                },
+                "columns": [
+                    {
+                        "data": "Description", title: "Action", "orderable": false, "render": function (data) {
+                            return '<button class="btn btn-xs btn-info" title="Edit" id="BtnView" style="margin-right:5px"> <span class="fa fa-eye"></span></button>';
+                        }
+                    },
+                    { "title": "Departement", "data": "Description" },
+                    {
+                        "title": "PR Date", "data": "PRDate",
+                        "render": function (value) {
+                            if (value === null) return "";
+                            return moment(value).format('DD/MM/YYYY');
+                        }
+                    },
+                    {
+                        "title": "PR No",
+                        "data": "PRNo",
+                        "class": "point",
+                        render: function (data,) {
+                            return '<a id=btnPRNoProgress>' + data + '</a>'
+                        },
+                    },
+                    { "title": "Purchase Type", "data": "PurchaseType" }
+                ],
+                "columnDefs": [
+                    { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                    { "className": "text-center custom-middle-align", "targets": [0] },
+                    { "visible": false, "targets": [0] },
+                ],
+                //"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+            });
+        }
+
+        $(document).on('click', '#BtnViewProgress', function (event) {
+            event.preventDefault();
+            var stDate = $('#dtDariP').datepicker("getDate");
+            var enDate = $('#dtSampaiP').datepicker("getDate");
+            $("#tbPRProgress").dataTable().fnDestroy();
+            DataTablePRProgress(stDate.toISOString(), enDate.toISOString());
+        });
+
+        $(document).on('click', '#btnPRNoProgress', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tbPRProgress').dataTable().fnGetData(row);
+            var _PRNo = EncryptURL(data.PRNo);
+            var url = "/viewprall/" + _PRNo;
+            window.open(url, '_blank');
+        });
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+        function PopupMessage(success, msg) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+            Toast.fire({
+                icon: 'success',
+                title: msg
+            })
+
+            //if (success) {
+            //    Toast.fire({
+            //        icon: 'success',
+            //        title: msg
+            //    })
+            //} else {
+            //    Toast.fire({
+            //        icon: 'error',
+            //        title: msg
+            //    })
+            //}
+            //Swal.fire({
+            //    title: msg,
+            //    icon: 'success',
+            //})
+        }
+
+    </script>
+}
+
+

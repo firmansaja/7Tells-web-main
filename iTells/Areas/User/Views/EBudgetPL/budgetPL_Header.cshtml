@@ -1,0 +1,96 @@
+﻿@using BusinessObjects;
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    List<ComboList> combo = (List<ComboList>)ViewData["ComboTahun"];
+}
+
+
+
+<section class="content">
+
+
+    <div class="row">   
+
+                <div class="col-sm-4 col-md-5">
+                    <font color="#ffffff" size="+1"><label class=" col-xs-2 col-md-12 control-label text-muted" style="text-align:left;">@ViewBag.title</label></font>
+                </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="form-group form-group-sm">
+                <div class="col-sm-1  col-md-2">
+                    <button type="button" class="btn btn-success " id="btn">Lihat PL</button>
+                </div>
+
+                @*<button class=" col-xs-2 col-md-1 btn btn-success " id="btn">Lihat Budget</button>*@
+                <div class="col-sm-4 col-md-2">
+                    <select id="tahun" class="form-control select2 " placeholder="Pilih Tahun">
+                        <option value="0">-- Pilih Tahun --</option>
+                        @foreach (var item in combo)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+</section>
+
+@section Scripts
+{
+    <script src="~/Scripts/aes.js"></script>
+    <script type="text/javascript">
+
+
+        $(document).on('click', '#btn', function (event) {
+            event.preventDefault();
+            var _tahun = $('#tahun').val();
+
+            if (_tahun == 0) {
+                alert("Pilih Tahun");
+            }
+            else {
+                //var url = "/showBudgetDetail/" + EncryptURL(_AcctId) + "/Tahun/" + EncryptURL(_Tahun) + "/Dept/" + EncryptURL(_Dept);
+                var url = "/budgetProfitLost/" + (_tahun);
+                window.location.href = url;
+            }
+
+
+        });
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+
+
+    </script>
+}
+
+
+
+

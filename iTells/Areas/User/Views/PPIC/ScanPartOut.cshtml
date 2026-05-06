@@ -1,0 +1,518 @@
+﻿
+@{
+    ViewBag.Title = "Scan Part Out";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <style>
+        .grid_center {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-column-gap: 10px;
+            grid-row-gap: 5px;
+        }
+
+        .container_barcode {
+            display: grid;
+            justify-content: center;
+            align-items: center;
+            grid-auto-flow: column;
+            /*grid-row-gap: 5px;*/
+            grid-column-gap: 10px;
+            background-color: #CCCCCC;
+            padding: 5px;
+            margin: 5px 0px;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 0px;
+        }
+
+        .form-control {
+            border-radius: 5px;
+        }
+
+        .box-header {
+            padding: 10px 10px 0px 10px;
+        }
+
+        @@media only screen and (max-width:640px) {
+            .box-header {
+                padding: 5px 5px 0px 5px;
+            }
+
+            .c-header {
+                font-size: 14px;
+            }
+
+            .col-xs-12 {
+                padding: 0px;
+            }
+
+            .grid_center {
+                grid-gap: 5px;
+                font-size: 10px;
+            }
+
+            .form-control {
+                border-radius: 5px;
+                padding: 2px 8px;
+                font-size: 10px;
+                height: 20px;
+            }
+
+            .btn {
+                padding: 2px 8px;
+                font-size: 10px;
+            }
+
+            h4.small {
+                font-size: 10px;
+            }
+
+            .container_barcode {
+                display: grid;
+                grid-auto-flow: column;
+                grid-gap: 5px;
+                align-items: center;
+                justify-content: space-around;
+            }
+
+            .table-container {
+                font-size: 10px;
+            }
+
+            .main-header .logo {
+                display: none;
+            }
+
+            .fixed .content-wrapper, .fixed .right-side {
+                padding-top: 50px;
+            }
+        }
+
+        table {
+            /*width: 50%;*/
+            counter-reset: row-num;
+        }
+
+            table tbody tr {
+                counter-increment: row-num;
+            }
+
+                table tbody tr td:first-child::before {
+                    content: counter(row-num) "";
+                }
+    </style>
+</head>
+
+<div class="box box-primary">
+    <div class="box-header with-border header-font">
+        <div class="col-xs-12">
+            <div align="center" class="row">
+                <h1 class="c-header" style="margin:0; font-weight:bold; color:#FF0000">SCAN BUKTI MUAT OUT</h1>
+            </div>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="col-xs-12">
+            <div class="grid_center">
+                <div class="form-group">
+                    <label style="margin:0">No. Seq</label>
+                    <input type="text" class="form-control" value="" id="txtNoSeq">
+                </div>
+                <div class="form-group" hidden>
+                    <label style="margin:0">No. Mobil</label>
+                    <input type="text" class="form-control" oninput="this.value = this.value.toUpperCase()" value="" id="txtNoMobil" disabled>
+                </div>
+                <div class="form-group">
+                    <label style="margin:0">No. Mobil</label>
+                    <input type="text" class="form-control" oninput="this.value = this.value.toUpperCase()" value="" id="txtNoMobilAktual">
+                </div>
+                <div class="form-group">
+                    <label style="margin:0">Tgl Kirim</label>
+                    <input type="text" class="form-control" value="" id="dtTglKirim" disabled>
+                </div>
+                <div class="form-group">
+                    <label style="margin:0">Tujuan</label>
+                    <input type="text" class="form-control" value="" id="txtTujuan" disabled>
+                </div>
+            </div>
+            <div class="container_barcode">
+                <div align="center">
+                    <h4 class="small" style="margin:0; font-weight:bold">ITEM CARD</h4>
+                </div>
+                <div>
+                    <input type="text" class="form-control" oninput="this.value = this.value.toUpperCase()" value="" id="txtItemCard">
+                </div>
+                <div align="center">
+                    <button id="btnSubmit" class="btn btn-primary" onclick="return SimpanBuktiMuatOut()">Submit & Print</button>
+                </div>
+            </div>
+            <div class="table-container" style="overflow-x:auto">
+                <table class="table" id="tblBuktiMuatOut" style="border-color:black;width:100%">
+                    <thead>
+                        <tr style="border-color:black">
+                            <th style="text-align:center;vertical-align:middle;border-color:black">No</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Part No</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" hidden>Item No</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Part Name</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">User</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">PO No</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Qty</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" hidden>Lokasi</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" hidden>PF</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Pilihan</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
+    <script>
+        let listMuat = [];
+        $(document).ready(function () {
+            var menuItem = $('#buktimuat');
+            menuItem.addClass('active');
+            var subMenuItem = menuItem.find('#scanpartout');
+            subMenuItem.addClass('active');
+
+            var msg = localStorage.getItem("message");
+            var scs = localStorage.getItem("success");
+            if (msg != null) {
+                //var msg1 = '<h3 class=\"alert alert-success fade in\">' + msg + '</h3>';
+                //$('#message').html(msg1);
+                //$("#message").slideDown(1000).slideUp(2000);
+                PopupMessage(scs, msg);
+                localStorage.removeItem("message");
+                localStorage.removeItem("success");
+            }
+
+            $('#txtNoSeq').focus();
+        })
+
+        // Input no seq
+        $(document).on('focus', '#txtNoSeq', function (event) {
+            //event.preventDefault();
+            $('#txtNoSeq').val('');
+        });
+
+        $(document).on('keypress', '#txtNoSeq', function (event) {
+            if (event.which === 32) {
+                event.preventDefault();
+            }
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                CheckBuktiMuat($('#txtNoSeq').val());
+            }
+        });
+
+        // Input no mobil aktual
+        $(document).on('focus', '#txtNoMobilAktual', function (event) {
+            //event.preventDefault();
+            $('#txtNoMobilAktual').val('');
+        });
+
+        $(document).on('keypress', '#txtNoMobilAktual', function (event) {
+            if (event.which === 32) {
+                event.preventDefault();
+            }
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                if ($('#txtNoSeq').val() === '') {
+                    $('#txtNoSeq').focus();
+                } else if ($('#txtItemCard').val() === '') {
+                    $('#txtItemCard').focus();
+                }
+            }
+        });
+
+        // Input item card
+        $(document).on('focus', '#txtItemCard', function (event) {
+            //event.preventDefault();
+            $('#txtItemCard').val('');
+        });
+
+        $(document).on('keypress', '#txtItemCard', function (event) {
+            var itemCard = $('#txtItemCard').val();
+            var noSeq = $('#txtNoSeq').val();
+            var noMobil = $('#txtNoMobil').val();
+            var tglKirim = $('#dtTglKirim').val();
+
+            if (itemCard !== '' && event.key === "Enter") {
+                if (noSeq === '') {
+                    alert('No seq harus diisi!')
+                    $('#txtNoSeq').focus();
+                } else if (noMobil === '') {
+                    alert('No mobil harus diisi!')
+                    $('#txtNoSeq').focus();
+                } else if (tglKirim === '') {
+                    alert('Tgl kirim harus diisi!')
+                    $('#txtNoSeq').focus();
+                } else{
+                    event.preventDefault();
+                    AddMuatOut();
+                }
+            }
+        });
+
+        // Hapus bukti muat out
+        $("#tblBuktiMuatOut").on('click', '.btnHapus', function () {
+            $(this).closest('tr').remove();
+        });
+
+        function CheckBuktiMuat(noSeq) {
+            $.ajax({
+                url: '@Url.Action("CheckBuktiMuat", "PPIC", new { area ="User"})',
+                dataType: "json",
+                type: "GET",
+                data: { noSeq: noSeq },
+                async: false,
+                success: function (data) {
+                    if (!data.success) {
+                        alert(data.message)
+                        //PopupMessage(false, data.message);
+                        $('#txtNoSeq').focus();
+                    } else {
+                        $('#txtNoSeq').prop('disabled', true);
+                        $('#txtNoMobil').val(data.dataMuat[0].NoMobil);
+                        let tglKirim = new Date(data.dataMuat[0].TglKirim.match(/\d+/)[0] * 1);
+                        $('#dtTglKirim').val(FormatDateTime(tglKirim, 'DD-MM-YYYY'));
+                        $('#txtTujuan').val(data.dataMuat[0].Tujuan);
+
+                        listMuat = data.dataMuat;
+
+                        if ($('#txtNoMobilAktual').val() === '') {
+                            $('#txtNoMobilAktual').focus();
+                        } else if ($('#txtItemCard').val() === '') {
+                            $('#txtItemCard').focus();
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+        function AddMuatOut() {
+            var yim = $('#txtItemCard').val();
+            var itemCard = yim.replace(/[^a-zA-Z0-9[)>]/g, "");
+
+            var itemNo = itemCard.substring(25, 11);
+            var userCode = itemCard.substring(36, 32);
+            var orderNo = itemCard.substring(42, 37);
+            //var orderQty = itemCard.substring(49, 43);
+
+            //console.log(('00000' + orderNo).slice(-5));
+            let dataMuat = listMuat.filter(obj => obj.ItemNo === itemNo && obj.UserCode === userCode && ('00000' + obj.OrderNo).slice(-5) === orderNo);
+
+            if (dataMuat.length === 0) {
+                alert(`Part No ${itemNo}-${userCode}-${orderNo} tidak ditemukan!`);
+                $('#txtItemCard').focus();
+            } else {
+                var table = document.getElementById("tblBuktiMuatOut").getElementsByTagName('tbody')[0];
+                var rowCount = table.rows.length;
+
+                var isReady = false;
+
+                for (var i = 0; i < rowCount; i++) {
+                    var partNo = table.rows[i].cells[2].textContent.trim();
+                    var user = table.rows[i].cells[4].textContent.trim();
+                    var poNo = table.rows[i].cells[5].textContent.trim();
+                    if (partNo === itemNo && user === userCode && poNo === orderNo ) {
+                        alert(`Part No ${itemNo} sudah ada!`);
+                        $('#txtItemCard').focus();
+                        isReady = true;
+                        break;
+                    }
+                }
+
+                if (!isReady) {
+                    var newRow = table.insertRow(rowCount);
+                    newRow.setAttribute("style", "text-align:center;vertical-align:middle");
+
+                    newRow.insertCell(0);
+                    var cPartNo = newRow.insertCell(1);
+                    var cItemNo = newRow.insertCell(2);
+                    var cPartName = newRow.insertCell(3);
+                    var cUser = newRow.insertCell(4);
+                    var cPONo = newRow.insertCell(5);
+                    var cQty = newRow.insertCell(6);
+                    var cLokasi = newRow.insertCell(7);
+                    var cPF = newRow.insertCell(8);
+                    var cPilihan = newRow.insertCell(9);
+                    cPartNo.innerHTML = dataMuat[0].PartNo;
+                    cItemNo.innerHTML = itemNo;
+                    cItemNo.setAttribute("style", "display:none");
+                    cPartName.innerHTML = dataMuat[0].ItemName;
+                    cUser.innerHTML = dataMuat[0].UserCode;
+                    cPONo.innerHTML = dataMuat[0].OrderNo;
+                    cQty.innerHTML = dataMuat[0].OrderQty;
+                    cLokasi.innerHTML = dataMuat[0].Lokasi;
+                    cLokasi.setAttribute("style", "display:none");
+                    cPF.innerHTML = dataMuat[0].PF;
+                    cPF.setAttribute("style", "display:none");
+                    cPilihan.innerHTML = '<button class="btn btn-xs btnHapus" title="Hapus" style="color:red"><span class="fa fa-trash"></span></button>';
+                }
+            }
+            $('#txtItemCard').val('');
+        }
+
+        function SimpanBuktiMuatOut() {
+            var NoSeq = $("#txtNoSeq").val();
+            var NoMobil = $("#txtNoMobil").val();
+            var NoMobilAct = $("#txtNoMobilAktual").val();
+            var table = document.getElementById("tblBuktiMuatOut").getElementsByTagName('tbody')[0];;
+            var rowCount = table.rows.length;
+
+            if (NoSeq == "") {
+                alert("No seq tidak boleh kosong!")
+            } else if (NoMobil == "") {
+                alert("No Mobil tidak boleh kosong!")
+            } else if (NoMobilAct == "") {
+                alert("No Mobil tidak boleh kosong!")
+            } else if (rowCount == 0) {
+                alert("Data part tidak boleh kosong!")
+            } else {                
+                simpanData();
+            }
+        }
+
+        function simpanData() {
+            if (confirm('Yakin ingin simpan data?')) {
+
+                $('#btnSubmit').prop('disabled', true);
+                               
+                var noSeq = $("#txtNoSeq").val();
+
+                var Data = [];
+                $("#tblBuktiMuatOut tbody tr").each(function () {
+                    var currentRow = $(this);
+                    var partNo = currentRow.find("td:eq(1)").text();
+                    var itemNo = currentRow.find("td:eq(2)").text();
+                    var itemName = currentRow.find("td:eq(3)").text();
+                    var userCode = currentRow.find("td:eq(4)").text();
+                    var poNo = currentRow.find("td:eq(5)").text();
+                    var qty = currentRow.find("td:eq(6)").text();
+                    var lokasi = currentRow.find("td:eq(7)").text();
+                    var Pf = currentRow.find("td:eq(8)").text();
+
+                    var obj = {};
+                    obj.NoUpload = noSeq.substring(0, 15);
+                    obj.NoMobil = $("#txtNoMobil").val();
+                    obj.NoMobilAktual = $("#txtNoMobilAktual").val();
+                    obj.PartNo = partNo;
+                    obj.ItemNo = itemNo;
+                    obj.ItemName = itemName;
+                    obj.Lokasi = lokasi;
+                    obj.UserCode = userCode;
+                    obj.PF = Pf;
+                    obj.OrderNo = poNo;
+                    obj.OrderQty = qty;
+
+                    Data.push(obj);
+                });
+
+                Data = JSON.stringify({ 'DataPart': Data });
+
+                $.ajax({
+                    url: '@Url.Action("SimpanBuktiMuatOut", "PPIC", new { area ="User"})',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: "json",
+                    type: "POST",
+                    data: Data,
+                    success: function (data) {
+                        if (data.success) {
+                            $("#txtNoSeq").val('');
+                            $("#txtNoMobil").val('');
+                            $("#txtNoMobilAktual").val('');
+                            $("#dtTglKirim").val('');
+                            $('#txtTujuan').val('');                            
+                            $("#tblBuktiMuatOut").find("tr:gt(0)").remove();
+
+                            alert(data.message);
+
+                            $('#btnSubmit').prop('disabled', false);
+                            $('#txtNoSeq').prop('disabled', false);
+                            $('#txtNoSeq').focus();
+
+                            $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("ViewReportBuktiMuatOut", "PPIC", new { area ="User"})',
+                                data: { NoSeq: noSeq, RptName: 'RptTrollyOutDepo' },
+                                success: function (data) {
+                                    if (!data.result) {
+                                        alert("Error");
+                                    }
+                                    else {
+                                        window.open("/Reports/ReportBuktiMuat.aspx", '_blank');
+                                    }
+                                }
+                            });
+                        } else {
+                            alert(data.message);
+                            $('#btnSubmit').prop('disabled', false);
+                        }
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
+                        $('#btnSubmit').prop('disabled', false);
+                    }
+                });
+            } else {
+                return false;
+            }
+        }
+
+        function PopupMessage(success, msg) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+            //Toast.fire({
+            //    icon: 'success',
+            //    title: msg
+            //})
+            if (success) {
+                Toast.fire({
+                    icon: 'success',
+                    title: msg
+                })
+            } else {
+                Toast.fire({
+                    icon: 'error',
+                    title: msg
+                })
+            }
+        }
+
+        function FormatDateTime(tgl, format) {
+            // const today = new Date();
+
+            var datetime = moment(tgl).format(format)
+
+            return datetime
+        }
+
+    </script>
+}
+

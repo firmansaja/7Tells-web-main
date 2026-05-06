@@ -1,0 +1,400 @@
+﻿
+
+
+@using BusinessObjects
+
+@{
+
+    List<BO_MaterialKontrol> ListPRBudget = (List<BO_MaterialKontrol>)ViewData["Januari"];
+    int i = 0;
+
+}
+
+<div class="box-body" id="januari">
+    <div class="row">
+        <div class="col-xs-12">
+            <table id="TB1" style="border-color:black;width:100%" class="table table-condensed table-striped table-responsive display" >
+                <thead>
+                    <tr style="background-color:#3C8EBE;border-color:black;color:white">
+                        <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3 ">No</th>
+                        <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">ID Inv</th>
+                        <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Description</th>
+                        <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Min</th>
+                        @*<th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Min 20%</th>*@
+                        <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Unit</th>
+                        <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Site</th>
+                        <th colspan="8" style="text-align:center;vertical-align:middle;border-color:black" class="style3 jan">@ViewBag.Bulan</th>
+                    </tr>
+                    <tr style="background-color:#3C8EBE;color:white">
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">Awal</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">Masuk</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">K. Produksi</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">Balance</th>
+                       @* <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">Rasio</th>*@
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">F_Cast </th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">PR</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">PO</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">EST Akhir</th>
+                        @*<th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">F_Cast N1 </th>*@
+                        @*<th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">Rasio N1 </th>*@
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in @ListPRBudget)
+                    {
+                        i++;
+                    <tr>
+                        <td style="text-align:center;border-color:black; vertical-align:middle" class="style2">@i</td>
+                        <td style="vertical-align:middle;border-color:black" class="style2">@item.InvtID</td>
+                        <td style="vertical-align:middle;border-color:black" class="style10">@item.Desc</td>
+
+                        @if (@ViewBag.Kolom == 1)
+                        {
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin01)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Min01)</td>*@
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STAwal01)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STIN01)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STOut01)</td>
+                            if (@item.ST01 < @item.STMin01)
+                            {
+                                <td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST01) </td>
+                            }
+                            else
+                            {
+                                <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST01)</td>
+                            }
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day01) Day</td>*@
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC01)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PR01)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PO01)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST01 + @item.PR01 + @item.PO01)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC02)</td>*@
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day01N1) Day</td>*@
+                        }
+                        else if (@ViewBag.Kolom == 2)
+                        {
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin02)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Min02)</td>*@
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STAwal02)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STIN02)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STOut02)</td>
+                            if (@item.ST02 < @item.STMin02)
+                            {
+                                <td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST02)</td>
+                            }
+                            else
+                            {
+                                <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST02)</td>
+                            }
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day02) Day</td>*@
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC02)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PR02)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PO02)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST02 + @item.PR02 + @item.PO02)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC03)</td>
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day03N1) Day</td>*@
+
+
+                        }
+
+                        else if (@ViewBag.Kolom == 3)
+                        {
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin03)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Min03)</td>*@
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STAwal03)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STIN03)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STOut03)</td>
+                            if (@item.ST03 < @item.STMin03)
+                            {
+                                <td style="background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST03)</td>
+                            }
+                            else
+                            {
+                                <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST03)</td>
+                            }
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day03)  Day</td>*@
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC03)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PR03)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PO03)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST03 + @item.PR03 + @item.PO03)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC04)</td>
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day03N1) Day</td>*@
+
+
+                        }
+                        else if (@ViewBag.Kolom == 4)
+                        {
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin04)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Min04)</td>*@
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STAwal04)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STIN04)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STOut04)</td>
+                            if (@item.ST04 < @item.STMin04)
+                            {
+                                <td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST04)</td>
+                            }
+                            else
+                            {
+                                <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST04)</td>
+                            }
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day04) Day</td>*@
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC04)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PR04)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PO04)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST04 + @item.PR04 + @item.PO04)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC05)</td>
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day04N1) Day</td>*@
+
+
+                        }
+
+                        else if (@ViewBag.Kolom == 5)
+                        {
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin05)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Min05)</td>*@
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STAwal05)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STIN05)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STOut05)</td>
+                            if (@item.ST05 < @item.STMin05)
+                            {
+                                <td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST05)</td>
+                            }
+                            else
+                            {
+                                <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST05)</td>
+                            }
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day05) Day</td>*@
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC05)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PR05)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PO05)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST05 + @item.PR05 + @item.PO05)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC06)</td>
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day05N1) Day</td>*@
+
+
+                        }
+                        else if (@ViewBag.Kolom == 6)
+                        {
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin06)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Min06)</td>*@
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STAwal06)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STIN06)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STOut06)</td>
+                            if (@item.ST06 < @item.STMin06)
+                            {
+                                <td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST06)</td>
+                            }
+                            else
+                            {
+                                <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST06)</td>
+                            }
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day06) Day</td>*@
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC06)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PR06)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PO06)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST06 + @item.PR06 + @item.PO06)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC07)</td>
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day06N1) Day</td>*@
+
+
+                        }
+
+                        else if (@ViewBag.Kolom == 7)
+                        {
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin07)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Min07)</td>*@
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STAwal07)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STIN07)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STOut07)</td>
+                            if (@item.ST07 < @item.STMin07)
+                            {
+                                <td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST07)</td>
+                            }
+                            else
+                            {
+                                <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST07)</td>
+                            }
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day07) Day</td>*@
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC07)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PR07)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PO07)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST07 + @item.PR07 + @item.PO07)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC08)</td>
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day07N1) Day</td>*@
+
+
+                        }
+                        else if (@ViewBag.Kolom == 8)
+                        {
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin08)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Min08)</td>*@
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STAwal08)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STIN08)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STOut08)</td>
+                            if (@item.ST08 < @item.STMin08)
+                            {
+                                <td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST08)</td>
+                            }
+                            else
+                            {
+                                <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST08) </td>
+                            }
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day08) Day</td>*@
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC08)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PR08)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PO08)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST08 + @item.PR08 + @item.PO08)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC09)</td>
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day08N1) Day</td>*@
+
+
+                        }
+
+                        else if (@ViewBag.Kolom == 9)
+                        {
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin09)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Min09)</td>*@
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STAwal09)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STIN09)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STOut09)</td>
+                            if (@item.ST09 < @item.STMin09)
+                            {
+                                <td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST09)</td>
+                            }
+                            else
+                            {
+                                <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST09)</td>
+                            }
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day09) Day</td>*@
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC09)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PR09)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PO09)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST09 + @item.PR09 + @item.PO09)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC10)</td>
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day09N1) Day</td>*@
+
+
+                        }
+                        else if (@ViewBag.Kolom == 10)
+                        {
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin10)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Min10)</td>*@
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STAwal10)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STIN10)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STOut10)</td>
+                            if (@item.ST10 < @item.STMin10)
+                            {
+                                <td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST10)</td>
+                            }
+                            else
+                            {
+                                <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST10)</td>
+                            }
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day10) Day</td>*@
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC10)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PR10)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PO10)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST10 + @item.PR10 + @item.PO10)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC11)</td>
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day10N1) Day</td>*@
+
+
+                        }
+
+                        else if (@ViewBag.Kolom == 11)
+                        {
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin11)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Min11)</td>*@
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STAwal11)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STIN11)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STOut11)</td>
+                            if (@item.ST11 < @item.STMin11)
+                            {
+                                <td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST11)</td>
+                            }
+                            else
+                            {
+                                <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST11)</td>
+                            }
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day11) Day</td>*@
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC11)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PR11)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PO11)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST11 + @item.PR11 + @item.PO11)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC12)</td>
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day11N1) Day</td>*@
+
+
+                        }
+                        else if (@ViewBag.Kolom == 12)
+                        {
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STMin12)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Min12)</td>*@
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STAwal12)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STIN12)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.STOut12)</td>
+                            if (@item.ST12 < @item.STMin12)
+                            {
+                                <td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="style2 blink">@String.Format("{0,14:n2}", @item.ST12)</td>
+                            }
+                            else
+                            {
+                                <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST12)</td>
+                            }
+                            @*<td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day12) Day</td>*@
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.FC12)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PR12)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.PO12)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.ST12 + @item.PR12 + @item.PO12)</td>
+                            @*<td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">0</td>
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n0}", @item.Day12N1) Day</td>*@
+
+
+                        }
+
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+</div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

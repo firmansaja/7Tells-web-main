@@ -1,0 +1,103 @@
+﻿
+
+
+
+@using BusinessObjects
+
+@{
+
+    List<BO_MaterialKontrol> ListPRBudget = (List<BO_MaterialKontrol>)ViewData["StokMaterial"];
+    int i = 0;
+
+}
+
+<div id="Quarter4" class="row">
+    <div class="col-xs-12">
+            <div class="box-body">
+                <table id="TBQ4" style="border-color:black" class="table table-bordered">
+                    <thead>
+                        <tr style="background-color:lightgreen;border-color:black">
+                            <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3 ">No</th>
+                            <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Invt</th>
+                            <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Desc</th>
+                            <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Unit</th>
+                            <th rowspan="2" style="text-align:center;vertical-align:middle;border-color:black" class="style3">Site</th>
+                            <th colspan="4" style="text-align:center;vertical-align:middle;border-color:black" class="style3 okt">Oktober</th>
+                            <th colspan="4" style="text-align:center;vertical-align:middle;border-color:black" class="style3 nov">November</th>
+                            <th colspan="4" style="text-align:center;vertical-align:middle;border-color:black" class="style3 des">Desember</th>
+                        </tr>
+                        <tr style="background-color:lightgreen">
+
+                            <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 okt">FC</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 okt">Stok</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 okt">PO</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 okt">PR</th>
+
+                            <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 nov">FC</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 nov">Stok</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 nov">PO</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 nov">PR</th>
+
+                            <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 des">FC</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 des">Stok</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 des">PO</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 des">PR</th>
+
+
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in @ListPRBudget)
+                        {
+                            i++;
+                        <tr>
+                            <td style="text-align:center;border-color:black; vertical-align:middle" class="style2">@i</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.InvtID</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Desc</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Unit</td>
+                            <td style="vertical-align:middle;border-color:black" class="style2">@item.Site</td>
+
+
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 okt">@String.Format("{0,14:n0}", @item.FC10)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 okt">@String.Format("{0,14:n0}", 0)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 okt">@String.Format("{0,14:n0}", @item.PR10)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 okt">@String.Format("{0,14:n0}", @item.PO10)</td>
+
+
+
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 nov">@String.Format("{0,14:n0}", @item.FC11)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 nov">@String.Format("{0,14:n0}", 0)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 nov">@String.Format("{0,14:n0}", @item.PR11)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 nov">@String.Format("{0,14:n0}", @item.PO11)</td>
+
+
+
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 des">@String.Format("{0,14:n0}", @item.FC12)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 des">@String.Format("{0,14:n0}", 0)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 des">@String.Format("{0,14:n0}", @item.PR12)</td>
+                            <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 des">@String.Format("{0,14:n0}", @item.PO12)</td>
+
+
+                        </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+

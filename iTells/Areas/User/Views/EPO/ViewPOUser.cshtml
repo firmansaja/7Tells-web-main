@@ -1,0 +1,524 @@
+﻿@using BusinessObjects;
+@{
+    ViewBag.Title = "ViewPOUser";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "PO Detail";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "E-PO";
+    //ViewBag.Link = "/User/PR";
+    BO_PO POHeader = (BO_PO)ViewData["POHeader"];
+    BO_PO POTotal = (BO_PO)ViewData["POTotalAmount"];
+    List<BO_PODetail> ListPODetail = (List<BO_PODetail>)ViewData["ListPODetail"];
+    POAksesUser AkseUser = (POAksesUser)ViewData["AksesUser"];
+
+    double Taxf = 0;
+    double Total = 0;
+    double Tax = 0;
+    double GTotal = 0;
+    Taxf = Convert.ToDouble(POHeader.TaxF);
+    Total = Convert.ToDouble(POTotal.TotalAmount);
+    Tax = (Taxf / 100) * Total;
+    GTotal = Tax + Total;
+    double Tx = Convert.ToDouble(Tax);
+    double GT = Convert.ToDouble(GTotal);
+    string Termin = "";
+    if (@POHeader.Terms == "0")
+    {
+        Termin = "Cash";
+    } else
+    {
+        Termin = "Term of Payment :  " + @POHeader.Terms + " Hari Setelah terima Invoice, Pembayaran dilakukan setiap akhir bulan";
+    }
+
+    int Kol = @AkseUser.Kol;
+    int cek = 0;
+
+}
+
+<style type="text/css">
+
+    <!--
+    .style2 {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .style7 {
+        font-size: 13px;
+        font-family: Arial;
+    }
+
+    .style9 {
+        font-size: 13px;
+        font-style: italic;
+    }
+
+    .style11 {
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .style13 {
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .style14 {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .style17 {
+        font-family: Arial;
+        font-weight: bold;
+    }
+
+    .style22 {
+        font-family: Arial
+    }
+
+    .style23 {
+        font-size: 13px;
+        font-family: Arial;
+    }
+
+    .style24 {
+        font-weight: bold;
+    }
+    -->
+</style>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary" style="overflow-x:auto">
+
+            <table>
+                <tr>
+                    @*<td width="21" rowspan="4">&nbsp;</td>*@
+                    @*<td width="241" rowspan="4">&nbsp;</td>
+                <td width="36" rowspan="4"><span class="style7"></span></td>*@
+                    <td width="128" rowspan="2"><img src="/Images/Logo.png" width="100" height="70" /></td>
+                    <td colspan="11">
+                        <div align="center">
+                            <div style="font-style: oblique" align="left" class="style17">PT. Takagi Sari Multi Utama</div>
+                            <div align="left" class="style17">One Stop Plastic Manufacturing</div>
+                            <div align="left">Office : Jl. Industri Raya IV Blok AF 9-10 Desa Bunder Kec. Cikupa. Tangerang</div>
+                            <div align="left">Telp. (021) 5902308, (021) 5902310 Fax. (021) 5902309</div>
+                        </div>
+                    </td>
+                    <td colspan="2"><span class="style2 style22"></span></td>
+                </tr>
+
+                <tr>
+                    <td colspan="6" style="border-top: 1px solid #000000">&nbsp;</td>
+                    <td width="233" style="border-top: 1px solid #000000">&nbsp;</td>
+                    <td width="157" style="border-top: 1px solid #000000">&nbsp;</td>
+                    <td width="101" style="border-top: 1px solid #000000">&nbsp;</td>
+                    <td colspan="3" style="border-top: 1px solid #000000">&nbsp;</td>
+                    <td width="45" style="border-top: 1px solid #000000">&nbsp;</td>
+                    <td width="52" style="border-top: 1px solid #000000">&nbsp;</td>
+                    <td colspan="2" style="border-top: 1px solid #000000">&nbsp;</td>
+                    <td colspan="2" style="border-top: 1px solid #000000">&nbsp;</td>
+                </tr>
+                <tr>
+
+                    @*<td>&nbsp;</td>*@
+                    <td colspan="3"><span class="style17">PURCHASING ORDER</span></td>
+                    <td width="157">&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td colspan="3">&nbsp;</td>
+                    <td colspan="6" style="border-left: 1px solid #000000;border-right: 1px solid #000000;border-top: 1px solid #000000;text-align:left"><span class="style22">&nbsp;Supplier :</span></td>
+                </tr>
+
+                <tr>
+
+                    @*<td>&nbsp;</td>*@
+                    <td colspan="2"><span class="style22">Purchase Order No.</span></td>
+                    <td width="900"><span class="style22" id="PONumber">: &nbsp;&nbsp; @POHeader.PONumber </span></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td colspan="3">&nbsp;</td>
+                    <td colspan="6" style="border-left: 1px solid #000000 ; border-right: 1px solid #000000"><span class="style22"> &nbsp;@POHeader.VendorName</span></td>
+                </tr>
+                <tr>
+
+                    @*<td>&nbsp;</td>*@
+                    <td colspan="2"><span class="style22">Revision No.</span></td>
+                    <td><span class="style22" id="PORevisi">: &nbsp;&nbsp; @POHeader.Revisi </span></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td colspan="3">&nbsp;</td>
+                    <td colspan="6" style="border-left: 1px solid #000000 ; border-right: 1px solid #000000"><span class="style22"> &nbsp;@POHeader.VendAttn</span></td>
+                </tr>
+                <tr>
+
+                    @*<td>&nbsp;</td>*@
+                    <td colspan="2"><span class="style22">Order Date</span></td>
+                    <td><span class="style22" id="PODate">: &nbsp;&nbsp; @POHeader.PODate </span></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td colspan="3">&nbsp;</td>
+                    <td colspan="6" style="border-left: 1px solid #000000 ; border-right: 1px solid #000000"><span class="style22"> &nbsp;@POHeader.VendAddr1</span></td>
+                    @*<td style="border-left: 1px solid #000000">&nbsp;</td>
+                <td colspan="5" style="border-right: 1px solid #000000"><span class="style22">&nbsp;&nbsp;@POHeader.VendAddr1</span></td>*@
+                </tr>
+                <tr>
+
+                    @*<td>&nbsp;</td>*@
+                    <td colspan="2"><span class="style22">Ship To</span></td>
+                    <td><span class="style22" id="PODate">: &nbsp;&nbsp;@POHeader.ShipName&nbsp;   </span></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td colspan="3">&nbsp;</td>
+                    <td colspan="6" style="border-left: 1px solid #000000 ; border-right: 1px solid #000000"><span class="style22"> &nbsp;@POHeader.VendAddr2</span></td>
+                    @*<td style="border-left: 1px solid #000000">&nbsp;</td>
+                <td colspan="5" style="border-right: 1px solid #000000"><span class="style22">&nbsp;&nbsp;@POHeader.VendAddr1</span></td>*@
+                </tr>
+                <tr>
+
+                    @*<td>&nbsp;</td>*@
+                    <td colspan="2">&nbsp;</td>
+                    <td><span class="style22"> &nbsp;&nbsp;&nbsp;@POHeader.ShipAddr1,&nbsp;@POHeader.ShipAddr2,&nbsp; @POHeader.ShipCity&nbsp;@POHeader.ShipState&nbsp;@POHeader.ShipZip,&nbsp;@POHeader.Negara,&nbsp;  </span></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td colspan="3">&nbsp;</td>
+                    @*<td style="border-left: 1px solid #000000">&nbsp;</td>*@
+                    <td colspan="6" style="border-left: 1px solid #000000 ; border-right: 1px solid #000000"><span class="style22">  &nbsp;@POHeader.VendCity</span></td>
+                </tr>
+                <tr>
+
+                    @*<td>&nbsp;</td>*@
+                    <td colspan="2"><span class="style22">Invoice To</span></td>
+                    <td><span class="style22" id="PODate">: &nbsp;&nbsp;@POHeader.BillName&nbsp;   </span></td>
+                    <td>&nbsp;</td>.
+                    <td>&nbsp;</td>
+                    <td colspan="3">&nbsp;</td>
+                    @*<td style="border-left: 1px solid #000000">&nbsp;</td>*@
+                    <td colspan="6" style="border-left: 1px solid #000000 ; border-right: 1px solid #000000"><span class="style22"> &nbsp;Telp : &nbsp; @POHeader.VendPhone  &nbsp;  &nbsp; Fax :  &nbsp;@POHeader.VendFax </span></td>
+                </tr>
+                <tr>
+
+                    @*<td>&nbsp;</td>*@
+                    <td colspan="2">&nbsp;</td>
+                    <td><span class="style22"> &nbsp;&nbsp;&nbsp;@POHeader.BillAddr1,&nbsp;@POHeader.BillAddr2,&nbsp; @POHeader.BillCity&nbsp;@POHeader.BillState&nbsp;@POHeader.BillZip,&nbsp;@POHeader.Negara,&nbsp;  </span></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td colspan="3">&nbsp;</td>
+                    <td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000">&nbsp;</td>
+                    <td colspan="5" style="border-right: 1px solid #000000; border-bottom: 1px solid #000000"><span class="style23">&nbsp;</span></td>
+                </tr>
+                <tr>
+                    @*<td>&nbsp;</td>*@
+                    <td colspan="3">&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td colspan="3">&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td colspan="5">&nbsp;</td>
+                </tr>
+            </table>
+
+            @*<div class="row">
+        <div class="col-xs-12">*@
+            <table id="tblPoDetailUser" style="border-color:black" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th hidden style="text-align:center;vertical-align:middle;border-color:black" width="30px"><input type="checkbox" class="select-all checkbox" id="selectall" /></th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" width="200px">Komentar Atasan</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" width="30px">No</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" width="90px">InvtID</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" width="200px">Description</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" width="70px">No PR</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" width="65px">Account</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" width="70px">Date Promised</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" width="70px">S PRC</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" width="70px">Qty</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" width="70px">Unit</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" width="80px">Price @POHeader.CuryID</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" width="80px">Amount @POHeader.CuryID</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ListPODetail)
+                    {
+                        if (@item.cek == "checked")
+                        {
+                            cek++;
+                        }
+                    <tr>
+                        @*<td style="text-align:center; vertical-align:middle;border-color:black"><input type="text" class="singlechkbox" name="singlechkbox" >@item.LineID</td>*@
+                        <td hidden style="text-align:center; vertical-align:middle;border-color:black">@item.LineID</td>
+                        @if (@Kol == 1)
+                        {
+                            <td style="word-wrap: break-word;white-space: pre-wrap;vertical-align:middle;border-color:black"><textarea class="komen" rows="1" oninput="AutoGrow(this)" readonly id="txtComment_@item.LineID" style="width:100%;resize:none">@item.Komentar</textarea></td>
+                        }
+                        else
+                        {
+                            <td style="word-wrap: break-word;white-space: pre-wrap;vertical-align:middle;border-color:black"><textarea class="komen" rows="1" oninput="AutoGrow(this)" id="txtComment_@item.LineID" style="width:100%;resize:none">@item.Komentar</textarea></td>
+                        }
+                        @*<td style="word-wrap: break-word;white-space: pre-wrap;vertical-align:middle;border-color:black"><textarea class="komen" rows="1" oninput="AutoGrow(this)" id="txtComment_@item.No" style="width:100%;resize:none"></textarea></td>*@
+                        <td style="text-align:center; vertical-align:middle;border-color:black">@item.No</td>
+                        <td style="text-align:left; word-wrap:break-word;white-space:pre-wrap;vertical-align:middle;border-color:black">@item.InvtID</td>
+                        <td style="text-align:left; word-wrap: break-word;white-space: pre-wrap;vertical-align:middle;border-color:black">@item.Description</td>
+                        <td style="text-align:center; vertical-align:middle;border-color:black">@item.PRNo</td>
+                        <td style="text-align:center; vertical-align:middle;border-color:black">@item.Account</td>
+                        <td style="text-align:center; vertical-align:middle;border-color:black">@item.PromDate</td>
+                        <td style="text-align:center; vertical-align:middle;border-color:black">@item.ReqNbr</td>
+                        <td style="text-align:center; vertical-align:middle;border-color:black">@String.Format("{0,14:n2}", @item.QtyOrd)</td>
+                        <td style="text-align:left; vertical-align:middle;border-color:black">@item.Unit</td>
+                        <td style="text-align:right; vertical-align:middle;border-color:black">@String.Format("{0,14:n2}", @item.CuryUnitCost)</td>
+                        <td style="text-align:right; vertical-align:middle;border-color:black">@string.Format("{0,14:n2}", @item.total)</td>
+                    </tr>
+                    }
+
+
+                    <tr>
+                        <td colspan="8" rowspan="3" style="text-align:left; vertical-align:middle;border-color:black"> </td>
+                        <td class="style24" colspan="3" style="text-align:center; vertical-align:middle;border-color:black"> Total </td>
+                        <td colspan="2" style="text-align:center; vertical-align:middle;border-color:black">@string.Format("{0,14:n2}",@POTotal.TotalAmount) </td>
+                    </tr>
+                    <tr>
+                        @*<td colspan="8" style="text-align:center; vertical-align:middle;border-color:black"> </td>*@
+                        <td class="style24" colspan="3" style="text-align:center; vertical-align:middle;border-color:black">TAX @Taxf % </td>
+                        <td colspan="2" style="text-align:center; vertical-align:middle;border-color:black">@string.Format("{0,14:n2}",@Tx) </td>
+                    </tr>
+                    <tr>
+                        @*<td colspan="8" style="text-align:center; vertical-align:middle;border-color:black"> </td>*@
+                        <td class="style24" colspan="3" style="text-align:center; vertical-align:middle;border-color:black">Grand Total </td>
+                        <td colspan="2" style="text-align:center; vertical-align:middle;border-color:black">@string.Format("{0,14:n2}", @GT) </td>
+                    </tr>
+                    <tr>
+                        <td class="style24" colspan="12" style="text-align:left; vertical-align:middle;border-color:black">&nbsp;@Termin &nbsp;  </td>
+                    </tr>
+                    <tr>
+                        <td class="style24" colspan="12" style="text-align:left; vertical-align:middle;border-color:black">Remark :  @POHeader.SNote  </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="text-align:center; vertical-align:middle;border-color:black">Dibuat </td>
+                        <td colspan="3" style="text-align:center; vertical-align:middle;border-color:black">Diperiksa </td>
+                        <td colspan="4" style="text-align:center; vertical-align:middle;border-color:black">Disetujui </td>
+                    </tr>
+                    <tr>
+                        <td class="style24" colspan="5" style="text-align:center; vertical-align:middle;border-color:black" height="80px"><span id="prApproveBy1">By :</span></td>
+                        <td class="style24" colspan="3" style="text-align:center; vertical-align:middle;border-color:black" height="80px"><span id="prApproveBy2">By :</span></td>
+                        <td class="style24" colspan="4" style="text-align:center; vertical-align:middle;border-color:black" height="80px"><span id="prApproveBy3">By :</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl1">Purchasing Staff </span></td>
+                        <td colspan="3" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl2">Purchasing Manager </span></td>
+                        <td colspan="4" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl3">Division Head </span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="text-align:center; vertical-align:middle;border-color:black"><span id="prApproveAt1">Tanggal : </span></td>
+                        <td colspan="3" style="text-align:center; vertical-align:middle;border-color:black"><span id="prApproveAt2">Tanggal : </span></td>
+                        <td colspan="4" style="text-align:center; vertical-align:middle;border-color:black"><span id="prApproveAt3">Tanggal : </span></td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <table>
+                <tr>
+                    <td colspan="12">&nbsp;&nbsp;- No PO harus tercantum dalam semua invoice, Surat Jalan, dan surat - surat yang berhubungan dengan PO ini</td>
+                </tr>
+                <tr>
+                    <td colspan="12"><span class="style22"> &nbsp;&nbsp;- Surat Jalan dan Faktur Pajak harus dikirim 3 lembar (1 asli 2 copy)</span></td>
+                </tr>
+                <tr>
+                    <td colspan="12"><span class="style22"> &nbsp;&nbsp;- Tukar Faktur setiap hari Selasa, Rabu, Jumat (jam 10:00 s/d 15:00)</span></td>
+                </tr>
+                <tr>
+                    <td colspan="12"><span class="style22"> &nbsp;&nbsp;- Kwitansi Bermaterai</span></td>
+                </tr>
+                <tr class="style24" style="font-style: italic">
+                    <td colspan="12"><span class="style22"> &nbsp;&nbsp;- NB : Dokumen elektronik ini sudah merupakan bukti yang sah sebagai Permohonan Pembelian Barang / Purchase Request</span></td>
+                </tr>
+
+            </table>
+            <div class="row no-print">
+                <div class="col-xs-12">
+                    <button class="btn btn-primary pull-left margin" id="btnApprovePO">Approve</button>
+                    <button class="btn btn-danger pull-left margin" id="btnRejectPO">Reject</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            SetFooter();
+
+        });
+
+        function SetFooter()
+        {
+            const today = new Date();
+            //var TglCetak = ((today.getMonth() > 8) ? (today.getMonth() + 1) : ('0' + (today.getMonth() + 1))) + '-' + ((today.getDate() > 9) ? today.getDate() : ('0' + today.getDate())) + '-' + today.getFullYear();
+            var TglCetak = ((today.getDate() > 9) ? today.getDate() : ('0' + today.getDate())) + '-' +((today.getMonth() > 8) ? (today.getMonth() + 1) : ('0' + (today.getMonth() + 1)))  + '-' + today.getFullYear();
+            $("#dtCetak").html(TglCetak);
+
+		    var xValue = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["ListApproval"]))');
+		    for (var i = 0; i < xValue.length; i++) {
+			    if (xValue[i].Kol == 1) {
+				    $("#prApproveBy1").html(xValue[i].Status + " by " + xValue[i].UserName);
+				    $("#prApproveAt1").html("Tanggal : " + xValue[i].Tanggal);
+                    } else if (xValue[i].Kol == 2) {
+				    $("#prApproveBy2").html(xValue[i].Status + " by " + xValue[i].UserName);
+				    $("#prApproveAt2").html("Tanggal : " + xValue[i].Tanggal);
+                    } else if (xValue[i].Kol == 3) {
+				    $("#prApproveBy3").html(xValue[i].Status + " by " + xValue[i].UserName);
+				    $("#prApproveAt3").html("Tanggal : " + xValue[i].Tanggal);
+			    }
+            }
+
+		    if (@Kol == 1) {
+                $("#btnUpdatePO").addClass('disabled');
+			    $('#selectall').prop('checked', true);
+			    $('#selectall').prop('disabled', true);
+			    $('.singlechkbox').prop('checked', true);
+			    $('.singlechkbox').prop('disabled', true);
+		    }
+        };
+
+        function AutoGrow(obj) {
+            $(obj).css('height', 'auto').css('height', obj.scrollHeight + (obj.offsetHeight - obj.clientHeight));
+        }
+
+
+        @*$(document).on('click', '#btnApprovePO', function (event) {
+            event.preventDefault();
+            if (confirm('Apakah Yakin Ingin Approve ?')) {
+                $.ajax({
+                    url: '@Url.Action("ApprovePO", "EPO", new { area ="User"})',
+                    dataType: "json",
+                    type: "POST",
+                    cache: false,
+                    data: { PONo: '@POHeader.PONumber'} ,
+                    success: function (data) {
+                        if (data.success) {
+                            window.location = "/user/EPO";
+                            localStorage.setItem("message", data.message)
+                        }
+                    },
+                    error: function (xhr) {
+                        alert("Error");
+                    }
+                });
+            } else {
+                return false;
+            }
+        });*@
+
+        $(document).on('click', '#btnApprovePO', function (event) {
+            event.preventDefault();
+            if (confirm('Apakah Yakin Ingin Approve  ?')) {
+                var PODetail = [];
+                $("#tblPoDetailUser tr").each(function () {
+                    var currentRow = $(this);
+
+                    var No = currentRow.find("td:eq(2)").text();
+                    var LD = currentRow.find("td:eq(0)").text();
+                    var obj = {};
+                    obj.PONumber = '@POHeader.PONumber';  
+                    obj.No = No;
+                    obj.LineID = LD;
+                    obj.Komentar = "";
+
+                    PODetail.push(obj);
+                });
+               
+
+                PODetail.splice((PODetail.length - 9), 9);
+                PODetail.splice(0, 1);
+                for (var i = 0; i < PODetail.length; i++) {
+                    PODetail[i].Komentar = $('#txtComment_' + PODetail[i].No).val();
+                }
+
+                PODetail = JSON.stringify({ 'PODetail': PODetail });
+                console.log(PODetail);
+
+                 $.ajax({
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    type: 'POST',
+                    url: '@Url.Action("ApproveApproval", "EPO", new { area ="User"})',
+                    data: PODetail ,
+                    success: function (data) {
+                        if (data.success) {
+                            alert(data.message);
+                            window.location = "/user/EPO";
+                            //localStorage.setItem("message", data.message)
+                        }
+                    },
+                    error: function (xhr) {
+                        alert("Error");
+                    }
+                });
+               
+            } else {
+                return false
+            }
+        })
+
+
+        $(document).on('click', '#btnRejectPO', function (event) {
+            event.preventDefault();
+            if (confirm('Apakah Yakin Ingin Reject  ?')) {
+                var PODetail = [];
+                $("#tblPoDetailUser tr").each(function () {
+                    var currentRow = $(this);
+
+                    var No = currentRow.find("td:eq(2)").text();
+                    var LD = currentRow.find("td:eq(0)").text();
+                    var obj = {};
+                    obj.PONumber = '@POHeader.PONumber';  
+                    obj.No = No;
+                    obj.LineID = LD;
+                    obj.Komentar = "";
+
+                    PODetail.push(obj);
+                });
+               
+
+                PODetail.splice((PODetail.length - 9), 9);
+                PODetail.splice(0, 1);
+                for (var i = 0; i < PODetail.length; i++) {
+                    PODetail[i].Komentar = $('#txtComment_' + PODetail[i].No).val();
+                }
+
+                PODetail = JSON.stringify({ 'PODetail': PODetail });
+                console.log(PODetail);
+
+                 $.ajax({
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    type: 'POST',
+                    url: '@Url.Action("RejectApproval", "EPO", new { area ="User"})',
+                    data: PODetail ,
+                    success: function (data) {
+                        if (data.success) {
+                            alert(data.message);
+                            window.location = "/user/EPO";
+                            //window.location = "/user/EPO";
+                            //localStorage.setItem("message", data.message)
+                        }
+                    },
+                    error: function (xhr) {
+                        alert("Error");
+                    }
+                });
+               
+            } else {
+                return false
+            }
+        })
+
+
+    </script>
+}

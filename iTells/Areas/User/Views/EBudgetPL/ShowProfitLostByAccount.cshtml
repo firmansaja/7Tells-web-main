@@ -1,0 +1,245 @@
+﻿@using BusinessObjects;
+@model List<BO_EBudgetPL>
+@{
+    // ViewBag.Title = "E-BUDGET";
+
+    int i = 0;
+    int j = 0;
+    int k = 1;
+    double subjan = 0;
+    double subfeb = 0;
+    double submar = 0;
+    double subapr = 0;
+    double submei = 0;
+    double subjun = 0;
+    double subjul = 0;
+    double subags = 0;
+    double subsep = 0;
+    double subokt = 0;
+    double subnov = 0;
+    double subdes = 0;
+    double subtot = 0;
+    string _tahun = "";
+    string _acct = "";
+
+
+}
+
+@foreach (var subtotal in Model)
+{
+    subjan = subjan + subtotal.Jan;
+    subfeb = subfeb + subtotal.Feb;
+    submar = submar + subtotal.Mar;
+    subapr = subapr + subtotal.Apr;
+    submei = submei + subtotal.Mei;
+    subjun = subjun + subtotal.Jun;
+    subjul = subjul + subtotal.Jul;
+    subags = subags + subtotal.Ags;
+    subsep = subsep + subtotal.Sep;
+    subokt = subokt + subtotal.Okt;
+    subnov = subnov + subtotal.Nov;
+    subdes = subdes + subtotal.Des;
+
+    subtot = subtot + subtotal.Total;
+
+    j++;
+
+    _tahun = subtotal.Tahun;
+    _acct = subtotal.AcctID;
+}
+
+
+<div class="row">
+    <div class="col-md-12 " id="div2">
+        <div class="form-group form-group-sm">
+            <button class="col-sm-1 col-md-2 btn btn-success" id="btnExport">Export To Excel</button>
+            <div class="col-sm-1 col-md-8">
+                <font color="#ffffff" size="+1"><label class="  control-label text-muted" style="text-align:left;">@ViewBag.title</label></font>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box box-primary">
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12">
+
+                @*<div>
+                        <input type="submit" value="Baru" id="btnbaru" class="btn btn-success">
+                    </div>*@
+                <table id="LB" class="table table-bordered">
+
+                    <thead>
+                        <tr>
+                            <th class="text-center">No</th>
+                            <th class="text-center">Dept</th>
+                            <th class="text-center">Account</th>
+                            <th class="text-center">Januari</th>
+                            <th class="text-center">Februari</th>
+                            <th class="text-center">Maret</th>
+                            <th class="text-center">April</th>
+                            <th class="text-center">Mei</th>
+                            <th class="text-center">Juni</th>
+                            <th class="text-center">Juli</th>
+                            <th class="text-center">Agustus</th>
+                            <th class="text-center">September</th>
+                            <th class="text-center">Oktober</th>
+                            <th class="text-center">November</th>
+                            <th class="text-center">Desember</th>
+                            <th class="text-center">Total</th>
+
+
+                        </tr>
+
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            i++;
+                            <tr>
+
+                                <td class="text-center">@i</td>
+                                <td><a href="/showBudgetDetail_pl/@item.AcctID/tahun/@item.Tahun/Dept/@item.DeptID">@item.DeptName</a></td>
+                                <td>@item.AcctName</td>
+
+
+
+                                <td class="text-right">@string.Format("{0:N0}", item.Jan)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Feb)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Mar)</td>
+
+                                <td class="text-right">@string.Format("{0:N0}", item.Apr)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Mei)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Jun)</td>
+
+                                <td class="text-right">@string.Format("{0:N0}", item.Jul)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Ags)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Sep)</td>
+
+                                <td class="text-right">@string.Format("{0:N0}", item.Okt)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Nov)</td>
+                                <td class="text-right">@string.Format("{0:N0}", item.Des)</td>
+
+                                <td class="text-right">@string.Format("{0:N0}", item.Total)</td>
+
+                            </tr>
+                        }
+
+                            <tr>
+
+                                @{
+                                    int sub = 1 + @j;
+                                }
+
+                                <td class="text-center">@sub</td>
+                                <td>Sub Total</td>
+                                <td></td>
+
+
+
+                                <td class="text-right">@string.Format("{0:N0}", subjan)</td>
+                                <td class="text-right">@string.Format("{0:N0}", subfeb)</td>
+                                <td class="text-right">@string.Format("{0:N0}", submar)</td>
+
+                                <td class="text-right">@string.Format("{0:N0}", subapr)</td>
+                                <td class="text-right">@string.Format("{0:N0}", submei)</td>
+                                <td class="text-right">@string.Format("{0:N0}", subjun)</td>
+
+                                <td class="text-right">@string.Format("{0:N0}", subjul)</td>
+                                <td class="text-right">@string.Format("{0:N0}", subags)</td>
+                                <td class="text-right">@string.Format("{0:N0}", subsep)</td>
+
+                                <td class="text-right">@string.Format("{0:N0}", subokt)</td>
+                                <td class="text-right">@string.Format("{0:N0}", subnov)</td>
+                                <td class="text-right">@string.Format("{0:N0}", subdes)</td>
+
+                                <td class="text-right">@string.Format("{0:N0}", subtot)</td>
+
+                            </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+
+                $(document).ready(function () {
+                    $(document).ready(function () {
+
+                        $('#LB').DataTable({
+                            "destroy": true,
+                            paging: false,
+                            bFilter: false,
+                            fixedColumns: true,
+                            fixedColumns: {
+                                leftColumns: 2
+                            },
+                            //columnDefs: [{
+                            //    targets: no-sort,
+                            //    orderable: false,
+                            //}],
+                            scrollY: "700px",
+                            scrollX: true,
+                            scrollCollapse: true
+                        });
+                    })
+                })
+
+
+          $(document).on('click', '#btnExport', function (event) {
+            event.preventDefault();
+        
+
+            $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("CreateDataToExcel_ProfitlostByAccount", "EBudgetPL", new { area ="User"})',
+                data: { acctid :@_acct , tahun : @_tahun },
+                    //datatype: "json",
+                    success: function (data_) {
+                        console.log(data_);
+                        if (data_.success) {
+                            window.location.href = "@Url.RouteUrl(new { Controller = "EBudget", Action = "Download" })/?fileName=" + data_.namafile;
+                        }
+                        else {
+                            alert("Download GAGAL")
+                        }
+                    }
+
+                });
+
+         });
+
+                @*function tdclick(data) {
+                    //var Id = data.closest("tr").find("._id").val();
+                    console.log(data)
+                    var url = "/ShowEditData/" + data;
+                    window.location.href = url;
+                };
+
+                $(document).on('click', '#btnbaru', function (event) {
+                    event.preventDefault();
+                    //var url = "/tambahbudget";
+                    var url = "/tambahbudget/" + @AcctId + "/AcctName/" + '@AcctName' + "/Tahun/" + @Tahun + "/DeptId/" + '@dept' + "/SideID/" + '@SiteID';
+                    window.location.href = url;
+                });*@
+
+    </script>
+}
+
+
+
+
+
+
+
+
+

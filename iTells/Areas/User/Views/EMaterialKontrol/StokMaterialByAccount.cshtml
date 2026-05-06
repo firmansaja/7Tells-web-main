@@ -1,0 +1,134 @@
+﻿@using BusinessObjects;
+@{
+
+   // List<BO_MaterialKontrol> ListPRBudget = (List<BO_MaterialKontrol>)ViewData["StokMaterialByAccount"];
+    int i = 0;
+}
+
+
+
+
+@*<div class="box box-primary" style="overflow-x:auto">*@
+<div id="MainForm">
+    <div class="row">
+        <div class="col-md-12 " id="div2">
+            <div class="form-group form-group-sm">
+                @*<button class="col-sm-1 col-md-1 btn btn-warning" id="btnKembali">Kembali</button>
+                    <button class="col-sm-1 col-md-1 btn btn-success" id="btnExport">Export</button>*@
+                <div class="col-sm-1 col-md-8">
+                    <font color="#ffffff" size="+1"><label class="  control-label text-muted" style="text-align:left;">@ViewBag.title</label></font>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-lg-4 col-xs-8">
+        <div class="small-box bg-green">
+            <div class="inner">
+                <h3 id="th_Plastik">@ViewBag.Year<sup style="font-size: 15px"></sup></h3>
+                <h3>Material Plastik</h3>
+            </div>
+            <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+            </div>
+            <button type="button" class="btn btn-primary" id="BtnPlastik">View</button>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-xs-8">
+        <div class="small-box bg-navy">
+            <div class="inner">
+                <h3 >@ViewBag.Year<sup style="font-size: 15px"></sup></h3>
+                <h3>Material Painting</h3>
+            </div>
+            <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+            </div>
+            <button type="button" class="btn btn-primary" id="BtnPainting">View</button>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-xs-8">
+        <div class="small-box bg-blue">
+            <div class="inner">
+                <h3>@ViewBag.Year<sup style="font-size: 15px"></sup></h3>
+                <h3>Supplies Parts  </h3>
+            </div>
+            <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+            </div>
+            <button type="button" class="btn btn-primary" id="BtnChildPart">View</button>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts
+{
+    <script src="~/Scripts/aes.js"></script>
+    <script type="text/javascript">
+
+
+        $(document).on('click', '#BtnPlastik', function (event) {
+            event.preventDefault();
+            //var _tahun = "2022";
+            var _tahun = $("#th_Plastik").text();
+            var _account = "11620";
+
+
+
+            //var Dept_ = EncryptURL(_Dept)
+            var url = "/StokMaterial/" + EncryptURL(_tahun) + "/account/" + EncryptURL(_account);
+            window.location.href = url;
+
+        });
+
+        $(document).on('click', '#BtnPainting', function (event) {
+            event.preventDefault();
+            //var _tahun = "2022";
+            var _tahun = $("#th_Plastik").text();
+            var _account = "11621";
+
+            var url = "/StokMaterial/" + EncryptURL(_tahun) + "/account/" + EncryptURL(_account);
+            window.location.href = url;
+
+        });
+
+        $(document).on('click', '#BtnChildPart', function (event) {
+            event.preventDefault();
+            //var _tahun = "2022";
+            var _tahun = $("#th_Plastik").text();
+            var _account = "11630";
+
+            var url = "/StokMaterial/" + EncryptURL(_tahun) + "/account/" + EncryptURL(_account);
+            window.location.href = url;
+
+        });
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+
+
+    </script>
+}

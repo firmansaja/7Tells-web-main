@@ -1,0 +1,178 @@
+﻿@using BusinessObjects;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.SubTitle = "Home";
+    ViewBag.SubTitle1 = "";
+}
+
+<div id="message"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-lg-2">
+                        <div class="form-group">
+                            <label>Dari Tanggal</label>
+                            <div class="input-group date" id="dtDari">
+                                <input type="text" class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="form-group">
+                            <label>Sampai Tanggal</label>
+                            <div class="input-group date" id="dtSampai">
+                                <input type="text" class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        @if (ViewBag.IsAdd == true)
+                        {
+                            <a href="/admin/role/create" class="btn btn-info pull-right bottom">Tambah Baru</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_ListTrxObat")
+
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $('#dtDari').datepicker({               
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy',
+            });
+            $('#dtSampai').datepicker({
+                useCurrent: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+
+            const today = new Date();
+            DataTableTrxObat(today.toISOString(), today.toISOString());
+
+            $('#dtDari').datepicker('setDate', today);
+            $('#dtSampai').datepicker('setDate', today);
+
+            $("#message").slideDown(0).slideUp(0);
+            var msg = localStorage.getItem("message");
+            if (msg != null) {
+                var msg1 = '<h3 class=\"alert alert-success fade in\">' + msg + '</h3>';
+                $('#message').html(msg1);
+                $("#message").slideDown(1000).slideUp(2000);
+                localStorage.removeItem("message");
+            }
+        })
+
+        $(document).on('change', '#dtDari', function (event) {
+            event.preventDefault();
+            var tglMulai = $('#dtDari').datepicker("getDate");
+            var tglSampai = $('#dtSampai').datepicker("getDate");
+            
+            if (isNaN(tglSampai)) {
+                tglSampai = tglMulai;
+            } else if (tglMulai > tglSampai) {
+                tglSampai = tglMulai
+            }
+
+            $("#tbTrxObat").dataTable().fnDestroy();
+            DataTableTrxObat(tglMulai.toISOString(), tglSampai.toISOString());
+        });
+
+        $(document).on('change', '#dtSampai', function (event) {
+            event.preventDefault();
+            //var tglMulai = $('#dtDari').datepicker("getDate").toISOString();
+            //$("#tbTrxObat").dataTable().fnDestroy();
+            //DataTableTrxObat(tglMulai, tglMulai);
+        });
+
+        var ListTrxObat = null;
+        var dtTrxObat;
+        function DataTableTrxObat(tglMulai, tglSelesai) {
+            ListTrxObat = {
+                init: function () {
+                    dtTrxObat = $('#tbTrxObat').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "ajax": {
+                            "url": "/getTrxPeriksa",
+                            "data": {
+                                TglMulai: tglMulai,
+                                TglSelesai: tglSelesai
+                            },
+                            "type": 'POST',
+                        },
+                        "columns": [                            
+                            { "title": "No Trans", "data": "NoTrans"},
+                            {
+                                "title": "Tanggal", "data": "Tanggal",
+                                "render": function (value) {
+                                    if (value === null) return "";
+                                    return moment(value).format('DD/MM/YYYY');
+                                }
+                            },
+                            { "title": "NIK", "data": "NIK" },
+                            { "title": "Nama", "data": "Nama" },
+                            { "title": "Dept", "data": "Dept" },
+                            { "title": "Nama Dokter", "data": "NamaDokter" },
+                            { "title": "Diagnosa", "data": "Diagnosa" },
+                            { "title": "Total Obat", "data": "TotalObat" },
+                            { "title": "Total Harga", "data": "TotalHargaObat" },
+                            {
+                                "data": "null", "title": "Action", "orderable": false, "render": function (data) {
+                                    return '<button class="btn btn-xs btn-primary" title="Edit" id="BtnEditTrx" style="margin-right:5px"> <span class="fa fa-edit"></span></button>' +
+                                        '<button class="btn btn-xs btn-danger" title="Delete" id="BtnEditTrx" style="margin-right:5px"> <span class="fa fa-trash"></span></button>';
+                                }
+                            },
+                        ],
+                        "columnDefs": [
+                            { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                            { "className": "text-center custom-middle-align", "targets": [0] },
+                            //{ "visible": false, "targets": [0, 4, 6] },
+                        ],
+                        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+                    });
+                }
+            }
+            ListTrxObat.init();
+        }
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+    </script>
+}
+

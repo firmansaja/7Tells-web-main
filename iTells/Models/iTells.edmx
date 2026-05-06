@@ -1,0 +1,724 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="iTelssModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="S_User">
+          <Key>
+            <PropertyRef Name="Username" />
+          </Key>
+          <Property Name="UserId" Type="uniqueidentifier" />
+          <Property Name="RoleID" Type="uniqueidentifier" />
+          <Property Name="Username" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Password" Type="varbinary" MaxLength="200" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="Remark" Type="varchar" MaxLength="200" />
+          <Property Name="AdminStatus" Type="char" MaxLength="1" />
+          <Property Name="FlagActive" Type="char" MaxLength="1" />
+          <Property Name="UserGroupCode" Type="char" MaxLength="10" />
+          <Property Name="Site" Type="varchar" MaxLength="10" />
+          <Property Name="Level" Type="int" />
+          <Property Name="Email" Type="varchar" MaxLength="50" />
+          <Property Name="EntryDate" Type="datetime" />
+          <Property Name="EntryUser" Type="varchar" MaxLength="15" />
+          <Property Name="UpdateDate" Type="datetime" />
+          <Property Name="UpdateUser" Type="varchar" MaxLength="50" />
+          <Property Name="LastLogin" Type="datetime" />
+        </EntityType>
+        <EntityType Name="SJUser">
+          <Key>
+            <PropertyRef Name="Username" />
+          </Key>
+          <Property Name="Username" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Pass" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Site" Type="varchar" MaxLength="10" />
+          <Property Name="LastLogin" Type="datetime" />
+        </EntityType>
+        <EntityType Name="tblCountry">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" />
+          <Property Name="IsDeleted" Type="bit" />
+        </EntityType>
+        <EntityType Name="tblModule">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DisplayOrder" Type="int" />
+          <Property Name="ModuleName" Type="nvarchar" MaxLength="512" />
+          <Property Name="PageIcon" Type="nvarchar" MaxLength="50" />
+          <Property Name="PageUrl" Type="nvarchar" MaxLength="512" />
+          <Property Name="PageSlug" Type="nvarchar" MaxLength="512" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="IsDefault" Type="bit" />
+          <Property Name="ParentModuleID" Type="int" />
+        </EntityType>
+        <EntityType Name="tblRole">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="DisplayName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Description" Type="nvarchar" MaxLength="512" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="IsDefault" Type="bit" />
+          <Property Name="InsertBy" Type="uniqueidentifier" />
+          <Property Name="InsertDate" Type="datetime" />
+          <Property Name="LastModified" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="uniqueidentifier" />
+        </EntityType>
+        <EntityType Name="tblRolePermission">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ModuleID" Type="int" />
+          <Property Name="RoleID" Type="uniqueidentifier" />
+          <Property Name="IsView" Type="bit" />
+          <Property Name="IsAdd" Type="bit" />
+          <Property Name="IsEdit" Type="bit" />
+          <Property Name="IsDeleted" Type="bit" />
+        </EntityType>
+        <EntityType Name="tblSetting">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" />
+          <Property Name="LogoPath" Type="nvarchar" MaxLength="200" />
+          <Property Name="FeviconPath" Type="nvarchar" MaxLength="200" />
+          <Property Name="SMTPHost" Type="nvarchar" MaxLength="100" />
+          <Property Name="SMTPUserName" Type="nvarchar" MaxLength="100" />
+          <Property Name="SMTPPassword" Type="nvarchar" MaxLength="100" />
+          <Property Name="SMTPEmail" Type="nvarchar" MaxLength="100" />
+          <Property Name="SMTPPort" Type="nvarchar" MaxLength="100" />
+          <Property Name="DrrPath" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="tblToDo">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserID" Type="uniqueidentifier" />
+          <Property Name="Description" Type="nvarchar" MaxLength="1000" />
+          <Property Name="IsCompleted" Type="bit" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="CompleteDate" Type="datetime" />
+          <Property Name="CreateBy" Type="nvarchar" MaxLength="200" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="200" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="tblUser">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="RoleID" Type="uniqueidentifier" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="150" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="150" />
+          <Property Name="DateOfBirth" Type="date" />
+          <Property Name="Phone" Type="nvarchar" MaxLength="50" />
+          <Property Name="Address" Type="nvarchar" MaxLength="512" />
+          <Property Name="CountryID" Type="int" />
+          <Property Name="Gender" Type="nvarchar" MaxLength="50" />
+          <Property Name="PhotoPath" Type="nvarchar" MaxLength="512" />
+          <Property Name="FacebookLink" Type="nvarchar" MaxLength="512" />
+          <Property Name="TwitterLink" Type="nvarchar" MaxLength="512" />
+          <Property Name="GoogleLink" Type="nvarchar" MaxLength="512" />
+          <Property Name="LinkedInLink" Type="nvarchar" MaxLength="512" />
+          <Property Name="SkypeID" Type="nvarchar" MaxLength="512" />
+          <Property Name="Email" Type="nvarchar" MaxLength="512" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Password" Type="nvarchar" MaxLength="512" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="IsDefault" Type="bit" />
+          <Property Name="IsLockedOut" Type="bit" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="LastLoginDate" Type="datetime" />
+          <Property Name="LastLockoutDate" Type="datetime" />
+          <Property Name="FailedPasswordCount" Type="int" />
+          <Property Name="InsertDate" Type="datetime" />
+          <Property Name="InsertBy" Type="uniqueidentifier" />
+          <Property Name="LastModified" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="uniqueidentifier" />
+        </EntityType>
+        <EntityType Name="tblUserLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserId" Type="uniqueidentifier" />
+          <Property Name="Message" Type="nvarchar" MaxLength="1024" />
+          <Property Name="LogTime" Type="datetime" />
+          <Property Name="IPAddress" Type="nvarchar" MaxLength="50" />
+          <Property Name="MoreInfo" Type="nvarchar" MaxLength="1024" />
+        </EntityType>
+        <Association Name="FK_tblRolePermission_tblRole">
+          <End Role="tblRole" Type="Self.tblRole" Multiplicity="0..1" />
+          <End Role="tblRolePermission" Type="Self.tblRolePermission" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblRole">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblRolePermission">
+              <PropertyRef Name="RoleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblToDo_tblUser">
+          <End Role="tblUser" Type="Self.tblUser" Multiplicity="0..1" />
+          <End Role="tblToDo" Type="Self.tblToDo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUser">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblToDo">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserPermission_ModuleMast">
+          <End Role="tblModule" Type="Self.tblModule" Multiplicity="0..1" />
+          <End Role="tblRolePermission" Type="Self.tblRolePermission" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblModule">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblRolePermission">
+              <PropertyRef Name="ModuleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="ModuleDeleteSortOrder" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ModuleID" Type="int" Mode="In" />
+          <Parameter Name="PModuleID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="ModuleInsertSortOrder" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ModuleID" Type="int" Mode="In" />
+          <Parameter Name="PModuleID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="ModuleList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="ModuleUpdateSortOrder" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="OldSortOrder" Type="int" Mode="In" />
+          <Parameter Name="NewSortOrder" Type="int" Mode="In" />
+          <Parameter Name="ModuleID" Type="int" Mode="In" />
+          <Parameter Name="PModuleID" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="iTelssModelStoreContainer">
+          <EntitySet Name="S_User" EntityType="Self.S_User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SJUser" EntityType="Self.SJUser" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblCountry" EntityType="Self.tblCountry" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblModule" EntityType="Self.tblModule" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblRole" EntityType="Self.tblRole" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblRolePermission" EntityType="Self.tblRolePermission" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblSetting" EntityType="Self.tblSetting" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblToDo" EntityType="Self.tblToDo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblUser" EntityType="Self.tblUser" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblUserLog" EntityType="Self.tblUserLog" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tblRolePermission_tblRole" Association="Self.FK_tblRolePermission_tblRole">
+            <End Role="tblRole" EntitySet="tblRole" />
+            <End Role="tblRolePermission" EntitySet="tblRolePermission" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblToDo_tblUser" Association="Self.FK_tblToDo_tblUser">
+            <End Role="tblUser" EntitySet="tblUser" />
+            <End Role="tblToDo" EntitySet="tblToDo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserPermission_ModuleMast" Association="Self.FK_UserPermission_ModuleMast">
+            <End Role="tblModule" EntitySet="tblModule" />
+            <End Role="tblRolePermission" EntitySet="tblRolePermission" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="iTelssModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="tblCountry">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsDeleted" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="tblModule">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DisplayOrder" Type="Int32" />
+          <Property Name="ModuleName" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="PageIcon" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PageUrl" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="PageSlug" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="IsDefault" Type="Boolean" />
+          <Property Name="ParentModuleID" Type="Int32" />
+          <NavigationProperty Name="tblRolePermissions" Relationship="Self.FK_UserPermission_ModuleMast" FromRole="tblModule" ToRole="tblRolePermission" />
+        </EntityType>
+        <EntityType Name="tblRole">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DisplayName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="IsDefault" Type="Boolean" />
+          <Property Name="InsertBy" Type="Guid" />
+          <Property Name="InsertDate" Type="DateTime" Precision="3" />
+          <Property Name="LastModified" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Guid" />
+          <NavigationProperty Name="tblRolePermissions" Relationship="Self.FK_tblRolePermission_tblRole" FromRole="tblRole" ToRole="tblRolePermission" />
+        </EntityType>
+        <EntityType Name="tblRolePermission">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ModuleID" Type="Int32" />
+          <Property Name="RoleID" Type="Guid" />
+          <Property Name="IsView" Type="Boolean" />
+          <Property Name="IsAdd" Type="Boolean" />
+          <Property Name="IsEdit" Type="Boolean" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <NavigationProperty Name="tblModule" Relationship="Self.FK_UserPermission_ModuleMast" FromRole="tblRolePermission" ToRole="tblModule" />
+          <NavigationProperty Name="tblRole" Relationship="Self.FK_tblRolePermission_tblRole" FromRole="tblRolePermission" ToRole="tblRole" />
+        </EntityType>
+        <EntityType Name="tblSetting">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="LogoPath" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="FeviconPath" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="SMTPHost" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SMTPUserName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SMTPPassword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SMTPEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SMTPPort" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DrrPath" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="tblUser">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="RoleID" Type="Guid" />
+          <Property Name="FirstName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="DateOfBirth" Type="DateTime" Precision="0" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="CountryID" Type="Int32" />
+          <Property Name="Gender" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PhotoPath" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="FacebookLink" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="TwitterLink" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="GoogleLink" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="LinkedInLink" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="SkypeID" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="IsDefault" Type="Boolean" />
+          <Property Name="IsLockedOut" Type="Boolean" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="LastLoginDate" Type="DateTime" Precision="3" />
+          <Property Name="LastLockoutDate" Type="DateTime" Precision="3" />
+          <Property Name="FailedPasswordCount" Type="Int32" />
+          <Property Name="InsertDate" Type="DateTime" Precision="3" />
+          <Property Name="InsertBy" Type="Guid" />
+          <Property Name="LastModified" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="Guid" />
+          <NavigationProperty Name="tblToDoes" Relationship="iTelssModel.FK_tblToDo_tblUser" FromRole="tblUser" ToRole="tblToDo" />
+        </EntityType>
+        <EntityType Name="tblUserLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="UserId" Type="Guid" />
+          <Property Name="Message" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="LogTime" Type="DateTime" Precision="3" />
+          <Property Name="IPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MoreInfo" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK_UserPermission_ModuleMast">
+          <End Role="tblModule" Type="Self.tblModule" Multiplicity="0..1" />
+          <End Role="tblRolePermission" Type="Self.tblRolePermission" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblModule">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblRolePermission">
+              <PropertyRef Name="ModuleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblRolePermission_tblRole">
+          <End Role="tblRole" Type="Self.tblRole" Multiplicity="0..1" />
+          <End Role="tblRolePermission" Type="Self.tblRolePermission" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblRole">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblRolePermission">
+              <PropertyRef Name="RoleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="iTellsEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="tblCountries" EntityType="Self.tblCountry" />
+          <EntitySet Name="tblModules" EntityType="Self.tblModule" />
+          <EntitySet Name="tblRoles" EntityType="Self.tblRole" />
+          <EntitySet Name="tblRolePermissions" EntityType="Self.tblRolePermission" />
+          <EntitySet Name="tblSettings" EntityType="Self.tblSetting" />
+          <EntitySet Name="tblUsers" EntityType="Self.tblUser" />
+          <EntitySet Name="tblUserLogs" EntityType="Self.tblUserLog" />
+          <AssociationSet Name="FK_UserPermission_ModuleMast" Association="Self.FK_UserPermission_ModuleMast">
+            <End Role="tblModule" EntitySet="tblModules" />
+            <End Role="tblRolePermission" EntitySet="tblRolePermissions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblRolePermission_tblRole" Association="Self.FK_tblRolePermission_tblRole">
+            <End Role="tblRole" EntitySet="tblRoles" />
+            <End Role="tblRolePermission" EntitySet="tblRolePermissions" />
+          </AssociationSet>
+          <FunctionImport Name="ModuleDeleteSortOrder" ReturnType="Collection(iTelssModel.ModuleDeleteSortOrder_Result)">
+            <Parameter Name="ModuleID" Mode="In" Type="Int32" />
+            <Parameter Name="PModuleID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="ModuleInsertSortOrder">
+            <Parameter Name="ModuleID" Mode="In" Type="Int32" />
+            <Parameter Name="PModuleID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="ModuleList" ReturnType="Collection(iTelssModel.ModuleList_Result)">
+          <Parameter Name="ID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="ModuleUpdateSortOrder">
+            <Parameter Name="OldSortOrder" Mode="In" Type="Int32" />
+            <Parameter Name="NewSortOrder" Mode="In" Type="Int32" />
+            <Parameter Name="ModuleID" Mode="In" Type="Int32" />
+            <Parameter Name="PModuleID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="S_User" EntityType="iTelssModel.S_User" />
+          <EntitySet Name="SJUsers" EntityType="iTelssModel.SJUser" />
+          <EntitySet Name="tblToDoes" EntityType="iTelssModel.tblToDo" />
+          <AssociationSet Name="FK_tblToDo_tblUser" Association="iTelssModel.FK_tblToDo_tblUser">
+            <End Role="tblUser" EntitySet="tblUsers" />
+            <End Role="tblToDo" EntitySet="tblToDoes" />
+          </AssociationSet>
+        </EntityContainer>
+        <ComplexType Name="ModuleDeleteSortOrder_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="DisplayOrder" Nullable="true" />
+          <Property Type="String" Name="ModuleName" Nullable="true" MaxLength="512" />
+          <Property Type="String" Name="PageIcon" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PageUrl" Nullable="true" MaxLength="512" />
+          <Property Type="String" Name="PageSlug" Nullable="true" MaxLength="512" />
+          <Property Type="Boolean" Name="IsDeleted" Nullable="true" />
+          <Property Type="Boolean" Name="IsActive" Nullable="true" />
+          <Property Type="Boolean" Name="IsDefault" Nullable="true" />
+          <Property Type="Int32" Name="ParentModuleID" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="ModuleList_Result">
+          <Property Type="Int32" Name="id" Nullable="true" />
+          <Property Type="String" Name="ModuleName" Nullable="true" MaxLength="512" />
+          <Property Type="String" Name="FullName" Nullable="true" />
+          <Property Type="Boolean" Name="IsActive" Nullable="true" />
+          <Property Type="Int32" Name="DisplayOrder" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="S_User">
+          <Key>
+            <PropertyRef Name="Username" />
+          </Key>
+          <Property Name="UserId" Type="Guid" />
+          <Property Name="RoleID" Type="Guid" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="Binary" MaxLength="200" FixedLength="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Remark" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="AdminStatus" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="FlagActive" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="UserGroupCode" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="Site" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Level" Type="Int32" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EntryDate" Type="DateTime" Precision="3" />
+          <Property Name="EntryUser" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="UpdateDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdateUser" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastLogin" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="SJUser">
+          <Key>
+            <PropertyRef Name="Username" />
+          </Key>
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Pass" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Site" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="LastLogin" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="tblToDo">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="UserID" Type="Guid" />
+          <Property Name="Description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="IsCompleted" Type="Boolean" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="CompleteDate" Type="DateTime" Precision="3" />
+          <Property Name="CreateBy" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="tblUser" Relationship="iTelssModel.FK_tblToDo_tblUser" FromRole="tblToDo" ToRole="tblUser" />
+        </EntityType>
+        <Association Name="FK_tblToDo_tblUser">
+          <End Type="iTelssModel.tblUser" Role="tblUser" Multiplicity="0..1" />
+          <End Type="iTelssModel.tblToDo" Role="tblToDo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUser">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblToDo">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="iTelssModelStoreContainer" CdmEntityContainer="iTellsEntities">
+          <EntitySetMapping Name="tblCountries">
+            <EntityTypeMapping TypeName="iTelssModel.tblCountry">
+              <MappingFragment StoreEntitySet="tblCountry">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblModules">
+            <EntityTypeMapping TypeName="iTelssModel.tblModule">
+              <MappingFragment StoreEntitySet="tblModule">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="DisplayOrder" ColumnName="DisplayOrder" />
+                <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
+                <ScalarProperty Name="PageIcon" ColumnName="PageIcon" />
+                <ScalarProperty Name="PageUrl" ColumnName="PageUrl" />
+                <ScalarProperty Name="PageSlug" ColumnName="PageSlug" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+                <ScalarProperty Name="ParentModuleID" ColumnName="ParentModuleID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblRoles">
+            <EntityTypeMapping TypeName="iTelssModel.tblRole">
+              <MappingFragment StoreEntitySet="tblRole">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+                <ScalarProperty Name="InsertBy" ColumnName="InsertBy" />
+                <ScalarProperty Name="InsertDate" ColumnName="InsertDate" />
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblRolePermissions">
+            <EntityTypeMapping TypeName="iTelssModel.tblRolePermission">
+              <MappingFragment StoreEntitySet="tblRolePermission">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ModuleID" ColumnName="ModuleID" />
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+                <ScalarProperty Name="IsView" ColumnName="IsView" />
+                <ScalarProperty Name="IsAdd" ColumnName="IsAdd" />
+                <ScalarProperty Name="IsEdit" ColumnName="IsEdit" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblSettings">
+            <EntityTypeMapping TypeName="iTelssModel.tblSetting">
+              <MappingFragment StoreEntitySet="tblSetting">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="LogoPath" ColumnName="LogoPath" />
+                <ScalarProperty Name="FeviconPath" ColumnName="FeviconPath" />
+                <ScalarProperty Name="SMTPHost" ColumnName="SMTPHost" />
+                <ScalarProperty Name="SMTPUserName" ColumnName="SMTPUserName" />
+                <ScalarProperty Name="SMTPPassword" ColumnName="SMTPPassword" />
+                <ScalarProperty Name="SMTPEmail" ColumnName="SMTPEmail" />
+                <ScalarProperty Name="SMTPPort" ColumnName="SMTPPort" />
+                <ScalarProperty Name="DrrPath" ColumnName="DrrPath" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblUsers">
+            <EntityTypeMapping TypeName="iTelssModel.tblUser">
+              <MappingFragment StoreEntitySet="tblUser">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="CountryID" ColumnName="CountryID" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="PhotoPath" ColumnName="PhotoPath" />
+                <ScalarProperty Name="FacebookLink" ColumnName="FacebookLink" />
+                <ScalarProperty Name="TwitterLink" ColumnName="TwitterLink" />
+                <ScalarProperty Name="GoogleLink" ColumnName="GoogleLink" />
+                <ScalarProperty Name="LinkedInLink" ColumnName="LinkedInLink" />
+                <ScalarProperty Name="SkypeID" ColumnName="SkypeID" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+                <ScalarProperty Name="IsLockedOut" ColumnName="IsLockedOut" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="LastLoginDate" ColumnName="LastLoginDate" />
+                <ScalarProperty Name="LastLockoutDate" ColumnName="LastLockoutDate" />
+                <ScalarProperty Name="FailedPasswordCount" ColumnName="FailedPasswordCount" />
+                <ScalarProperty Name="InsertDate" ColumnName="InsertDate" />
+                <ScalarProperty Name="InsertBy" ColumnName="InsertBy" />
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblUserLogs">
+            <EntityTypeMapping TypeName="iTelssModel.tblUserLog">
+              <MappingFragment StoreEntitySet="tblUserLog">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="LogTime" ColumnName="LogTime" />
+                <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
+                <ScalarProperty Name="MoreInfo" ColumnName="MoreInfo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="ModuleDeleteSortOrder" FunctionName="iTelssModel.Store.ModuleDeleteSortOrder">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="iTelssModel.ModuleDeleteSortOrder_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="DisplayOrder" ColumnName="DisplayOrder" />
+                <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
+                <ScalarProperty Name="PageIcon" ColumnName="PageIcon" />
+                <ScalarProperty Name="PageUrl" ColumnName="PageUrl" />
+                <ScalarProperty Name="PageSlug" ColumnName="PageSlug" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+                <ScalarProperty Name="ParentModuleID" ColumnName="ParentModuleID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ModuleInsertSortOrder" FunctionName="iTelssModel.Store.ModuleInsertSortOrder" />
+          <FunctionImportMapping FunctionImportName="ModuleList" FunctionName="iTelssModel.Store.ModuleList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="iTelssModel.ModuleList_Result">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="DisplayOrder" ColumnName="DisplayOrder" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ModuleUpdateSortOrder" FunctionName="iTelssModel.Store.ModuleUpdateSortOrder" />
+          <EntitySetMapping Name="S_User">
+            <EntityTypeMapping TypeName="iTelssModel.S_User">
+              <MappingFragment StoreEntitySet="S_User">
+                <ScalarProperty Name="LastLogin" ColumnName="LastLogin" />
+                <ScalarProperty Name="UpdateUser" ColumnName="UpdateUser" />
+                <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
+                <ScalarProperty Name="EntryUser" ColumnName="EntryUser" />
+                <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Site" ColumnName="Site" />
+                <ScalarProperty Name="UserGroupCode" ColumnName="UserGroupCode" />
+                <ScalarProperty Name="FlagActive" ColumnName="FlagActive" />
+                <ScalarProperty Name="AdminStatus" ColumnName="AdminStatus" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SJUsers">
+            <EntityTypeMapping TypeName="iTelssModel.SJUser">
+              <MappingFragment StoreEntitySet="SJUser">
+                <ScalarProperty Name="LastLogin" ColumnName="LastLogin" />
+                <ScalarProperty Name="Site" ColumnName="Site" />
+                <ScalarProperty Name="Pass" ColumnName="Pass" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblToDoes">
+            <EntityTypeMapping TypeName="iTelssModel.tblToDo">
+              <MappingFragment StoreEntitySet="tblToDo">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
+                <ScalarProperty Name="CompleteDate" ColumnName="CompleteDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="IsCompleted" ColumnName="IsCompleted" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

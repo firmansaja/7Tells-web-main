@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{ACD3AF20-09B9-4B74-A594-E15B59291725}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BusinessObjects</RootNamespace>
+    <AssemblyName>BusinessObjects</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.10.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.10\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BO_EBudgetPL.cs" />
+    <Compile Include="BO_ECirculation.cs" />
+    <Compile Include="BO_MaterialKontrol.cs" />
+    <Compile Include="BO_PO.cs" />
+    <Compile Include="BO_So.cs" />
+    <Compile Include="ComboList.cs" />
+    <Compile Include="EMobil.cs" />
+    <Compile Include="GlobalModel.cs" />
+    <Compile Include="KlinikPeriksa.cs" />
+    <Compile Include="LineStorePartModel.cs" />
+    <Compile Include="Module.cs" />
+    <Compile Include="BO_EBudget.cs" />
+    <Compile Include="MRP.cs" />
+    <Compile Include="PPAP\PPAPAksesDeptModel.cs" />
+    <Compile Include="PPAP\PPAPApprovalDeptModel.cs" />
+    <Compile Include="PPAP\PPAPAssemblyModel.cs" />
+    <Compile Include="PPAP\PPAPAttendanceModel.cs" />
+    <Compile Include="PPAP\PPAPCheckItemModel.cs" />
+    <Compile Include="PPAP\PPAPComparationModel.cs" />
+    <Compile Include="PPAP\PPAPDetailModel.cs" />
+    <Compile Include="PPAP\PPAPDocumentDetailModel.cs" />
+    <Compile Include="PPAP\PPAPDocumentModel.cs" />
+    <Compile Include="PPAP\PPAPHeaderModel.cs" />
+    <Compile Include="PPAP\PPAPPackingModel.cs" />
+    <Compile Include="PPAP\PPAPPaintingDetailModel.cs" />
+    <Compile Include="PPAP\PPAPPaintingModel.cs" />
+    <Compile Include="PPAP\PPAPPreparationModel.cs" />
+    <Compile Include="PPAP\PPAPQualityModel.cs" />
+    <Compile Include="PPAP\PPAPRptDocumentModel.cs" />
+    <Compile Include="PPAP\PPAPSupplierModel.cs" />
+    <Compile Include="PPAP\PPAPToolingModel.cs" />
+    <Compile Include="PPIC\BuktiMuatModel.cs" />
+    <Compile Include="PR.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Surat\Activity.cs" />
+    <Compile Include="Surat\DisplayAttribute.cs" />
+    <Compile Include="Surat\Entry.cs" />
+    <Compile Include="Surat\MaxLengthAttribute.cs" />
+    <Compile Include="Surat\Models\Activity.cs" />
+    <Compile Include="Surat\Models\DisplayAttribute.cs" />
+    <Compile Include="Surat\Models\Entry.cs" />
+    <Compile Include="Surat\Models\MaxLengthAttribute.cs" />
+    <Compile Include="Surat\Models\SuratMasukActivity.cs" />
+    <Compile Include="Surat\Models\SuratMasukEntry.cs" />
+    <Compile Include="Surat\SuratMasukActivity.cs" />
+    <Compile Include="Surat\SuratMasukEntry.cs" />
+    <Compile Include="Surat\SuratSecModel.cs" />
+    <Compile Include="Surat\SuratKeluarModel.cs" />
+    <Compile Include="Surat\SuratMasukModel.cs" />
+    <Compile Include="Trolley.cs" />
+    <Compile Include="TrollyDepoModel.cs" />
+    <Compile Include="TrollyModel.cs" />
+    <Compile Include="Surat\KategoriSuratModel.cs" />
+    <Compile Include="User.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

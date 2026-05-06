@@ -1,0 +1,75 @@
+﻿
+
+
+@using BusinessObjects
+
+@{
+
+    List<BO_Fifo_Stok> ListStok = (List<BO_Fifo_Stok>)ViewData["DataStok"];
+    int i = 0;
+    string site = ViewBag.site;
+    string siteDesc = ViewBag.siteDesc;
+
+}
+<div class="navbar-default">
+    <h2><marquee>MONITORING STOK MATERIAL @siteDesc ( TANGGAL @ViewBag.tgl )</marquee></h2>
+</div>
+@*<div class="box-body" id="januari">*@
+    <div class="row">
+        <div class="col-xs-12">
+            <table id="TBFIFO" style="border-color:black;width:100%" class="table table-condensed table-striped table-responsive display">
+                <thead>
+                    <tr style="background-color:#3C8EBE;border-color:black;color:white">
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3 ">No</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3 ">Invt</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3 ">Descr</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style3 ">Minimal</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">Stok Awal</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">Masuk</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">Keluar</th>
+                        <th style="text-align:center;vertical-align:middle;border-color:black" class="style2 jan">Balance</th>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in @ListStok)
+                    {
+                        i++;
+                    <tr>
+                        <td style="text-align:center;border-color:black; vertical-align:middle" class="style2"><Blink> @i </Blink></td>
+                        @*<td style="text-align:left;border-color:black; vertical-align:middle" class="style2"><a href="#" onclick="ViewDetailStok('@item.InvtID','@site');">@item.InvtID</a></td>*@
+                        <td style="text-align:left;border-color:black; vertical-align:middle" class="style2">@item.InvtID</td>
+                        <td style="text-align:left;border-color:black; vertical-align:middle" class="style2">@item.Desc</td>
+                        <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.MinimalStok)</td>
+                        <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.StokAwal)</td>
+                        <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Masuk)</td>
+                        <td style="text-align:right;border-color:black; vertical-align:middle" class="style2 jan">@String.Format("{0,14:n2}", @item.Keluar)</td>
+                        @if (@item.Balance < @item.MinimalStok)
+                        {
+                            <td style=" background:LightCoral; text-align:right;border-color:black; vertical-align:middle" class="blink"><a href="#" onclick="ViewDetailStok('@item.InvtID','@site');">@String.Format("{0,14:n2}", @item.Balance)</a> </td>
+                        }
+                        else
+                        {
+                            <td style=" text-align:right;border-color:black; vertical-align:middle" class="style2 jan"><a href="#" onclick="ViewDetailStok('@item.InvtID','@site');">@String.Format("{0,14:n2}", @item.Balance)</a> </td>
+                        }
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+@*</div>*@
+
+
+
+
+
+
+
+
+
+
+
+
+
+

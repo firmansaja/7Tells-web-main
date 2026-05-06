@@ -1,0 +1,466 @@
+﻿
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Production Part Approval Process (e-PPAP)";
+    ViewBag.SubTitle = "Home";
+}
+
+<div id="message"></div>
+<div class="col-xs-12">
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h4 class="col-sm-10">List PPAP</h4>
+        </div>
+        <div class="box-body">
+            @Html.Partial("_PPAPHeader")
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="_popUp" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title" id="_title"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group hidden">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">State</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="_inputState" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group hidden">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Id</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="id" class="form-control" equired placeholder="Id" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Judgment</label>
+                        <select id="filterType" class="form-control select2">
+                            <option value="Oke">Oke</option>
+                            <option value="Cancel">Cancel</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+
+                    @*<div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label" style="text-align:left;">Tanggal</label>
+                        <label class="col-sm-1 col-md-1 control-label">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <input id="tanggal" class="form-control" equired placeholder="Tanggal" readonly />
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnSimpan" class="btn btn-primary" style="width:100px">Simpan</button>&nbsp;
+                <button type="button" class="btn btn-primary" data-dismiss="modal" style="width:100px">Kembali</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bootstrapDialog" role="dialog" aria-labelledby="myModal-label" aria-hidden="true"></div>
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            DataTablePPAP();
+
+            $("#message").slideDown(0).slideUp(0);
+            var msg = localStorage.getItem("message");
+            if (msg != null) {
+                var msg1 = '<h3 class=\"alert alert-success fade in\">' + msg + '</h3>';
+                $('#message').html(msg1);
+                $("#message").slideDown(1000).slideUp(2000);
+                localStorage.removeItem("message");
+            }
+        })
+
+        //function Init() {
+        //    $("#id").val(0);
+        //    $('#tanggal').val(FormatDateTime(new Date(), 'DD-MM-YYYY HH:mm:ss'));
+        //    $("#noUrut").val("");
+        //    $("#flag").val(1);
+        //    $("#noSurat").val("");
+        //    $("#dari").val("");
+        //    $("#pengirim").val("");
+        //    $("#tujuan").val("");
+        //    $("#dept").val("-").trigger('change');
+        //    $("#security").val("");
+        //    $("#ket").val("");
+        //    $('#tglAmbil').val("");
+        //    $("#kategori").val("-").trigger('change');
+        //    $('input[name=jenis][value=Eksternal]').prop('checked', true);
+        //    $("#penerima").val("");
+        //    $("#deptTerima").val("-").trigger('change');
+        //    $('input[name=media][value=Hardcopy]').prop('checked', true);
+        //    $("#perihal").val("");
+        //    $('input[name=akses][value=All]').prop('checked', true);
+        //    $('#isRahasia').prop('checked', false);
+        //    $('input[name=rahasia][value=Perusahaan]').prop('checked', true);
+        //    $("#file").val("");
+        //    $("#fileName").text("");
+        //    $("#status").val("Diambil");
+
+        //    $("#downloadSuratMasuk").addClass("hidden");
+        //    $("#securityGroup").addClass("hidden");
+        //    $("#ketGroup").addClass("hidden");
+        //    $("#tglAmbilGroup").addClass("hidden");
+        //    $("#penerimaGroup").addClass("hidden");
+        //    $("#deptTerimaGroup").addClass("hidden");
+        //    $("#lblPribadi").addClass("hidden");
+        //    $("#lblPerusahaan").addClass("hidden");
+        //}
+
+        var List = null;
+        var dtPPAP;
+        function DataTablePPAP() {
+            List = {
+                init: function () {
+                    dtPPAP = $('#tblPPAP').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        "autoWidth": false,
+                        "bInfo": false,
+                        "ajax": {
+                            "url": "/getlistppap",
+                            "data": {},
+                            "type": 'POST',
+                        },
+                        "columns": [
+                            {
+                                "title": "No",
+                                "data": "NoPPAP",
+                                "orderable": false,
+                                "width": "30px",
+                                render: function (data, type, row, meta) {
+                                    return meta.row + meta.settings._iDisplayStart + 1;
+                                }
+                            },
+                            { "title": "No PPAP", "data": "NoPPAP" },
+                            { "title": "Id Status", "data": "IdStatus" },
+                            { "title": "Status", "data": "Status" },
+                            { "title": "Site", "data": "Site" },
+                            { "title": "Cust ID", "data": "CustID" },
+                            { "title": "Project", "data": "ProjectName" },
+                            {
+                                "title": "Confirmation Date", "data": "ConfirmationDate",
+                                "render": function (value) {
+                                    if (value === null || new Date(FormatDateTime(value, 'DD-MMM-YY')) < new Date(1900, 0, 2)) return "";
+                                    return moment(value).format('DD-MMM-YY');
+                                }
+                            },
+                            {
+                                "title": "Massproduction Date", "data": "MassproductionDate",
+                                "render": function (value) {
+                                    if (value === null || new Date(FormatDateTime(value, 'MMM-YY')) < new Date(1900, 0, 2)) return "";
+                                    return moment(value).format('MMM-YY');
+                                }
+                            },
+                            { "title": "Overall Judgment", "data": "OverallJudgment" },
+                            { "title": "Is Edit", "data": "IsEdit" },
+                            {
+                                data: "id", "width": "70px", title: "Action", "orderable": false, "render": function (data) {
+                                    return '<button class="btn btn-xs btn-primary" title="Edit" id="btnView" style="margin-right:5px"> <span class="fa fa-eye"></span></button>';
+                                }
+                            },
+                        ],
+                        "columnDefs": [
+                            { "width": "20px", "searchable": false, "orderable": false, "targets": [0] },
+                            //{ "className": "text-center custom-middle-align", "targets": [0, 1] },
+                            { "visible": false, "targets": [1, 2, 10] },
+                        ],
+                        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]
+                    });
+                }
+            }
+            List.init();
+        }        
+
+        //$("#isRahasia").change(function () {
+        //    if (this.checked) {
+        //        $("#lblPribadi").removeClass('hidden');
+        //        $("#lblPerusahaan").removeClass('hidden');
+        //    } else {
+        //        $("#lblPribadi").addClass("hidden");
+        //        $("#lblPerusahaan").addClass("hidden");
+        //    }
+        //});
+
+        //$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        //    var target = $(e.target).attr("href")
+        //    if (target == '#sudahAmbil') {
+        //        $('#tbSuratMasukDiambil').DataTable().ajax.reload();
+        //    } else {
+        //        $('#tbSuratMasuk').DataTable().ajax.reload();
+        //    }
+        //});        
+
+        //$(document).on('click', '#btnEdit', function (event) {
+        //    event.preventDefault();            
+        //    var row = $(this).closest('tr');
+
+        //    Init();
+        //    var data = $('#tblPPAP').dataTable().fnGetData(row);
+
+        //    var Id = data.Id;
+
+        //    $("#_popUp").modal({ backdrop: 'static' });
+        //    $('#_title').text("Edit Surat Masuk");
+
+        //    GetSuratMasukById(Id);
+
+        //    $("#_inputState").val("Edit");
+
+        //    $("#btnSimpan").removeClass("hidden");
+        //    $("#btnSimpan").html("Update");
+
+        //    $('#_popUp').on('shown.bs.modal', function () {
+        //        $('#noSurat').focus();
+        //    })
+        //});
+
+        //$(document).on('click', '#btnDelete', function (event) {
+        //    event.preventDefault();
+
+        //    var row = $(this).closest('tr');
+        //    var data = $('#tbSuratMasukDiambil').dataTable().fnGetData(row);
+
+        //    var Id = data.Id;
+
+        //    if (confirm('Anda yakin ingin hapus data ?')) {
+        //        $.ajax({
+        //            type: "DELETE",
+        //            url: '/deletesuratmasuk',
+        //            cache: false,
+        //            data: {
+        //                Id: Id
+        //            },
+        //            success: function (data) {
+        //                if (data.success) {
+        //                    toastr.success(data.message);
+        //                    $('#tbSuratMasukDiambil').DataTable().ajax.reload();
+        //                } else {
+        //                    toastr.error(data.message);
+        //                }
+        //            },
+        //        });
+        //    } else {
+        //        return false;
+        //    }
+        //});
+
+        //$(document).on('click', '#btnSimpan', function (event) {
+        //    event.preventDefault();
+        //    var inputState = $("#_inputState").val();
+        //    var id = $("#id").val();
+        //    var tanggal = $("#tanggal").val();
+        //    var noUrut = $("#noUrut").val();
+        //    var flag = $("#flag").val();
+        //    var noSurat = $("#noSurat").val();
+        //    var dari = $("#dari").val();
+        //    var pengirim = $("#pengirim").val();
+        //    var tujuan = $("#tujuan").val();
+        //    var dept = $("#dept").val();
+        //    var security = $("#security").val();
+        //    var ket = $("#ket").val();
+        //    var tglAmbil = $('#tglAmbil').val();
+        //    var jenis = $("input[name='jenis']:checked").val();
+        //    var penerima = $("#penerima").val();
+        //    var deptTerima = $("#deptTerima").val();
+        //    var idKategori = $("#kategori").val();
+        //    var kategori = $("#kategori option:selected").text();
+        //    var media = $("input[name='media']:checked").val();
+        //    var perihal = $("#perihal").val();
+        //    var akses = $("input[name='akses']:checked").val();
+        //    var isRahasia = $("#isRahasia").is(":checked");
+        //    var rahasia = $("input[name='rahasia']:checked").val();
+        //    var fileName = $("#fileName").text();
+        //    var status = $("#status").val();
+        //    //console.log(fileName);
+        //    if (pengirim == "") {
+        //        toastr.error("Input Pengirim.")
+        //        $("#pengirim").focus();
+        //    } else if (tujuan == "") {
+        //        toastr.error("Input Tujuan.")
+        //        $("#tujuan").focus();
+        //    } else if (dept == "-") {
+        //        toastr.error("Pilih Dept.")
+        //        $("#dept").focus();
+        //    } else {
+        //        if (confirm('Anda yakin ingin simpan data?')) {
+        //            var formData = new FormData();
+        //            formData.append("file", $("#file")[0].files[0]);
+        //            formData.append("Id", id);
+        //            formData.append("Tanggal", new Date(tanggal.substring(6, 10), tanggal.substring(3, 5) - 1, tanggal.substring(0, 2), tanggal.substring(11, 13), tanggal.substring(14, 16)).toISOString());
+        //            formData.append("NoUrut", noUrut);
+        //            formData.append("Flag", flag);
+        //            formData.append("NoSurat", noSurat);
+        //            formData.append("Dari", dari);
+        //            formData.append("Pengirim", pengirim);
+        //            formData.append("Tujuan", tujuan);
+        //            formData.append("Dept", dept);
+        //            formData.append("Security", security);
+        //            formData.append("Ket", ket);
+        //            formData.append("TglAmbil", new Date(tglAmbil.substring(6, 10), tglAmbil.substring(3, 5) - 1, tglAmbil.substring(0, 2), tglAmbil.substring(11, 13), tglAmbil.substring(14, 16)).toISOString());
+        //            formData.append("Penerima", penerima);
+        //            formData.append("DeptTerima", deptTerima);
+        //            formData.append("IdKategori", idKategori);
+        //            formData.append("Kategori", kategori);
+        //            formData.append("Jenis", jenis);
+        //            formData.append("Media", media);
+        //            formData.append("Perihal", perihal);
+        //            formData.append("Akses", akses);
+        //            formData.append("IsRahasia", isRahasia);
+        //            formData.append("Rahasia", rahasia);
+        //            formData.append("FileName", fileName);
+        //            formData.append("Status", status);
+
+        //            $.ajax({
+        //                type: inputState == 'Create' ? "POST" : "PUT",
+        //                url: inputState == 'Create' ? '/postsuratmasuk' : '/putsuratmasuk',
+        //                data: formData,
+        //                cache: false,
+        //                contentType: false,
+        //                processData: false,
+        //                success: function (data) {
+        //                    if (data.success) {
+        //                        toastr.success(data.message);
+        //                        $("#_popUp").modal('hide');
+        //                        Init();
+        //                        $('#tbSuratMasukDiambil').DataTable().ajax.reload();
+        //                    } else {
+        //                        toastr.error(data.message);
+        //                        $("#_popUp").modal('hide');
+        //                        Init();
+        //                    }
+        //                },
+        //            });
+        //        }
+        //    }
+        //});
+
+        $(document).on('click', '#btnView', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var data = $('#tblPPAP').dataTable().fnGetData(row);
+
+            var noPPAP = EncryptURL(data.NoPPAP);
+            var idStatus = EncryptURL(data.IdStatus);
+
+            var url = "/viewppap/" + noPPAP + "/" + idStatus;
+            window.location.href = url;
+
+            //$("#_popUp").modal({ backdrop: 'static' });
+            //$('#_title').text("APPROVAL DEPT");
+
+            ////GetSuratMasukById(Id);
+
+            //$("#_inputState").val("View");
+
+            ////$("#btnSimpan").addClass("hidden");
+        });
+
+        function GetSuratMasukById(Id) {
+            $.ajax({
+                type: "GET",
+                url: '/getsuratmasuk',
+                data: {
+                    Id: Id
+                },
+                success: function (result) {
+                    if (result.Id != 0) {
+                        var dt = FormatDateTime(result.TglAmbil, 'DD-MM-YYYY HH:mm:ss');
+                        if (new Date(dt) < new Date(1900, 0, 2)) {
+                            dt = "";
+                        }
+                        //console.log(result);
+                        $("#id").val(result.Id);
+                        $('#tanggal').val(FormatDateTime(result.Tanggal, 'DD-MM-YYYY HH:mm:ss'));
+                        $("#noUrut").val(result.NoUrut);
+                        $("#flag").val(result.Flag);
+                        $("#noSurat").val(result.NoSurat);
+                        $("#dari").val(result.Dari);
+                        $("#pengirim").val(result.Pengirim);
+                        $("#tujuan").val(result.Tujuan);
+                        $("#dept").val(result.Dept).trigger('change');
+                        $("#security").val(result.Security);
+                        $("#ket").val(result.Ket);
+                        $('#tglAmbil').val(dt);
+                        $("#kategori").val(result.IdKategori).trigger('change');
+                        //$("#jenis").val(result.Jenis).trigger('change');
+                        $("input[name=jenis][value=" + result.Jenis + "]").prop('checked', true);
+                        $("#penerima").val(result.Penerima);
+                        $("#deptTerima").val(result.DeptTerima).trigger('change');
+                        //$("#media").val(result.Media).trigger('change');
+                        $("input[name=media][value=" + result.Media + "]").prop('checked', true);
+                        $("#perihal").val(result.Perihal);
+                        //$("#akses").val(result.Akses).trigger('change');
+                        $("input[name=akses][value=" + result.Akses + "]").prop('checked', true);
+                        $('#isRahasia').prop('checked', result.IsRahasia).trigger('change');
+                        //$("#rahasia").val(result.Rahasia).trigger('change');
+                        $("input[name=rahasia][value=" + result.Rahasia + "]").prop('checked', true);
+                        $("#fileName").text(result.FileName);
+                        if (result.FileName) {
+                            $("#downloadSuratMasuk").removeClass("hidden");
+                            var link = '@Html.ActionLink("Download Surat Masuk", "DownloadFile", "SuratMasuk", new { FileName  = "_fileName_" }, null)';
+                            link = link.replace('_fileName_', result.FileName);
+                            $("#downloadSuratMasuk").html(link)
+                        } else {
+                            $("#downloadSuratMasuk").addClass("hidden");
+                        }
+
+                        if (result.Flag === 0) {
+                            $("#securityGroup").removeClass("hidden");
+                            $("#ketGroup").removeClass("hidden");
+                            $("#tglAmbilGroup").removeClass("hidden");
+                            $("#penerimaGroup").removeClass("hidden");
+                            $("#deptTerimaGroup").removeClass("hidden");
+                        }
+                    }
+                },
+            });
+        }
+
+        toastr.options = {
+            "positionClass": "toast-top-center",
+            "timeOut": "1000",
+            "preventDuplicates": true,
+            "closeButton": true,
+            "progressBar": true
+        }
+
+        function FormatDateTime(date, format) {
+            var datetime = moment(date).format(format)
+            return datetime
+        }
+
+        function EncryptURL(obj) {
+            var key = CryptoJS.enc.Utf8.parse("8080808080808080");
+            var iv = CryptoJS.enc.Utf8.parse("8080808080808080");
+
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(obj), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+            var encryptedString = encrypted.toString(CryptoJS.format.Hex);
+            encryptedString = encryptedString.replace(/\//g, " ");
+            encryptedString = encryptedString.replace(/\+/g, "-");
+            return encryptedString
+        }
+
+    </script>
+}

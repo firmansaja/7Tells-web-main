@@ -1,0 +1,166 @@
+﻿@using BusinessObjects;
+@model List<BO_EBudgetPL>
+@{
+    //ViewBag.Title = "Profit Lost";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    int i = 0;
+    var _tahun = "";
+}
+
+
+<div class="row">
+    <div class="col-md-12 " id="div2">
+        <div class="form-group form-group-sm">
+            <button class="col-sm-1 col-md-2 btn btn-success" id="btnExport">Export To Excel</button>
+            <div class="col-sm-1 col-md-8">
+            <font color="#ffffff" size="+1"><label class="  control-label text-muted" style="text-align:left;">@ViewBag.title</label></font>
+        </div>
+        </div>
+    </div>
+</div>
+
+<div class="box box-primary">
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12">
+                @*<div class="box ">*@
+                <table id="LB" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th width="10px" ; class="text-center">No</th>
+                            <th width="50px" ; class="text-center">Account</th>
+                            <th width="100px" ; class="text-center">Account Name</th>
+                            <th width="100px" ; class="text-center">Jan</th>
+                            <th width="100px" ; class="text-center">Feb</th>
+                            <th width="100px" ; class="text-center">Mar</th>
+                            <th width="100px" ; class="text-center">Apr</th>
+                            <th width="100px" ; class="text-center">Mei</th>
+                            <th width="100px" ; class="text-center">Jun</th>
+                            <th width="50px" ; class="text-center">Semester 1</th>
+
+
+                            <th width="100px" ; class="text-center">Jul</th>
+                            <th width="100px" ; class="text-center">Agus</th>
+                            <th width="100px" ; class="text-center">Sep</th>
+                            <th width="100px" ; class="text-center">Okt</th>
+                            <th width="100px" ; class="text-center">Nov</th>
+                            <th width="100px" ; class="text-center">Des</th>
+                            <th width="50px" ; class="text-center">Semester 2</th>
+                            <th width="50px" ; class="text-center">Total</th>
+                            <th width="50px" ; class="text-center">Total Actual</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            i++;
+                            _tahun = item.Tahun;
+                        <tr>
+                            @*<td class="text-center">  @i</td>*@
+                            <td width="10px" ; style="text-align:center; vertical-align:middle"> @item.RecNo</td>
+                            @*                            <td width="10px" ; style="text-align:center; vertical-align:middle"><a href="/EBudgetPLController/ShowProfitLostByAccount/@item.AcctID/tahun/@item.Tahun">@item.AcctID</a></td>*@
+                            <td width="10px" ; style="text-align:center; vertical-align:middle"><a href="/ShowProfitLostByAccount/@item.AcctID/tahun/@item.Tahun">@item.AcctID</a></td>
+
+                            <td width="100px" ; style="text-align:left; vertical-align:middle"> @item.AcctName</td>
+
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.Jan)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.Feb)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.Mar)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.Apr)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.Mei)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.Jun)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.HasilAcct1)</td>
+
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.Jul)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.Ags)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.Sep)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.Okt)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.Nov)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.Des)</td>
+
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.HasilAcct2)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.HasilAcct)</td>
+                            <td width="50px" ; style="text-align:right; vertical-align:middle"> @string.Format("{0:N0}", @item.TotalActual)</td>
+                        </tr>
+                }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            $(document).ready(function () {
+                $('#LB').DataTable({
+                    "destroy": true,
+                    scrollY: "700px",
+                    scrollX: true,
+                    scrollCollapse: true,
+                    paging: false,
+                    info: false,
+                    search: false,
+                    autoWidth: false,
+                    columnDefs: [
+                        { width: '40%', targets: 0 }
+                    ],
+                    fixedColumns: true,
+                    fixedColumns: {
+                        leftColumns: 2
+                    }
+                });
+            })
+                //$(document).ready(function () {
+                //    $('#LB').DataTable({
+                //        destroy: true,
+                //        scrollY: "500px",
+                //        scrollX: false,
+                //        scrollCollapse: true,
+                //        paging: false,
+                //        autoWidth: false,
+                //        filter: false,
+                //        info: false
+                       
+                //    });
+                //})
+        })
+
+
+     $(document).on('click', '#btnExport', function (event) {
+            event.preventDefault();
+
+        
+
+            $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("CreateDataToExcel_ProfitLost", "EBudget", new { area ="User"})',
+                data: {
+                    tahun: @_tahun },
+                    success: function (data_) {
+                        console.log(data_);
+                        if (data_.success) {
+                            window.location.href = "@Url.RouteUrl(new { Controller = "EBudget", Action = "Download" })/?fileName=" + data_.namafile;
+                        }
+                        else {
+                            alert("Download GAGAL")
+                        }
+                    }
+
+                });
+
+         });
+
+    </script>
+}
+
+
+
+

@@ -1,0 +1,750 @@
+﻿@using BusinessObjects;
+@{
+
+    List<BO_MaterialKontrol> ListPRBudget = (List<BO_MaterialKontrol>)ViewData["StokMaterial"];
+    List<ComboList> listYear = (List<ComboList>)ViewData["Tahun"];
+    int i = 0;
+    //ViewBag.bulan
+
+    var FilterTahun = "";
+    var FilterAccount = "";
+    var kolom = 0;
+
+    foreach (var item in listYear)
+    {
+        FilterTahun = item.Value;
+    }
+
+    FilterAccount = @ViewBag.Account;
+    kolom = @ViewBag.kolom;
+
+
+}
+
+<style type="text/css">
+    .style2 {
+        font-size: 10px;
+        /*font-weight: ;*/
+    }
+
+    .style3 {
+        font-size: 10px;
+        font-weight: bold;
+    }
+
+    .style10 {
+        font-size: 10px;
+        /*font-weight: ;*/
+    }
+
+    .btncolor {
+        background-color: #4682B4; /* Green */
+        /*border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;*/
+    }
+
+
+    @@keyframes blink {
+        0% {
+            /*background-color: #d73434 ;*/
+            color: black;
+        }
+
+        50% {
+            /*background-color: #c88e8e;*/
+            color: #c88e8e;
+        }
+
+        100% {
+            /*background-color: #d73434;*/
+            color: black;
+        }
+    }
+
+    @@-webkit-keyframes blink {
+        0% {
+            /*background-color: #d73434;*/
+            color: black;
+        }
+
+        50% {
+            /*background-color: #c88e8e;*/
+            color: #c88e8e;
+        }
+
+        100% {
+            /*background-color: #d73434;*/
+            color: black;
+        }
+    }
+
+    .blink {
+
+        -moz-transition: all 0.5s ease-in-out;
+        -webkit-transition: all 0.5s ease-in-out;
+        -o-transition: all 0.5s ease-in-out;
+        -ms-transition: all 0.5s ease-in-out;
+        transition: all 0.5s ease-in-out;
+        -moz-animation: blink normal 1.5s infinite ease-in-out;
+        /* Firefox */
+        -webkit-animation: blink normal 1.5s infinite ease-in-out;
+        /* Webkit */
+        -ms-animation: blink normal 1.5s infinite ease-in-out;
+        /* IE */
+        animation: blink normal 1.5s infinite ease-in-out;
+        /* Opera */
+    }
+
+    .select {
+        /*position: relative;
+        display: block;
+        width: 15em;*/
+        height: 2em;
+        background: #3C8EBE;
+        border-radius: 5px;
+        /*line-height: 2;*/
+        /*overflow: hidden;*/
+        /*border-radius: .25em;*/
+        /*padding-bottom: 5px;*/
+    }
+
+
+</style>
+
+<div class="row" style="margin-bottom :0px">
+    <div class="form-group form-group-sm">
+        <div class="col-sm-1 col-md-2">
+            <font color="#ffffff" ><label class="  control-label text-muted" style="text-align:left;">@ViewBag.title</label></font>
+        </div>
+        <div class="form-group form-group-sm">
+            <button class=" btn " id="btn1">Jan</button>
+            <button class=" btn " id="btn2">Feb</button>
+            <button class=" btn " id="btn3">Mar</button>
+            <button class=" btn " id="btn4">Apr</button>
+            <button class=" btn " id="btn5">Mei</button>
+            <button class=" btn " id="btn6">Jun</button>
+            <button class=" btn " id="btn7">Jul</button>
+            <button class=" btn " id="btn8">Agu</button>
+            <button class=" btn " id="btn9">Sep</button>
+            <button class=" btn " id="btn10">Okt</button>
+            <button class=" btn " id="btn11">Nov</button>
+            <button class=" btn " id="btn12">Des</button>
+            <text class="hidden" id="tahun" value=""></text>
+           
+            <select id="categoryFilter" style="width:7%"  class="select">
+                <option value="">Show All</option>
+                <option value="TSC1">TSC1</option>
+                <option value="TSC3">TSC3</option>
+            </select>
+           
+        </div>
+    </div>
+</div>
+<div class="box box-primary scrollme">
+    @Html.Partial("Partial/Partial1")
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            DT1();
+            //LoadDt();
+            DeleteClass()
+
+            var currentTime = new Date()
+            // returns the month (from 0 to 11)
+            //var month = currentTime.getMonth() + 1
+            var month = 0;
+            month = @kolom;
+            console.log(month);
+            if (month == 1) {
+                document.getElementById("btn1").classList.add("btncolor");
+            }
+
+            if (month == 2) {
+                document.getElementById("btn2").classList.add("btncolor");
+            }
+
+            if (month == 3) {
+                document.getElementById("btn3").classList.add("btncolor");
+            }
+            if (month == 4) {
+                document.getElementById("btn4").classList.add("btncolor");
+            }
+            if (month == 5) {
+                document.getElementById("btn5").classList.add("btncolor");
+            }
+            if (month == 6) {
+                document.getElementById("btn6").classList.add("btncolor");
+            }
+            if (month == 7) {
+                document.getElementById("btn7").classList.add("btncolor");
+            }
+            if (month == 8) {
+                document.getElementById("btn8").classList.add("btncolor");
+            }
+            if (month == 9) {
+                document.getElementById("btn9").classList.add("btncolor");
+            }
+            if (month == 10) {
+                document.getElementById("btn10").classList.add("btncolor");
+            }
+            if (month == 11) {
+                document.getElementById("btn11").classList.add("btncolor");
+            }
+            if (month == 12) {
+                document.getElementById("btn12").classList.add("btncolor");
+            }
+            $('.sidebar-toggle').click(function () {
+                $('.dataTables_scrollHeadInner').css('width', '100%');
+                $('.table').css('width', '100%');
+                setTimeout(function () {
+                    //table.columns.adjust().draw();
+                    $($.fn.dataTable.tables( true ) ).DataTable().columns.adjust().draw();
+                },200);
+            });
+        });
+
+        function DT1() {
+            //$('#TB1').DataTable({
+                //"destroy": true,
+                //scrollY: "65vh",
+                //scrollX: true,
+                //scrollCollapse: true,
+                //paging: false,
+                //search: false,
+                //bFilter: true,
+                //bInfo: false,
+                //autoWidth: false,
+                //responsive: true,
+                //"xScrollXInner" : "100%",
+
+            $('#TB1').DataTable({
+                paging: false,
+                scrollY: "60vh",
+                scrollX: true,
+                //fixedColumns: {
+                //    leftColumns: 3
+                //},
+                //"columnDefs": [
+                //    { "orderable": false, "targets": [0] },
+                //    { "orderable": false, "targets": [1] },
+                //    { "orderable": false,  "targets": [2] },
+                //    { "orderable": false, "targets": [3] },
+                //    { "orderable": false, "targets": [4] },
+                //    { "orderable": false, "targets": [5] },
+                //    { "orderable": false, "targets": [6] },
+                //    { "orderable": false, "targets": [7] },
+                //    { "orderable": false, "targets": [8] },
+                //    { "orderable": false, "targets": [9] },
+                //    { "orderable": false, "targets": [10] },
+                //    { "orderable": false, "targets": [11] },
+                //    { "orderable": false, "targets": [12] }
+                  
+                //]
+               
+            });
+
+            var table = $('#TB1').DataTable();
+            //$("#TB1_filter.dataTables_filter").append($("#categoryFilter"));
+
+            $('#categoryFilter').on('change', function () {
+                table.columns(5).search(this.value).draw();
+            });
+        }
+
+
+        $(document).on('click', '#btn1', function (event) {
+            event.preventDefault();
+
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+             var tbl = $('#januari');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetData1", "EMaterialKontrol")',
+                    data: {
+                        id: @FilterTahun,
+                        account: @FilterAccount,
+                        bulan: 1,
+                        bulan2: "Januari"
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+
+                    }
+
+                });
+            
+            DeleteClass()
+            document.getElementById("btn1").classList.add("btncolor");
+
+
+        });
+
+        $(document).on('click', '#btn2', function (event) {
+            event.preventDefault();
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+            var tbl = $('#januari');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetData1", "EMaterialKontrol")',
+                    data: {
+                        id: @FilterTahun,
+                        account: @FilterAccount,
+                        bulan: 2,
+                        bulan2: "Februari"
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+
+                });
+            
+            DeleteClass()
+            document.getElementById("btn2").classList.add("btncolor");
+        });
+
+        $(document).on('click', '#btn3', function (event) {
+            event.preventDefault();
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+            var tbl = $('#januari');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetData1", "EMaterialKontrol")',
+                    data: {
+                        id: @FilterTahun,
+                        account: @FilterAccount,
+                        bulan: 3,
+                        bulan2: "Maret"
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+
+                });
+           // DT1();
+            DeleteClass()
+            document.getElementById("btn3").classList.add("btncolor");
+        });
+
+        $(document).on('click', '#btn4', function (event) {
+            event.preventDefault();
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+            var tbl = $('#januari');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetData1", "EMaterialKontrol")',
+                    data: {
+                        id: @FilterTahun,
+                        account: @FilterAccount,
+                        bulan: 4,
+                        bulan2: "April"
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+
+                });
+            
+            DeleteClass()
+            document.getElementById("btn4").classList.add("btncolor");
+        });
+
+        $(document).on('click', '#btn5', function (event) {
+           event.preventDefault();
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+            var tbl = $('#januari');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetData1", "EMaterialKontrol")',
+                    data: {
+                        id: @FilterTahun,
+                        account: @FilterAccount,
+                        bulan: 5,
+                        bulan2: "Mei"
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+
+                });
+           // DT1();
+            DeleteClass()
+            document.getElementById("btn5").classList.add("btncolor");
+
+        });
+
+
+        $(document).on('click', '#btn6', function (event) {
+            event.preventDefault();
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+            var tbl = $('#januari');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetData1", "EMaterialKontrol")',
+                    data: {
+                        id: @FilterTahun,
+                        account: @FilterAccount,
+                        bulan: 6,
+                        bulan2: "Juni"
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+
+                });
+            
+            DeleteClass()
+            document.getElementById("btn6").classList.add("btncolor");
+        });
+
+        $(document).on('click', '#btn7', function (event) {
+            event.preventDefault();
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+            var tbl = $('#januari');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetData1", "EMaterialKontrol")',
+                    data: {
+                        id: @FilterTahun,
+                        account: @FilterAccount,
+                        bulan: 7,
+                        bulan2: "Juli"
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+
+                });
+            
+            DeleteClass()
+            document.getElementById("btn7").classList.add("btncolor");
+        });
+
+        $(document).on('click', '#btn8', function (event) {
+            event.preventDefault();
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+            var tbl = $('#januari');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetData1", "EMaterialKontrol")',
+                    data: {
+                        id: @FilterTahun,
+                        account: @FilterAccount,
+                        bulan: 8,
+                        bulan2: "Agustus"
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+
+                });
+            
+            DeleteClass()
+            document.getElementById("btn8").classList.add("btncolor");
+        });
+
+        $(document).on('click', '#btn9', function (event) {
+            event.preventDefault();
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+            var tbl = $('#januari');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetData1", "EMaterialKontrol")',
+                    data: {
+                        id: @FilterTahun,
+                        account: @FilterAccount,
+                        bulan: 9,
+                        bulan2: "September"
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+
+                });
+            DeleteClass()
+            document.getElementById("btn9").classList.add("btncolor");
+        });
+
+        $(document).on('click', '#btn10', function (event) {
+            event.preventDefault();
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+            var tbl = $('#januari');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetData1", "EMaterialKontrol")',
+                    data: {
+                        id: @FilterTahun,
+                        account: @FilterAccount,
+                        bulan: 10,
+                        bulan2: "Oktober"
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+
+                });
+            DeleteClass()
+            document.getElementById("btn10").classList.add("btncolor");
+        });
+
+        $(document).on('click', '#btn11', function (event) {
+            event.preventDefault();
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+            var tbl = $('#januari');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetData1", "EMaterialKontrol")',
+                    data: {
+                        id: @FilterTahun,
+                        account: @FilterAccount,
+                        bulan: 11,
+                        bulan2: "November"
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+
+                });
+            DeleteClass()
+            document.getElementById("btn11").classList.add("btncolor");
+        });
+        $(document).on('click', '#btn12', function (event) {
+            event.preventDefault();
+            WaitingDialog.show('Please Wait...', {
+                dialogSize: 'm',
+                progressType: 'info'
+            });
+            var tbl = $('#januari');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetData1", "EMaterialKontrol")',
+                    data: {
+                        id: @FilterTahun,
+                        account: @FilterAccount,
+                        bulan: 12,
+                        bulan2: "Desember"
+                    },
+                    success: function (data) {
+                        tbl.empty().append(data);
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        return DT1();
+                        //return LoadDt();
+                    },
+                    error: function (data) {
+                        setTimeout(function () {
+                            WaitingDialog.hide();
+                        }, 500);
+                        alert('Error Load data');
+                    }
+
+                });
+            DeleteClass()
+            document.getElementById("btn12").classList.add("btncolor");
+        });
+
+        function DeleteClass() {
+
+            document.getElementById("btn1").classList.remove("btncolor");
+            document.getElementById("btn2").classList.remove("btncolor");
+            document.getElementById("btn3").classList.remove("btncolor");
+            document.getElementById("btn4").classList.remove("btncolor");
+            document.getElementById("btn5").classList.remove("btncolor");
+            document.getElementById("btn6").classList.remove("btncolor");
+            document.getElementById("btn7").classList.remove("btncolor");
+            document.getElementById("btn8").classList.remove("btncolor");
+            document.getElementById("btn9").classList.remove("btncolor");
+            document.getElementById("btn10").classList.remove("btncolor");
+            document.getElementById("btn11").classList.remove("btncolor");
+            document.getElementById("btn12").classList.remove("btncolor");
+
+        }
+
+        function SearchSite() {
+
+           
+
+        }
+
+
+
+
+
+    </script>
+}
+

@@ -1,0 +1,691 @@
+﻿
+@{
+    ViewBag.Title = "Trolly Out Depo";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <style>
+        .grid_center {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-column-gap: 10px;
+            grid-row-gap: 5px;
+        }
+
+        .container_barcode {
+            display: grid;
+            justify-content: center;
+            align-items: center;
+            grid-auto-flow: row;
+            grid-row-gap: 5px;
+            background-color: #CCCCCC;
+            padding: 5px;
+            margin: 5px 0px;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 0px;
+        }
+
+        .form-control {
+            border-radius: 5px;
+        }
+
+        .box-header {
+            padding: 10px 10px 0px 10px;
+        }
+
+        @@media only screen and (max-width:640px) {
+            .box-header {
+                padding: 5px 5px 0px 5px;
+            }
+
+            .c-header {
+                font-size: 14px;
+            }
+
+            .col-xs-12 {
+                padding: 0px;
+            }
+
+            .grid_center {
+                grid-gap: 5px;
+                font-size: 10px;
+            }
+
+            .form-control {
+                border-radius: 5px;
+                padding: 2px 8px;
+                font-size: 10px;
+                height: 20px;
+            }
+
+            .btn {
+                padding: 2px 8px;
+                font-size: 10px;
+            }
+
+            h4.small {
+                font-size: 10px;
+            }
+
+            .container_barcode {
+                display: grid;
+                grid-auto-flow: column;
+                grid-gap: 5px;
+                align-items: center;
+                justify-content: space-around;
+            }
+
+            .table-container {
+                font-size: 10px;
+            }
+
+            .main-header .logo {
+                display: none;
+            }
+
+            .fixed .content-wrapper, .fixed .right-side {
+                padding-top: 50px;
+            }
+        }
+
+        table {
+            /*width: 50%;*/
+            counter-reset: row-num;
+        }
+
+            table tbody tr {
+                counter-increment: row-num;
+            }
+
+                table tbody tr td:first-child::before {
+                    content: counter(row-num) "";
+                }
+    </style>
+</head>
+
+<div class="box box-primary">
+    <div class="box-header with-border header-font">
+        <div class="col-xs-12">
+            <div align="center" class="row">
+                <h1 class="c-header" style="margin:0; font-weight:bold; color:#FF0000">TROLLY KELUAR DEPO</h1>
+            </div>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="col-xs-12">
+            <div class="grid_center">
+                <div class="form-group">
+                    <label style="margin:0">No. Trans</label>
+                    <input type="text" class="form-control" value="" id="txtNoTrans" disabled>
+                </div>
+                <div class="form-group" hidden>
+                    <label style="margin:0">Tanggal</label>
+                    <input type="text" class="form-control" value="" id="dtTgl" disabled>
+                </div>
+                <div class="form-group" hidden>
+                    <label style="margin:0">Jam</label>
+                    <input type="text" class="form-control" value="" id="txtJam" disabled>
+                </div>
+                <div class="form-group">
+                    <label style="margin:0">No. Mobil</label>
+                    <input type="text" class="form-control" oninput="this.value = this.value.toUpperCase()" value="" id="txtNoMobil">
+                </div>
+                <div class="form-group">
+                    <label style="margin:0">Nama Supir</label>
+                    <input type="text" class="form-control" oninput="this.value = this.value.toUpperCase()" value="" id="txtNamaSupir">
+                </div>
+            </div>
+            <div class="container_barcode">
+                <div align="center">
+                    <h4 class="small" style="margin:0; font-weight:bold">QR TROLLY</h4>
+                </div>
+                <div>
+                    <input style="max-width:300px;" type="text" class="form-control" oninput="this.value = this.value.toUpperCase()" value="" id="txtKodeQR">
+                </div>
+                <div align="center">
+                    <button id="btnSubmit" class="btn btn-primary" onclick="return SimpanTrollyOutDepo()">Submit</button>
+                </div>
+            </div>
+            <div class="table-container" style="overflow-x:auto">
+                <table class="table" id="tblTrollyOutDepo" style="border-color:black;width:100%">
+                    <thead>
+                        <tr style="border-color:black">
+                            <th style="text-align:center;vertical-align:middle;border-color:black">No</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">QR Trolly</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" hidden>Project</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Jenis</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Invt Id</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" hidden>Part No</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black" hidden>Part Name</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Type</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black">Qty</th>
+                            <th style="text-align:center;vertical-align:middle;border-color:black"></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="_popUp" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title" id="_title"></h2>
+            </div>
+            <div class="modal-body">
+                <div style="display: grid; grid-auto-flow: column; grid-gap: 5px;">
+                    <div class="form-group">
+                        <label style="text-align:left;">QR Trolly</label>
+                        <input id="txtKodeTrolly" class="form-control" readonly />
+                    </div>
+                    <div class="form-group" hidden>
+                        <label style="text-align:left;">Type Trolly</label>
+                        <input id="txtTypeTrolly" class="form-control" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label style="text-align:left;">Project</label>
+                        <input id="txtProject" class="form-control" readonly />
+                    </div>
+                    @*<div class="form-group">
+                        <label style="text-align:left;">Qty</label>
+                        <input id="txtQty" class="form-control" readonly />
+                    </div>*@
+                </div>
+                <div class="form-group">
+                    <label style="text-align:left;">Invt Id</label>
+                    <input id="txtInvtId" class="form-control" autofocus />
+                </div>
+                <div class="table-container" style="overflow-x:auto">
+                    <table class="table" id="tblTrollyPasscard" style="border-color:black;width:100%">
+                        <thead>
+                            <tr style="border-color:black">
+                                <th style="display:none;text-align:center;vertical-align:middle;border-color:black">No</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Invt Id</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black" hidden>Part No</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Part Name</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Type</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black">Qty</th>
+                                <th style="text-align:center;vertical-align:middle;border-color:black"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnProses" class="btn btn-primary" onclick="return Proses()" style="width:100px">Proses</button>&nbsp;
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/aes.js"></script>
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var menuItem = $('#trolly');
+            menuItem.addClass('active');
+            var subMenuItem = menuItem.find('#trollyoutdepo');
+            subMenuItem.addClass('active');
+
+            $('#dtTgl').val(FormatDateTime('DD-MM-YYYY'));
+            $('#txtJam').val(FormatDateTime('HH:mm:ss'));
+
+            var msg = localStorage.getItem("message");
+            var scs = localStorage.getItem("success");
+            if (msg != null) {
+                //var msg1 = '<h3 class=\"alert alert-success fade in\">' + msg + '</h3>';
+                //$('#message').html(msg1);
+                //$("#message").slideDown(1000).slideUp(2000);
+                PopupMessage(scs, msg);
+                localStorage.removeItem("message");
+                localStorage.removeItem("success");
+            }
+
+            $('#txtNoMobil').focus();
+        })        
+
+        // Input no mobil
+        $(document).on('focus', '#txtNoMobil', function (event) {
+            //event.preventDefault();
+            $('#txtNoMobil').val('');
+        });
+
+        $(document).on('keypress', '#txtNoMobil', function (event) {
+            if (event.which === 32) {
+                event.preventDefault();
+            }
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                if ($('#txtNamaSupir').val() === '') {
+                    $('#txtNamaSupir').focus();
+                } else if ($('#txtKodeQR').val() === '') {
+                    $('#txtKodeQR').focus();
+                } else {
+                    AddTrollyOut();
+                }
+            }
+        });
+
+        // Input nama supir
+        $(document).on('focus', '#txtNamaSupir', function (event) {
+            //event.preventDefault();
+            $('#txtNamaSupir').val('');
+        });
+
+        $(document).on('keypress', '#txtNamaSupir', function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                if ($('#txtNoMobil').val() === '') {
+                    $('#txtNoMobil').focus();
+                } else if ($('#txtKodeQR').val() === '') {
+                    $('#txtKodeQR').focus();
+                } else {
+                    AddTrollyOut();
+                }
+            }
+        });
+
+        // Input barcode
+        $(document).on('focus', '#txtKodeQR', function (event) {
+            //event.preventDefault();
+            $('#txtKodeQR').val('');
+        });
+
+        $(document).on('keypress', '#txtKodeQR', function (event) {
+            var kodeQR = $('#txtKodeQR').val();
+
+            if (kodeQR !== '' && event.key === "Enter") {                
+                event.preventDefault();
+                AddTrollyOut();
+            }
+        });
+
+        // Input Inventory
+        $(document).on('focus', '#txtInvtId', function (event) {
+            $('#txtInvtId').val('');
+        });
+
+        $(document).on('keypress', '#txtInvtId', function (event) {
+            if ($('#txtInvtId').val() !== '' && event.key === "Enter") {
+                event.preventDefault();
+                CheckPart();
+            }
+        });
+               
+        // Hapus trolly
+        $("#tblTrollyOutDepo").on('click', '.btnHapus', function () {
+            $(this).closest('tr').remove();
+        });
+
+        function AddTrollyOut() {
+            var kodeQR = $('#txtKodeQR').val();
+            $.ajax({
+                url: '@Url.Action("CheckKodeQR", "TrollyDepo", new { area ="User"})',
+                dataType: "json",
+                type: "GET",
+                data: { kodeQR: kodeQR },
+                async: false,
+                success: function (data) {
+                    if (!data.success) {
+                        alert(data.message)
+                        //PopupMessage(false, data.message);
+                        $('#txtKodeQR').focus();
+                    } else {
+                        var table = document.getElementById("tblTrollyOutDepo").getElementsByTagName('tbody')[0];
+                        var rowCount = table.rows.length;
+
+                        var isReady = false;
+
+                        for (var i = 0; i < rowCount; i++) {
+                            var kodeTrolley = table.rows[i].cells[1].textContent.trim();
+                            if (kodeTrolley === kodeQR) {
+                                alert(`Kode trolly ${kodeQR} sudah ada!`);
+                                //PopupMessage(false, `Kode trolley ${barcode} sudah ada!`);
+                                $('#txtKodeQR').focus();
+                                isReady = true;
+                                break;
+                            }
+                        }
+
+                        if (!isReady) {
+                            $("#_popUp").modal({ backdrop: 'static' });
+                            $('#_title').text("Scan Passcard");
+
+                            $('#_popUp').on('shown.bs.modal', function () {
+                                $('#txtInvtId').focus();
+                                $('#txtKodeTrolly').val(kodeQR);
+                                $('#txtTypeTrolly').val(data.dataTrolly.TypeTrolly);
+                                $('#txtProject').val(data.dataTrolly.Project);
+                                ////$('#txtQty').val(data.dataTrolly.Qty);
+                                $("#tblTrollyPasscard").find("tr:gt(0)").remove();
+                            })
+                            //var newRow = table.insertRow(rowCount);
+                            //newRow.setAttribute("style", "text-align:center;vertical-align:middle");
+
+                            //newRow.insertCell(0);
+                            //var cKodeTrolley = newRow.insertCell(1);
+                            //var cProject = newRow.insertCell(2);
+                            //var cJenisTrolley = newRow.insertCell(3);
+                            //var cPilihan = newRow.insertCell(4);
+                            //cKodeTrolley.innerHTML = kodeQR;
+                            //cProject.innerHTML = data.dataTrolly.Project;
+                            //cJenisTrolley.innerHTML = data.dataTrolly.TypeTrolly;
+                            //cPilihan.innerHTML = '<button class="btn btn-xs btnHapus" title="Hapus" style="color:red"><span class="fa fa-trash"></span></button>';
+                        }
+                    }
+                    $('#txtKodeQR').val('');
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        } 
+
+        function CheckPart() {
+            //var invtId = $('#txtInvtId').val().substring(0, 14);
+            var invtId = getInvtIdByIndex($('#txtInvtId').val(), "-", 1);
+            var project = $('#txtProject').val();
+            var typeTrolly = $('#txtTypeTrolly').val();
+
+            if (invtId !== '' && event.key === "Enter") {
+                event.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("CheckPart", "Trolly", new { area ="User"})',
+                    dataType: "json",
+                    type: "GET",
+                    data: {
+                        invtId: invtId ,
+                        project: project,
+                        typeTrolly: typeTrolly
+                    },
+                    async: false,
+                    success: function (data) {
+                        if (!data.success) {
+                            alert(data.message)
+                            //PopupMessage(false, data.message);
+                            $('#txtInvtId').focus();
+                        } else {
+                            var table = document.getElementById("tblTrollyPasscard").getElementsByTagName('tbody')[0];
+                            var rowCount = table.rows.length;
+                            
+                            var isReady = false;
+
+                            for (var i = 0; i < rowCount; i++) {
+                                var invtId_ = table.rows[i].cells[1].textContent.trim();
+                                var Qty = table.rows[i].cells[5].textContent.trim();
+                                if (invtId_ === invtId) {
+                                    table.rows[i].cells[5].innerHTML = parseInt(Qty) + 1;
+                                    $('#txtInvtId').focus();
+                                    isReady = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isReady) {
+                                var newRow = table.insertRow(rowCount);
+                                newRow.setAttribute("style", "text-align:center;vertical-align:middle");
+
+                                var cNo = newRow.insertCell(0);
+                                var cInvtID = newRow.insertCell(1);
+                                var cPartNo = newRow.insertCell(2);
+                                var cPartName = newRow.insertCell(3);
+                                var cType = newRow.insertCell(4);
+                                var cQty = newRow.insertCell(5);
+                                var cPilihan = newRow.insertCell(6);
+                                cNo.setAttribute("style", "display:none");
+                                cInvtID.innerHTML = invtId;
+                                cPartNo.setAttribute("style", "display:none");
+                                cPartNo.innerHTML = data.part.PartNo;
+                                cPartName.innerHTML = data.part.PartName;
+                                cType.innerHTML = data.part.Type;
+                                cQty.innerHTML = 1;
+                                //cQty.innerHTML = `<input style="min-width:50px; width:100%" type="number" id="txtQty_${rowCount}" onkeypress="pressQTY(event)">`
+                                cPilihan.innerHTML = '<button class="btn btn-xs btnHapus" title="Hapus" style="color:red"><span class="fa fa-trash"></span></button>';
+                            }
+                            //$(`#txtQty_${rowCount}`).focus();
+                        }
+                        $('#txtInvtId').val('');
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
+                    }
+                });
+            }
+        }
+
+        function getInvtIdByIndex(input, delimiter, posisi) {
+            let parts = input.split(delimiter);
+
+            if (posisi <= 0 || posisi > parts.length) {
+                return "";
+            }
+
+            return parts[posisi - 1].trim();
+        }
+
+        function Proses() {
+            if ($("#tblTrollyPasscard tbody tr").length > 0) {
+                $("#tblTrollyPasscard tbody tr").each(function () {
+                    var currentRow = $(this).closest("tr");
+                    var invtId = currentRow.find('td:eq(1)').text();
+                    var partNo = currentRow.find('td:eq(2)').text();
+                    var partName = currentRow.find('td:eq(3)').text();
+                    var type = currentRow.find('td:eq(4)').text();
+                    var qty = currentRow.find('td:eq(5)').text();
+
+                    var table = document.getElementById("tblTrollyOutDepo").getElementsByTagName('tbody')[0];
+                    var rowCount = table.rows.length;
+
+                    var newRow = table.insertRow(rowCount);
+                    newRow.setAttribute("style", "text-align:center;vertical-align:middle");
+
+                    newRow.insertCell(0);
+                    var cKodeTrolley = newRow.insertCell(1);
+                    var cProject = newRow.insertCell(2);
+                    var cJenisTrolley = newRow.insertCell(3);
+                    var cInvtId = newRow.insertCell(4);
+                    var cPartNo = newRow.insertCell(5);
+                    var cPartName = newRow.insertCell(6);
+                    var cType = newRow.insertCell(7);
+                    var cQty = newRow.insertCell(8);
+                    var cPilihan = newRow.insertCell(9);
+                    cKodeTrolley.innerHTML = $('#txtKodeTrolly').val();
+                    cProject.innerHTML = $('#txtProject').val();;
+                    cProject.setAttribute("style", "display:none");
+                    cJenisTrolley.innerHTML = $('#txtTypeTrolly').val();;
+                    cInvtId.innerHTML = invtId;
+                    cPartNo.innerHTML = partNo;
+                    cPartNo.setAttribute("style", "display:none");
+                    cPartName.innerHTML = partName;
+                    cPartName.setAttribute("style", "display:none");
+                    cType.innerHTML = type;
+                    cQty.innerHTML = qty
+                    cPilihan.innerHTML = '<button class="btn btn-xs btnHapus" title="Hapus" style="color:red"><span class="fa fa-trash"></span></button>';
+
+                    $("#tblTrollyPasscard").find("tr:gt(0)").remove();
+
+                    $("#_popUp").modal('hide');
+
+                    $('#txtKodeQR').focus();
+                });
+            } else {
+                var table = document.getElementById("tblTrollyOutDepo").getElementsByTagName('tbody')[0];
+                var rowCount = table.rows.length;
+
+                var newRow = table.insertRow(rowCount);
+                newRow.setAttribute("style", "text-align:center;vertical-align:middle");
+
+                newRow.insertCell(0);
+                var cKodeTrolley = newRow.insertCell(1);
+                var cProject = newRow.insertCell(2);
+                var cJenisTrolley = newRow.insertCell(3);
+                var cInvtId = newRow.insertCell(4);
+                var cPartNo = newRow.insertCell(5);
+                var cPartName = newRow.insertCell(6);
+                var cType = newRow.insertCell(7);
+                var cQty = newRow.insertCell(8);
+                var cPilihan = newRow.insertCell(9);
+                cKodeTrolley.innerHTML = $('#txtKodeTrolly').val();
+                cProject.innerHTML = $('#txtProject').val();;
+                cProject.setAttribute("style", "display:none");
+                cJenisTrolley.innerHTML = $('#txtTypeTrolly').val();;
+                cInvtId.innerHTML = "";
+                cPartNo.innerHTML = "";
+                cPartNo.setAttribute("style", "display:none");
+                cPartName.innerHTML = "";
+                cPartName.setAttribute("style", "display:none");
+                cType.innerHTML = "";
+                cQty.innerHTML = 1
+                cPilihan.innerHTML = '<button class="btn btn-xs btnHapus" title="Hapus" style="color:red"><span class="fa fa-trash"></span></button>';
+
+                $("#tblTrollyPasscard").find("tr:gt(0)").remove();
+
+                $("#_popUp").modal('hide');
+
+                $('#txtKodeQR').focus();
+            }
+            
+        }
+
+        function SimpanTrollyOutDepo() {
+            var NoMobil = $("#txtNoMobil").val();
+            var NamaSupir = $("#txtNamaSupir").val();
+            var table = document.getElementById("tblTrollyOutDepo").getElementsByTagName('tbody')[0];;
+            var rowCount = table.rows.length;
+
+            if (NoMobil == "") {
+                alert("No Mobil tidak boleh kosong!")
+            } else if (NoMobil.length > 9) {
+                alert("Cek nomor mobil!")
+            } else if (NamaSupir == "") {
+                alert("Nama supir tidak boleh kosong!")
+            } else if (rowCount == 0) {
+                alert("Data trolley tidak boleh kosong!")
+            } else {
+                simpanData();
+            }
+        }
+
+        function simpanData() {
+            if (confirm('Yakin ingin simpan data?')) {
+
+                $('#btnSubmit').prop('disabled', true);
+
+                var Details = [];
+                $("#tblTrollyOutDepo tbody tr").each(function () {
+                    var currentRow = $(this);
+                    var kodeQR = currentRow.find("td:eq(1)").text();
+                    var project = currentRow.find("td:eq(2)").text();
+                    var typeTrolly = currentRow.find("td:eq(3)").text();
+                    var invtId = currentRow.find("td:eq(4)").text();
+                    var partNo = currentRow.find("td:eq(5)").text();
+                    var partName = currentRow.find("td:eq(6)").text();
+                    var type = currentRow.find("td:eq(7)").text();
+                    var qty = currentRow.find("td:eq(8)").text();
+
+                    var obj = {};
+                    obj.NoTrans = "";
+                    obj.KodeQR = kodeQR;
+                    obj.Project = project;
+                    obj.TypeTrolly = typeTrolly;
+                    obj.InvtId = invtId;
+                    obj.PartNo = partNo;
+                    obj.PartName = partName;
+                    obj.Type = type;
+                    obj.Qty = qty;
+                    obj.Satuan = 'PCS';
+
+                    Details.push(obj);
+                });
+
+                $.ajax({
+                    url: '@Url.Action("SimpanTrollyInOutDepo", "TrollyDepo", new { area ="User"})',
+                    dataType: "json",
+                    type: "POST",
+                    cache: false,
+                    data: {
+                        NoTrans: $('#txtNoTrans').val(),
+                        NoTransTSC: "",
+                        InOut: "OUT",
+                        TglTrans: new Date().toISOString(),
+                        CustId: 'DEPO',
+                        NoMobil: $('#txtNoMobil').val(),
+                        NamaSupir: $('#txtNamaSupir').val(),
+                        Details: Details,
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            $("#txtNoMobil").val('');
+                            $("#txtNamaSupir").val('');
+                            $("#tblTrollyOutDepo").find("tr:gt(0)").remove();
+                            alert(data.message);
+                            $('#btnSubmit').prop('disabled', false);
+                            //PopupMessage(true, data.message);
+                            $('#txtNoMobil').focus();
+                        } else {
+                            alert(data.message);
+                            $('#btnSubmit').prop('disabled', false);
+                            //PopupMessage(false, data.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
+                        $('#btnSubmit').prop('disabled', false);
+                        //PopupMessage(false, "Terjadi kesalahan server");
+                    }
+                });
+            } else {
+                return false;
+            }
+        }    
+        
+        function PopupMessage(success, msg) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+            //Toast.fire({
+            //    icon: 'success',
+            //    title: msg
+            //})
+            if (success) {
+                Toast.fire({
+                    icon: 'success',
+                    title: msg
+                })
+            } else {
+                Toast.fire({
+                    icon: 'error',
+                    title: msg
+                })
+            }
+        }
+
+        function FormatDateTime(format) {
+            const today = new Date();
+
+            var datetime = moment(today).format(format)
+            return datetime
+        }
+
+    </script>
+}
