@@ -307,7 +307,7 @@
                     </tr>
                     <tr>
                         <td colspan="5" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl1">Purchasing Staff </span></td>
-                        <td colspan="3" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl2">Purchasing Manager </span></td>
+                        <td colspan="3" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl2">Purchasing Dept Head </span></td>
                         <td colspan="4" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl3">Division Head </span></td>
                     </tr>
                     <tr>
@@ -365,16 +365,25 @@
 
 		    var xValue = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["ListApproval"]))');
 		    for (var i = 0; i < xValue.length; i++) {
-			    if (xValue[i].Kol == 1) {
+                if (xValue[i].Kol == 1) {
 				    $("#prApproveBy1").html(xValue[i].Status + " by " + xValue[i].UserName);
-				    $("#prApproveAt1").html("Tanggal : " + xValue[i].Tanggal);
+                    $("#prApproveAt1").html("Tanggal : " + xValue[i].Tanggal);
+                    var userLvl1 = (xValue[i].UserName || "").trim().toLowerCase();
+                    $("#prLvl1").html(userLvl1 === "kusmiyati" ? "Purchasing Section Head" : "Purchasing Staff");
                     } else if (xValue[i].Kol == 2) {
 				    $("#prApproveBy2").html(xValue[i].Status + " by " + xValue[i].UserName);
 				    $("#prApproveAt2").html("Tanggal : " + xValue[i].Tanggal);
                     } else if (xValue[i].Kol == 3) {
 				    $("#prApproveBy3").html(xValue[i].Status + " by " + xValue[i].UserName);
 				    $("#prApproveAt3").html("Tanggal : " + xValue[i].Tanggal);
-			    }
+                }
+
+                //if (xValue[i].UserName.trim().toLowerCase() == "Kusmiyati") {
+                //    $("#prLvl1").html(" Purchasing Section Head ");
+                //} else {
+                //    $("#prLvl1").html(" Purchasing Staff ");
+                //}
+
             }
 
 		    if (@Kol == 1) {
