@@ -110,5 +110,10 @@ namespace ActionServices
             return moduleDao.RejectApproval(PODetail, UserName, Kol);
         }
 
+        public List<Dictionary<string, object>> GetHistoryPrice(string InvtID)
+        {
+            return moduleDao.GetHistoryPrice(InvtID);
+        }
+
     }
 }

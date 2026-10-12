@@ -36,6 +36,10 @@ namespace DataObjects
         int PrintPO(string PONo);
         int SendEmail(string PONo);
 
+        /// <summary>
+        /// History harga sebuah item (SP PR_V_GetHistoryPrice). Kolom dikembalikan apa adanya.
+        /// </summary>
+        List<Dictionary<string, object>> GetHistoryPrice(string InvtID);
 
     }
 }

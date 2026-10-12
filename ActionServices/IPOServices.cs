@@ -34,5 +34,7 @@ namespace ActionServices
         int PrintPO(string PONo);
         int SendEmail(string PONo);
 
+        List<Dictionary<string, object>> GetHistoryPrice(string InvtID);
+
     }
 }

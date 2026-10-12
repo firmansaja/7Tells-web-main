@@ -43,6 +43,18 @@
         font-weight: bold;
     }
 
+    .lnkInvtID {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    @@media print {
+        .lnkInvtID {
+            color: #000;
+            text-decoration: none;
+        }
+    }
+
     .style7 {
         font-size: 13px;
         font-family: Arial;
@@ -260,7 +272,7 @@
                         }
                         @*<td style="word-wrap: break-word;white-space: pre-wrap;vertical-align:middle;border-color:black"><textarea class="komen" rows="1" oninput="AutoGrow(this)" id="txtComment_@item.No" style="width:100%;resize:none"></textarea></td>*@
                         <td style="text-align:center; vertical-align:middle;border-color:black">@item.No</td>
-                        <td style="text-align:left; word-wrap:break-word;white-space:pre-wrap;vertical-align:middle;border-color:black">@item.InvtID</td>
+                        <td style="text-align:left; word-wrap:break-word;white-space:pre-wrap;vertical-align:middle;border-color:black"><a href="#" class="lnkInvtID" data-invtid="@item.InvtID" title="Lihat history harga">@item.InvtID</a></td>
                         <td style="text-align:left; word-wrap: break-word;white-space: pre-wrap;vertical-align:middle;border-color:black">@item.Description</td>
                         <td style="text-align:center; vertical-align:middle;border-color:black">@item.PRNo</td>
                         <td style="text-align:center; vertical-align:middle;border-color:black">@item.Account</td>
@@ -306,7 +318,7 @@
                         <td class="style24" colspan="4" style="text-align:center; vertical-align:middle;border-color:black" height="80px"><span id="prApproveBy3">By :</span></td>
                     </tr>
                     <tr>
-                        <td colspan="5" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl1">Purchasing Staff </span></td>
+                        <td colspan="5" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl1">Purchasing GL</span></td>
                         <td colspan="3" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl2">Purchasing Dept Head </span></td>
                         <td colspan="4" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl3">Division Head </span></td>
                     </tr>
@@ -348,12 +360,101 @@
 
 </div>
 
+@* Popup history harga per InvtID (data dari SP PR_V_GetHistoryPrice) *@
+<div class="modal fade no-print" id="_popUpHistoryPrice" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="_titleHistoryPrice"></h4>
+            </div>
+            <div class="modal-body" style="max-height:60vh;overflow:auto">
+                <table id="tblHistoryPrice" class="table table-bordered table-striped table-condensed" style="font-size:12px">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" style="width:100px">Kembali</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @section scripts{
     <script>
         $(document).ready(function () {
             SetFooter();
 
+        });
+
+        // ===== Popup History Harga (klik InvtID) =====
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+        }
+
+        function formatHistoryValue(v) {
+            if (v === null || v === undefined) return { text: "", cls: "" };
+            if (typeof v === "number") {
+                var text = Number.isInteger(v)
+                    ? v.toLocaleString("en-US")
+                    : v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                return { text: text, cls: "text-right" };
+            }
+            return { text: escapeHtml(v), cls: "" };
+        }
+
+        $(document).on('click', '.lnkInvtID', function (event) {
+            event.preventDefault();
+            var invtId = $(this).data('invtid');
+
+            $("#_titleHistoryPrice").html("History Harga : " + escapeHtml(invtId));
+            $("#tblHistoryPrice thead").empty();
+            $("#tblHistoryPrice tbody").html('<tr><td class="text-center">Loading...</td></tr>');
+            $("#_popUpHistoryPrice").modal({ backdrop: 'static' });
+
+            $.ajax({
+                url: '@Url.Action("GetHistoryPrice", "EPO", new { area = "User" })',
+                type: "POST",
+                dataType: "json",
+                cache: false,
+                data: { InvtID: invtId },
+                success: function (data) {
+                    if (!data.success) {
+                        $("#tblHistoryPrice tbody").html('<tr><td class="text-center text-danger">' + escapeHtml(data.message || "Gagal mengambil data") + '</td></tr>');
+                        return;
+                    }
+                    if (!data.rows || data.rows.length === 0) {
+                        $("#tblHistoryPrice tbody").html('<tr><td class="text-center">Tidak ada data history harga</td></tr>');
+                        return;
+                    }
+
+                    var head = '<tr>';
+                    for (var c = 0; c < data.columns.length; c++) {
+                        head += '<th class="text-center" style="vertical-align:middle">' + escapeHtml(data.columns[c]) + '</th>';
+                    }
+                    head += '</tr>';
+
+                    var body = '';
+                    for (var r = 0; r < data.rows.length; r++) {
+                        body += '<tr>';
+                        for (var k = 0; k < data.columns.length; k++) {
+                            var cell = formatHistoryValue(data.rows[r][data.columns[k]]);
+                            body += '<td class="' + cell.cls + '">' + cell.text + '</td>';
+                        }
+                        body += '</tr>';
+                    }
+
+                    $("#tblHistoryPrice thead").html(head);
+                    $("#tblHistoryPrice tbody").html(body);
+                },
+                error: function (xhr) {
+                    $("#tblHistoryPrice tbody").html('<tr><td class="text-center text-danger">Error mengambil data history harga</td></tr>');
+                }
+            });
         });
 
         function SetFooter()
@@ -369,7 +470,7 @@
 				    $("#prApproveBy1").html(xValue[i].Status + " by " + xValue[i].UserName);
                     $("#prApproveAt1").html("Tanggal : " + xValue[i].Tanggal);
                     var userLvl1 = (xValue[i].UserName || "").trim().toLowerCase();
-                    $("#prLvl1").html(userLvl1 === "kusmiyati" ? "Purchasing Section Head" : "Purchasing Staff");
+                    $("#prLvl1").html(userLvl1 === "kusmiyati" ? "Purchasing Section Head" : "Purchasing GL");
                     } else if (xValue[i].Kol == 2) {
 				    $("#prApproveBy2").html(xValue[i].Status + " by " + xValue[i].UserName);
 				    $("#prApproveAt2").html("Tanggal : " + xValue[i].Tanggal);

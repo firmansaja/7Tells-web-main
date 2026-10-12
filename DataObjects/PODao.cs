@@ -626,6 +626,36 @@ namespace DataObjects
             return 1;
         }
 
+        public List<Dictionary<string, object>> GetHistoryPrice(string InvtID)
+        {
+            try
+            {
+                object[] Params = { "@InvtID", InvtID };
+                return db.Read("PR_V_GetHistoryPrice", CommandType.StoredProcedure, MakeDynamicRow, Params).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // Memetakan satu baris reader ke dictionary {NamaKolom: Nilai} tanpa perlu tahu skema SP.
+        // DateTime diformat ke string dan decimal dikonversi ke double supaya aman di-serialize ke JSON.
+        static readonly Func<IDataReader, Dictionary<string, object>> MakeDynamicRow = reader =>
+        {
+            var row = new Dictionary<string, object>();
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                object value = reader.IsDBNull(i) ? null : reader.GetValue(i);
+                if (value is DateTime)
+                    value = ((DateTime)value).ToString("dd-MM-yyyy");
+                else if (value is decimal)
+                    value = Convert.ToDouble(value);
+                row[reader.GetName(i)] = value;
+            }
+            return row;
+        };
+
         static readonly Func<IDataReader, BO_PO> MakePO = reader =>
             new BO_PO
             {

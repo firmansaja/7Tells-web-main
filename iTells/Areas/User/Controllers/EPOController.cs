@@ -482,6 +482,29 @@ namespace iTells.Areas.User.Controllers
             ViewData["ListApproval"] = ListApproval;
         }
 
+        // Dipanggil via AJAX dari popup InvtID di ViewPOUser. Mengembalikan kolom + baris dari SP PR_V_GetHistoryPrice.
+        [HttpPost]
+        public ActionResult GetHistoryPrice(string InvtID)
+        {
+            if (dHelper.CurrentLoginUserName() == null)
+            {
+                return Json(new { success = false, message = "Session habis, silakan login kembali." }, JsonRequestBehavior.AllowGet);
+            }
+
+            try
+            {
+                var rows = service.GetHistoryPrice(InvtID);
+                var columns = rows.Count > 0 ? rows[0].Keys.ToList() : new List<string>();
+                var result = Json(new { success = true, columns, rows }, JsonRequestBehavior.AllowGet);
+                result.MaxJsonLength = int.MaxValue;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [HttpPost]
         public ActionResult ApprovePO(string PONo)
         {

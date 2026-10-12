@@ -300,7 +300,7 @@
                         <td class="style24" colspan="5" style="text-align:center; vertical-align:middle;border-color:black" height="80px"><span id="prApproveBy3">By :</span></td>
                     </tr>
                     <tr>
-                        <td colspan="5" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl1">Purchasing Staff </span></td>
+                        <td colspan="5" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl1">Purchasing GL </span></td>
                         <td colspan="3" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl2">Purchasing Dept Head </span></td>
                         <td colspan="5" style="text-align:center; vertical-align:middle;border-color:black" height="20px"><span id="prLvl3">Division Head </span></td>
                     </tr>
@@ -366,7 +366,7 @@
 				    $("#prApproveBy1").html(xValue[i].Status + " by " + xValue[i].UserName);
                     $("#prApproveAt1").html("Tanggal : " + xValue[i].Tanggal);
                     var userLvl1 = (xValue[i].UserName || "").trim().toLowerCase();
-                    $("#prLvl1").html(userLvl1 === "kusmiyati" ? "Purchasing Section Head" : "Purchasing Staff");
+                    $("#prLvl1").html(userLvl1 === "kusmiyati" ? "Purchasing Section Head" : "Purchasing GL");
                     } else if (xValue[i].Kol == 2) {
 				    $("#prApproveBy2").html(xValue[i].Status + " by " + xValue[i].UserName);
 				    $("#prApproveAt2").html("Tanggal : " + xValue[i].Tanggal);
